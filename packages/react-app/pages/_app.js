@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
-    <Web3Provider network="localhost">
+    <Web3Provider network={process.env.DEFAULT_WEB3_PROVIDER || "localhost"}>
       <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme.current}>
         <>
           <Head>

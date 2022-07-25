@@ -10,6 +10,8 @@ import { useRouter } from "next/router";
 function MyApp({ Component, pageProps }) {
   const prevTheme = useRef("light");
   const router = useRouter();
+  const defaultWeb3Provider = process.env.DEFAULT_WEB3_PROVIDER || "localhost";
+  console.log("defaultWeb3Provider", defaultWeb3Provider);
 
   const themes = {
     dark: `/css/dark-theme.css`,
@@ -21,7 +23,7 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
-    <Web3Provider network={process.env.DEFAULT_WEB3_PROVIDER || "localhost"}>
+    <Web3Provider network={defaultWeb3Provider}>
       <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme.current}>
         <>
           <Head>

@@ -18,6 +18,7 @@
     "@ant-design/icons": "^4.2.2",
     "@apollo/client": "^3.3.21",
     "@apollo/react-hooks": "^4.0.0",
+    "@headlessui/react": "^1.6.5",
     "@portis/web3": "^4.0.5",
     "@ramp-network/ramp-instant-sdk": "^2.2.0",
     "@testing-library/jest-dom": "^5.11.4",
@@ -53,8 +54,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
     "walletlink": "^2.1.5",
-    "web3modal": "^1.9.1",
-    "@headlessui/react": "^1.6.5"
+    "web3modal": "^1.9.1"
   },
   "devDependencies": {
     "@apollo/client": "^3.3.21",
@@ -63,7 +63,7 @@
     "@tailwindcss/forms": "^0.5.2",
     "@testing-library/dom": "^6.12.2",
     "@types/react": "^16.9.19",
-    "autoprefixer": "^10.3.6",
+    "autoprefixer": "^10.4.8",
     "chalk": "^4.1.0",
     "eslint": "^7.5.0",
     "eslint-config-airbnb": "^18.2.0",
@@ -81,11 +81,11 @@
     "gulp-postcss": "^9.0.0",
     "ipfs-http-client": "^45.0.0",
     "less-plugin-npm-import": "^2.1.0",
-    "postcss": "^8.3.8",
+    "postcss": "^8.4.14",
     "prettier": "^2.0.5",
     "s3-folder-upload": "^2.3.1",
     "surge": "^0.21.5",
-    "tailwindcss": "^2.2.16"
+    "tailwindcss": "^3.1.7"
   },
   "eslintConfig": {
     "extends": "react-app"

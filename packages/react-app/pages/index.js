@@ -5,6 +5,8 @@ import { Hero } from "/components/Hero";
 import Head from "next/head";
 import { Header } from "/components/Header";
 import { Footer } from "/components/Footer";
+import { About } from "/components/About";
+
 const LandingPage = () => {
   return (
     <>
@@ -17,6 +19,7 @@ const LandingPage = () => {
         <Hero />
         <Features />
         <CallToAction />
+        <About/>
       </main>
       <Footer />
     </>

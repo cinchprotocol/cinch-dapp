@@ -3,26 +3,27 @@ import { GlobeAltIcon, LightningBoltIcon, MailIcon, ScaleIcon } from '@heroicons
 
 const features = [
   {
-    name: 'Preserve your native tokens during a bear market',
-    description: 'Your treasury has a finite amount of tokens. Force selling tokens at all-time lows is painful. Preserve tokens and minimize dilution with Cinch by minting and issuing revenue tokens instead.',
-    icon: GlobeAltIcon,
-  },
-  {
-    name: 'Reduce token sell pressure',
-    description:
-      'Reduce excess token emissions that lead to sell pressure.',
-    icon: ScaleIcon,
-  },
-  {
-    name: 'Access capital with $0 of collateral and without dilution',
+    name: 'Access capital with $0 of collateral and with 0% dilution',
     description:
       'Cinch’s marketplace makes it possible to trade future revenue for capital today. No collateral required.',
     icon: LightningBoltIcon,
   },
   {
-    name: 'flexibility & control',
+    name: 'Reduce token sell pressure',
     description:
-      'Choose how much future cashflow to tokenize, how these cashflows get distributed and, how and when to sell them.',
+      'Some DEX liquidity is useful for price discovery, but constant sell pressure is extremely damaging to the token price. Reduce excess token emissions that lead to sell pressure.',
+    icon: ScaleIcon,
+  },
+  {
+    name: 'Preserve your native tokens during a bear market',
+    description: 'Your treasury has a finite amount of tokens. Force selling tokens at all-time lows is painful. Preserve tokens and minimize dilution with Cinch by minting and issuing revenue tokens instead.',
+    icon: GlobeAltIcon,
+  },
+
+  {
+    name: 'Flexibility & control',
+    description:
+      'Choose how much future revenue to tokenize. Choosee how the tokens get distributed. Track & view token analytics.',
     icon: MailIcon,
   },
 ]
@@ -57,7 +58,7 @@ export function Features() {
         <div className="relative lg:grid lg:grid-cols-3 lg:gap-x-8">
           <div className="lg:col-span-1">
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              A better way to manage treasury.
+              A better way to manage your treasury.
             </h2>
           </div>
           <dl className="mt-10 space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:mt-0 lg:col-span-2">

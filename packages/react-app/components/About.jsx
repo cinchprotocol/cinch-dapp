@@ -1,6 +1,6 @@
 export function About() {
   return (
-    <div id="about"className="relative py-16 bg-white overflow-hidden">
+    <div id="about" className="relative py-16 bg-white overflow-hidden">
       <div className="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full">
         <div className="relative h-full text-lg max-w-prose mx-auto" aria-hidden="true">
           <svg
@@ -60,13 +60,6 @@ export function About() {
           </p>
         </div>
         <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
-          <p>
-            Faucibus commodo massa rhoncus, volutpat. <strong>Dignissim</strong> sed <strong>eget risus enim</strong>.
-            Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra
-            tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim.{' '}
-            <a href="#">Mattis mauris semper</a> sed amet vitae sed turpis id.
-          </p>
-
           <h2>Our vision</h2>
           <p>
             To be the financial hub for permissionless, uncollateralized, and non-dilutive capital in web3.

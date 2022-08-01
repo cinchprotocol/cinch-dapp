@@ -28,10 +28,16 @@ export function Hero() {
         currency for web3.
       </h1>
       <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-slate-700">
-      Cinch turns revenue-sharing agreements into transferable ERC-20 tokens.
+        Cinch turns revenue-sharing agreements into transferable ERC-20 tokens.
       </p>
       <div className="mt-10 flex justify-center gap-x-6">
-        <Button variant="outline" href="/register">Get in touch</Button>       
+        <a
+          href="https://tr61ro2oj6g.typeform.com/to/N5Oam3nb"
+          target="blank"
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Get in touch
+        </a>
       </div>
       {/* <div className="mt-36 lg:mt-44">
         <p className="font-display text-base text-slate-900">

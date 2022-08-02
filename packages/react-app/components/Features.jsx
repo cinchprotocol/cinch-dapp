@@ -3,19 +3,19 @@ import { GlobeAltIcon, LightningBoltIcon, MailIcon, ScaleIcon } from '@heroicons
 
 const features = [
   {
-    name: 'Access capital with $0 of collateral and with 0% dilution',
+    name: 'Access capital with $0 collateral and 0% dilution',
     description:
       'Cinch’s marketplace makes it possible to trade future revenue for capital today. No collateral required.',
     icon: LightningBoltIcon,
   },
   {
-    name: 'Reduce token sell pressure',
+    name: 'Reduce native token sell pressure',
     description:
       'Some DEX liquidity is useful for price discovery, but constant sell pressure is extremely damaging to the token price. Reduce excess token emissions that lead to sell pressure.',
     icon: ScaleIcon,
   },
   {
-    name: 'Preserve your native tokens during a bear market',
+    name: 'Preserve native tokens during a bear market',
     description: 'Your treasury has a finite amount of tokens. Force selling tokens at all-time lows is painful. Preserve tokens and minimize dilution with Cinch by minting and issuing revenue tokens instead.',
     icon: GlobeAltIcon,
   },
@@ -23,7 +23,7 @@ const features = [
   {
     name: 'Flexibility & control',
     description:
-      'Choose how much future revenue to tokenize. Choosee how the tokens get distributed. Track & view token analytics.',
+      'Choose how much future revenue to tokenize. Choose how the tokens get distributed. Track & view token analytics.',
     icon: MailIcon,
   },
 ]

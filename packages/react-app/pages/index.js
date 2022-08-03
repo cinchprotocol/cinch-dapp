@@ -11,8 +11,8 @@ const LandingPage = () => {
   return (
     <>
       <Head>
-        <title>Cinch - Non-dilutive currency for web3</title>
-        <meta name="description" content="Cinch turns revenue-sharing agreements into transferable ERC-20 tokens." />
+        <title>Cinch - Reward community, Grow treasury</title>
+        <meta name="description" content="Reduce native token sell pressure by creating custom revenue-share tokens." />
       </Head>
       <Header />
       <main>

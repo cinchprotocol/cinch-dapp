@@ -6,7 +6,7 @@ export function Logo(props) {
           <img class="h-10 w-10" src="/cinch_logo.png" alt="Cinch"></img>
         </div>
         <div class="hidden md:block">
-          <span class="ml-2 text-600 text-3xl text-blue-600 font-semibold">
+          <span class="ml-1 text-600 text-3xl text-blue-600 font-semibold">
             Cinch
           </span>
         </div>

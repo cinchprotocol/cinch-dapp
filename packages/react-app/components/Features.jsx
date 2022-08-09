@@ -1,30 +1,30 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { GlobeAltIcon, LightningBoltIcon, MailIcon, ScaleIcon } from '@heroicons/react/outline'
+import { TrendingDownIcon, CurrencyDollarIcon, AdjustmentsIcon, ChartSquareBarIcon } from '@heroicons/react/outline'
 
 const features = [
   {
     name: 'Access capital with $0 collateral and 0% dilution',
     description:
       'Cinch’s marketplace makes it possible to trade future revenue for capital today. No collateral required.',
-    icon: LightningBoltIcon,
+    icon: CurrencyDollarIcon,
   },
   {
     name: 'Reduce native token sell pressure',
     description:
       'Some DEX liquidity is useful for price discovery, but constant sell pressure is extremely damaging to the token price. Reduce excess token emissions that lead to sell pressure.',
-    icon: ScaleIcon,
+    icon: ChartSquareBarIcon,
   },
   {
     name: 'Preserve native tokens during a bear market',
     description: 'Your treasury has a finite amount of tokens. Force selling tokens at all-time lows is painful. Preserve tokens and minimize dilution with Cinch by minting and issuing revenue tokens instead.',
-    icon: GlobeAltIcon,
+    icon: TrendingDownIcon,
   },
 
   {
     name: 'Flexibility & control',
     description:
       'Choose how much future revenue to tokenize. Choose how the tokens get distributed. Track & view token analytics.',
-    icon: MailIcon,
+    icon: AdjustmentsIcon,
   },
 ]
 
@@ -65,7 +65,7 @@ export function Features() {
             {features.map((feature) => (
               <div key={feature.name}>
                 <dt>
-                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white">
                     <feature.icon className="h-6 w-6" aria-hidden="true" />
                   </div>
                   <p className="mt-5 text-lg leading-6 font-medium text-gray-900">{feature.name}</p>

@@ -17,7 +17,7 @@ export function CallToAction() {
         <a
           href="https://tr61ro2oj6g.typeform.com/to/N5Oam3nb"
           target="blank"
-          className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 sm:w-auto"
+          className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50 sm:w-auto"
         >
           Get in touch
         </a>

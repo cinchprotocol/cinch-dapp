@@ -101,10 +101,13 @@ export function Header() {
             <div className="hidden md:flex md:gap-x-6">
               {/* <NavLink href="#docs">Docs</NavLink>
               <NavLink href="#roadmap">Roadmap</NavLink>    */}
-              <NavLink href="#about">About</NavLink>
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
+            <div className="hidden md:flex md:gap-x-6">
+              <NavLink href="#about">About</NavLink>
+              <NavLink href="https://mirror.xyz/0x7352724d097517b11ccB2FED15FA4C557A42192f">Blog</NavLink>
+            </div>
             <Button href="/" color="blue">
               <span>
                 Launch App

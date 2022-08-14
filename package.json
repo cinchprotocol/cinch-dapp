@@ -51,7 +51,8 @@
     "graph-ship-local": "yarn graph-prepare && yarn graph-codegen && yarn graph-deploy-local",
     "deploy-and-graph": "yarn deploy && yarn graph-ship-local",
     "theme": "yarn workspace @scaffold-eth/react-app theme",
-    "watch-theme": "yarn workspace @scaffold-eth/react-app watch"
+    "watch-theme": "yarn workspace @scaffold-eth/react-app watch",
+    "nextstart": "yarn workspace @scaffold-eth/react-app start"
   },
   "workspaces": {
     "packages": [
@@ -68,10 +69,14 @@
       "**/@tailwindcss/forms/**",
       "**/@tailwindcss/aspect-ratio",
       "**/@tailwindcss/aspect-ratio/**",
+      "**/@tailwindcss/typography",
+      "**/@tailwindcss/typography/**",
       "@tailwindcss/forms",
       "@tailwindcss/forms/**",
       "@tailwindcss/aspect-ratio",
-      "@tailwindcss/aspect-ratio/**"
+      "@tailwindcss/aspect-ratio/**",
+      "@tailwindcss/typography",
+      "@tailwindcss/typography/**"
     ]
   },
   "dependencies": {

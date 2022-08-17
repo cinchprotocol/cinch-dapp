@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { CallToAction } from "/components/CallToAction";
+import { UseCases } from "/components/UseCases";
 import { Features } from "/components/Features";
 import { Hero } from "/components/Hero";
 import Head from "next/head";
@@ -18,6 +19,7 @@ const LandingPage = () => {
       <main>
         <Hero />
         <Features />
+        <UseCases />
         <CallToAction />
         <About/>
       </main>

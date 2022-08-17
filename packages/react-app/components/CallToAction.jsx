@@ -12,7 +12,7 @@ export function CallToAction() {
           <span className="block">Ready to dive in?</span>
         </h2>
         <p className="mt-4 text-lg leading-6 text-blue-200">
-          Connect with us to find out how revenue-share tokens can transform how you manage your treasury.
+          V1.0 coming soon. Connect with us to learn about becoming an official launch partner.
         </p>
         <a
           href="https://tr61ro2oj6g.typeform.com/to/N5Oam3nb"

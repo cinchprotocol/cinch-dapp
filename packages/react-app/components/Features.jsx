@@ -5,7 +5,7 @@ const features = [
   {
     name: 'Access capital with $0 collateral and 0% dilution',
     description:
-      'Cinch’s network of buyers and secondary marketplace makes it possible to create custom and transferable revenue-share tokens (royalty tokens). Use royalty tokens instead of native tokens to protect your community from unwanted and unnecessary dilution.',
+      'Cinch’s network of buyers and secondary marketplace makes it possible to create custom and transferable revenue-share tokens (Royalty Tokens). Use royalty tokens instead of native tokens to protect your community from unwanted and unnecessary dilution.',
     icon: CurrencyDollarIcon,
   },
   {
@@ -28,15 +28,15 @@ const features = [
   },
   ,
   {
-    name: 'Protect your devs. We do all the work.',
-    description: 'Your team is hard at work improving your product. We know because ours is too. Creating Value tokens or Royalty tokens can be done by a single team member simply by answering a few simple questions. The longest part of the process will be obtaining governance approval.',
+    name: 'Protect your time',
+    description: 'Your team is hard at work improving your product. We know because ours is too. Creating Value Tokens or Royalty Tokens can be done by a single team member simply by answering a few simple questions. The longest part of the process will be obtaining governance approval.',
     icon: TrendingDownIcon,
   },
 
   {
-    name: 'The entire process takes 10 minutes.',
+    name: 'The entire process takes 10 minutes',
     description:
-      'Web3 moves fast. Our solution allows DAOs and protocols to set up revenue-share token infrastructure in record time. Easily setup, mint, and manage revenue-share incentives via our dashboard.',
+      'Web3 moves fast. Our solution allows DAOs and protocols to set up revenue-share token infrastructure in record time. Easily setup, mint, and manage revenue-share tokens via our dashboard.',
     icon: AdjustmentsIcon,
   },
 ]
@@ -44,34 +44,34 @@ const features = [
 export function Features() {
   return (
     <div className="py-12 bg-cyan-50">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="lg:text-center">
-        <h2 className="text-lg text-blue-600 font-semibold">Features</h2>
-        <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
-          Tools for DAOs
-        </p>
-        {/* <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="lg:text-center">
+          <h2 className="text-lg text-blue-600 font-semibold">Features</h2>
+          <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
+            Customizable and transferrable ERC-20 revenue-share tokens.
+          </p>
+          {/* <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
           Lorem ipsum dolor sit amet consect adipisicing elit. Possimus magnam voluptatum cupiditate veritatis in
           accusamus quisquam.
         </p> */}
-      </div>
+        </div>
 
-      <div className="mt-10">
-        <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-          {features.map((feature) => (
-            <div key={feature.name} className="relative">
-              <dt>
-                <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
-                  <feature.icon className="h-6 w-6" aria-hidden="true" />
-                </div>
-                <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{feature.name}</p>
-              </dt>
-              <dd className="mt-2 ml-16 text-base text-gray-500">{feature.description}</dd>
-            </div>
-          ))}
-        </dl>
+        <div className="mt-10">
+          <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+            {features.map((feature) => (
+              <div key={feature.name} className="relative">
+                <dt>
+                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                    <feature.icon className="h-6 w-6" aria-hidden="true" />
+                  </div>
+                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{feature.name}</p>
+                </dt>
+                <dd className="mt-2 ml-16 text-base text-gray-500">{feature.description}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
     </div>
-  </div>
   )
 }

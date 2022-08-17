@@ -5,25 +5,38 @@ const features = [
   {
     name: 'Access capital with $0 collateral and 0% dilution',
     description:
-      'Cinch’s marketplace makes it possible to trade future revenue for capital today. No collateral required.',
+      'Cinch’s network of buyers and secondary marketplace makes it possible to create custom and transferable revenue-share tokens (royalty tokens). Use royalty tokens instead of native tokens to protect your community from unwanted and unnecessary dilution.',
     icon: CurrencyDollarIcon,
   },
   {
     name: 'Reduce native token sell pressure',
     description:
-      'Some DEX liquidity is useful for price discovery, but constant sell pressure is extremely damaging to the token price. Reduce excess token emissions that lead to sell pressure.',
+      'Some DEX liquidity is useful for price discovery, but constant sell pressure is extremely damaging to the native token price. Reduce excess token emissions that lead to sell pressure by issuing royalty tokens to short-term holders instead.',
     icon: ChartSquareBarIcon,
   },
   {
-    name: 'Preserve native tokens during a bear market',
-    description: 'Your treasury has a finite amount of tokens. Force selling tokens at all-time lows is painful. Preserve tokens and minimize dilution with Cinch by minting and issuing revenue tokens instead.',
+    name: 'Go-to-market leverage',
+    description: 'Attracting customers is critically important to the long-term survival of projects. Custom and transferable royalty tokens give DAOs and projects a complementary tool with which to attract customers, form partnerships, and onboard investors.',
     icon: TrendingDownIcon,
   },
 
   {
-    name: 'Flexibility & control',
+    name: 'Use revenue to grow TVL',
     description:
-      'Choose how much future revenue to tokenize. Choose how the tokens get distributed. Track & view token analytics.',
+      'Royalty tokens create a reward mechanism for a totally new set of potential investors and customers. Leverage a powerful new tool to broaden your customer base. Achieve product-market fit and reach critical scale as quickly as possible.',
+    icon: AdjustmentsIcon,
+  },
+  ,
+  {
+    name: 'Protect your devs. We do all the work.',
+    description: 'Your team is hard at work improving your product. We know because ours is too. Creating Value tokens or Royalty tokens can be done by a single team member simply by answering a few simple questions. The longest part of the process will be obtaining governance approval.',
+    icon: TrendingDownIcon,
+  },
+
+  {
+    name: 'The entire process takes 10 minutes.',
+    description:
+      'Web3 moves fast. Our solution allows DAOs and protocols to set up revenue-share token infrastructure in record time. Easily setup, mint, and manage revenue-share incentives via our dashboard.',
     icon: AdjustmentsIcon,
   },
 ]
@@ -58,7 +71,7 @@ export function Features() {
         <div className="relative lg:grid lg:grid-cols-3 lg:gap-x-8">
           <div className="lg:col-span-1">
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              A new way to manage your treasury.
+            Tools for DAOs
             </h2>
           </div>
           <dl className="mt-10 space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:mt-0 lg:col-span-2">

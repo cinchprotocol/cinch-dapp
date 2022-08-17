@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { CallToAction } from "/components/CallToAction";
 import { UseCases } from "/components/UseCases";
 import { Features } from "/components/Features";
+import { HowItWorks } from "/components/HowItWorks";
 import { Hero } from "/components/Hero";
 import Head from "next/head";
 import { Header } from "/components/Header";
@@ -19,6 +20,7 @@ const LandingPage = () => {
       <main>
         <Hero />
         <Features />
+        <HowItWorks />
         <UseCases />
         <CallToAction />
         <About/>

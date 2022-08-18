@@ -30,7 +30,7 @@ const tiers = [
 ]
 export function UseCases() {
     return (
-        <div className="bg-gradient-to-b from-white to-gray-50 pb-20">
+        <div className="bg-sky-50 pb-20">
             <div className="max-w-7xl mx-auto pt-20 px-4 sm:px-6 lg:px-8">
                 <div className="sm:flex sm:flex-col sm:align-center">
                     <h1 className="text-4xl tracking-tight font-bold text-gray-900 sm:text-center">Use Cases</h1>
@@ -40,7 +40,7 @@ export function UseCases() {
                 </div>
                 <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10">
                     {tiers.map((tier) => (
-                        <div key={tier.name} className="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200 bg-gray-50">
+                        <div key={tier.name} className="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200 bg-white">
                             <div className="p-6">
                                 <h2 className="text-2xl leading-6 font-medium text-gray-900">{tier.name}</h2>
                                 {/* <p className="mt-4 text-sm text-gray-500">{tier.description}</p> */}

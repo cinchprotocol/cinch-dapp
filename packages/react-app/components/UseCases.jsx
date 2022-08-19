@@ -41,14 +41,15 @@ export function UseCases() {
                 <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10">
                     {tiers.map((tier) => (
                         <div key={tier.name} className="rounded-xl shadow-lg divide-y divide-gray-200 bg-white">
-                            <div className="p-6">
-                                <h2 className="text-2xl leading-6 font-medium text-gray-900">{tier.name}</h2>
+                            <div className="p-10">
+                                {/* <h2 className="text-2xl leading-6 font-medium text-gray-900">{tier.name}</h2> */}
+                                <h2 className="text-2xl leading-6 text-blue-600 font-semibold">{tier.name}</h2>
                                 {/* <p className="mt-4 text-sm text-gray-500">{tier.description}</p> */}
                                 <ul role="list" className="mt-6 space-y-4">
                                     {tier.features.map((feature) => (
                                         <li key={feature} className="flex space-x-3">
                                             <CheckIconSolid className="flex-shrink-0 h-5 w-5 text-green-500" aria-hidden="true" />
-                                            <span className="text-sm text-gray-500">{feature}</span>
+                                            <span className="text-base text-gray-600">{feature}</span>
                                         </li>
                                     ))}
                                 </ul>

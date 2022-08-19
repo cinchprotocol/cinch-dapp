@@ -57,19 +57,26 @@ export function Features() {
         </div>
 
         <div className="mt-10">
-          <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+          <ul
+            role="list"
+            className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 text-sm sm:mt-20 sm:grid-cols-2 md:gap-y-10 lg:max-w-none lg:grid-cols-3"
+          >
             {features.map((feature) => (
-              <div key={feature.name} className="relative">
-                <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
-                    <feature.icon className="h-6 w-6" aria-hidden="true" />
-                  </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{feature.name}</p>
-                </dt>
-                <dd className="mt-2 ml-16 text-base text-gray-500">{feature.description}</dd>
-              </div>
+              <li
+                key={feature.name}
+                className="p-6"
+              >
+                <div className='flex justify-center'>
+                  <feature.icon className="h-14 w-14 text-blue-500" />
+                </div>
+
+                <h3 className="mt-5 text-2xl text-center font-semibold text-gray-900">
+                  {feature.name}
+                </h3>
+                <p className="mt-2 text-center text-gray-700">{feature.description}</p>
+              </li>
             ))}
-          </dl>
+          </ul>
         </div>
       </div>
     </div>

@@ -106,9 +106,9 @@ export function HowItWorks() {
                             Cinch allows DAOs and projects to create ERC-20 tokens that represent the right to receive future revenue. Owners of these tokens will receive a fixed percentage of revenue until a maximum revenue is forwarded. The revenu-share will be implemented according to your preferred method, based on the use case.
                         </p>
                         <div className="mt-10 lg:grid lg:grid-cols-2 lg:gap-6">
-                            <div className="prose prose-blue prose-lg text-gray-500 lg:max-w-none bg-gray-50 p-10 rounded-xl shadow-lg">
-                                <h2 className="text-xl leading-6 text-blue-600 font-semibold">Value Token</h2>
-                                <p className="mt-5 text-gray-500">
+                            <div className="text-gray-500 lg:max-w-none bg-gray-50 p-10 rounded-xl shadow-lg">
+                                <h2 className="text-2xl leading-6 text-blue-600 font-semibold">Value Token</h2>
+                                <p className='mt-5 text-base'>
                                     Use case: replace native token emission to minimize dilution and sell pressure
                                 </p>
                                 <dl className="space-y-6 divide-y divide-gray-200">
@@ -136,9 +136,9 @@ export function HowItWorks() {
                                     ))}
                                 </dl>
                             </div>
-                            <div className="prose prose-blue prose-lg text-gray-500 lg:mt-0 bg-gray-50 p-10 rounded-xl shadow-lg">
-                                <h2 className="text-xl leading-6 text-blue-600 font-semibold">Royalty Token</h2>
-                                <p className="mt-5 text-gray-500">
+                            <div className="text-gray-500 lg:mt-0 bg-gray-50 p-10 rounded-xl shadow-lg">
+                                <h2 className="text-2xl leading-6 text-blue-600 font-semibold">Royalty Token</h2>
+                                <p className='mt-5 text-base'>
                                     Use case: TVL growth via customer incentives and investor onboarding
                                 </p>
                                 <dl className="space-y-6 divide-y divide-gray-200">

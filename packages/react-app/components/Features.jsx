@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { TrendingDownIcon, CurrencyDollarIcon, AdjustmentsIcon, ChartSquareBarIcon } from '@heroicons/react/outline'
+import { ClockIcon, AdjustmentsIcon, TrendingUpIcon, CurrencyDollarIcon, ViewGridAddIcon, ChartSquareBarIcon } from '@heroicons/react/outline'
 
 const features = [
   {
@@ -17,27 +17,27 @@ const features = [
   {
     name: 'Go-to-market leverage',
     description: 'Attracting customers is critically important to the long-term survival of projects. Custom and transferable revenue-share tokens give DAOs and projects a complementary tool with which to attract customers, form partnerships, and onboard investors.',
-    icon: TrendingDownIcon,
+    icon: AdjustmentsIcon,
   },
 
   {
     name: 'Use revenue to grow TVL',
     description:
       'Revenue-share tokens create a reward mechanism for a totally new set of potential investors and customers. Leverage a powerful new tool to broaden your customer base. Achieve product-market fit and reach critical scale as quickly as possible.',
-    icon: AdjustmentsIcon,
+    icon: TrendingUpIcon,
   },
   ,
   {
     name: 'Save developer bandwidth',
     description: 'Web3 moves fast and your team is hard at work improving your product. We know because ours is too. Creating Value Tokens or Royalty Tokens can be done by a single team member thanks to Cinch\'s integrated infrastructure. The longest part of the process will be obtaining governance approval.',
-    icon: TrendingDownIcon,
+    icon: ClockIcon,
   },
 
   {
     name: 'Seamless onboarding',
     description:
       'Our solution allows DAOs and protocols to set up revenue-share token infrastructure in record time simply by answering a few simple questions. Easily setup, mint, and manage revenue-share tokens via our dashboard.',
-    icon: AdjustmentsIcon,
+    icon: ViewGridAddIcon,
   },
 ]
 

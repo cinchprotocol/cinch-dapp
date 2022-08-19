@@ -45,7 +45,7 @@ export function Features() {
   return (
     <div className="py-12 bg-sky-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="lg:text-center">
+        <div className="text-center">
           <h2 className="text-lg text-blue-600 font-semibold">Benefits</h2>
           <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
             Customizable and transferrable ERC-20 revenue-share tokens.
@@ -59,7 +59,7 @@ export function Features() {
         <div className="mt-10">
           <ul
             role="list"
-            className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 text-sm sm:mt-20 sm:grid-cols-2 md:gap-y-10 lg:max-w-none lg:grid-cols-3"
+            className="mx-auto grid max-w-2xl grid-cols-1 gap-6 text-sm sm:grid-cols-2 lg:max-w-none lg:grid-cols-3"
           >
             {features.map((feature) => (
               <li
@@ -73,7 +73,7 @@ export function Features() {
                 <h3 className="mt-5 text-2xl text-center font-semibold text-gray-900">
                   {feature.name}
                 </h3>
-                <p className="mt-2 text-center text-gray-700">{feature.description}</p>
+                <p className="mt-2 text-center text-gray-500">{feature.description}</p>
               </li>
             ))}
           </ul>

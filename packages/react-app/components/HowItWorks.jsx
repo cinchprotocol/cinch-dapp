@@ -1,7 +1,46 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { TrendingDownIcon, CurrencyDollarIcon, AdjustmentsIcon, ChartSquareBarIcon } from '@heroicons/react/outline'
+import { TrendingDownIcon, CurrencyDollarIcon, AdjustmentsIcon, ChartSquareBarIcon, ChevronDownIcon } from '@heroicons/react/outline'
+import { Disclosure } from '@headlessui/react'
 
+const valTokenHowItWorks = [
+    {
+        question: "1. Choose redeemable value",
+        answer:
+            "each ERC-20 Value Token (VT) represents a fixed redeemable dollar value (example: $1.25/token). VT entitles the holder to receive the fixed redeemable dollar value from the issuing protocol.",
+    },
+    {
+        question: "2. Setup recurring DEX purchases",
+        answer:
+            "a Uniswap v3 liquidity pair will be created between the Value Token and a liquid stablecoin. The DAO or protocol commits to using a fixed proportion of revenue to perform automatic repurchases from the Liquidity Pool on a weekly or monthly basis. The DAO or protocol cannot stop the automatic purchases from the liquidity pool until all VTs are repurchased and burned.",
+    },
+    {
+        question: "3. Trade for liquidity or hold for yield",
+        answer:
+            "holders of the VT that want immediate liquidity can sell into the liquidity pool, thus making the VT more affordable for repurchase. VT owners that hold until all liquidity in the pool is repurchased will receive the fixed redeemable dollar value.",
+    },
+]
 
+const royaltyTokenHowItWorks = [
+    {
+        question: "1. Choose Royalty Token inputs",
+        answer:
+            "Each RT represents a portion of revenue-share.",
+    },
+    {
+        question: "2. Specify expiration criteria",
+        answer:
+            "Holders of Royalty Tokens will receive a fixed proportion of DAO or protocol revenue on a recurring basis (weekly or monthly), until a maximum amount. After which the RTs get burned.",
+    },
+    {
+        question: "3. Create value for your customers",
+        answer:
+            "Increase in DAO or protocol revenue generation creates faster repayment. Decrease in revenue generation results in slower repayment.",
+    },
+]
+
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
+}
 
 export function HowItWorks() {
     return (
@@ -64,34 +103,68 @@ export function HowItWorks() {
                             We give DAOs and protocols the tools to reach their full potential.
                         </p>
                         <p className='text-base text-gray-500'>
-                            Cinch allows DAOs and projects to create ERC-20 tokens that represent the right to receive future revenue. Owners of these tokens will receive a fixed percentage of revenue until a maximum revenue is forwarded. The revenu-share will be implemented according to your preferred method, based on the use case
+                            Cinch allows DAOs and projects to create ERC-20 tokens that represent the right to receive future revenue. Owners of these tokens will receive a fixed percentage of revenue until a maximum revenue is forwarded. The revenu-share will be implemented according to your preferred method, based on the use case.
                         </p>
                         <div className="mt-10 lg:grid lg:grid-cols-2 lg:gap-6">
-                            <div className="prose prose-blue prose-lg text-gray-500 lg:max-w-none">
-                                <h2 className="text-lg leading-6 text-blue-600 font-semibold">Value Token</h2>
-                                <ol role="list">
-                                    <li>Each ERC-20 Value Token (VT) represents a fixed redeemable dollar value (example: $1.25/token)</li>
-                                    <li>Each Value Token entitles the holder to receive the fixed redeemable dollar value</li>
-                                    <li>A Uniswap v3 liquidity pair will be created between the Value Token and a liquid stablecoin</li>
-                                    <li>The DAO or protocol commits to allocating a fixed proportion of revenue to repurchasing the Value Token from the liquidity pool on a weekly or monthly basis</li>
-                                    <li>Holders of the VT that want immediate liquidity can sell into the liquidity pool, thus making the VT more affordable for repurchase for the DAO or protocol</li>
-                                    <li>Holders of the VT that hold until all liquidity in the pool is purchase will receive the fixed redeemable dollar value directory from the DAO or protocol</li>
-                                    <li>The DAO or protocol cannot alter the revenue allocation until all VTs are repurchased and burned.</li>
-                                </ol>
-                                <p>
+                            <div className="prose prose-blue prose-lg text-gray-500 lg:max-w-none bg-gray-50 p-10 rounded-xl shadow-lg">
+                                <h2 className="text-xl leading-6 text-blue-600 font-semibold">Value Token</h2>
+                                <p className="mt-5 text-gray-500">
                                     Use case: replace native token emission to minimize dilution and sell pressure
                                 </p>
+                                <dl className="space-y-6 divide-y divide-gray-200">
+                                    {valTokenHowItWorks.map((faq) => (
+                                        <Disclosure as="div" key={faq.question} className="pt-6">
+                                            {({ open }) => (
+                                                <>
+                                                    <dt className="text-lg">
+                                                        <Disclosure.Button className="text-left w-full flex justify-between items-start text-gray-400">
+                                                            <span className="font-medium text-gray-900">{faq.question}</span>
+                                                            <span className="ml-6 h-7 flex items-center">
+                                                                <ChevronDownIcon
+                                                                    className={classNames(open ? '-rotate-180' : 'rotate-0', 'h-6 w-6 transform')}
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </span>
+                                                        </Disclosure.Button>
+                                                    </dt>
+                                                    <Disclosure.Panel as="dd" className="mt-2 pr-12">
+                                                        <p className="text-base text-gray-500">{faq.answer}</p>
+                                                    </Disclosure.Panel>
+                                                </>
+                                            )}
+                                        </Disclosure>
+                                    ))}
+                                </dl>
                             </div>
-                            <div className="mt-6 prose prose-blue prose-lg text-gray-500 lg:mt-0">
-                                <h2 className="text-lg leading-6 text-blue-600 font-semibold">Rotalty Token</h2>
-                                <ol role="list">
-                                    <li>  Each Royalty Token (RT)  represents a portion of revenue-share</li>
-                                    <li>Holders of Royalty Tokens will receive a fixed proportion of DAO or protocol revenue on a recurring basis (weekly or monthly), until a maximum amount.</li>
-                                    <li>When the maximum amount of revenue will have been forwarded, the revenue-share will end and the RTs will get burned.</li>
-                                </ol>
-                                <p>
+                            <div className="prose prose-blue prose-lg text-gray-500 lg:mt-0 bg-gray-50 p-10 rounded-xl shadow-lg">
+                                <h2 className="text-xl leading-6 text-blue-600 font-semibold">Royalty Token</h2>
+                                <p className="mt-5 text-gray-500">
                                     Use case: TVL growth via customer incentives and investor onboarding
                                 </p>
+                                <dl className="space-y-6 divide-y divide-gray-200">
+                                    {royaltyTokenHowItWorks.map((faq) => (
+                                        <Disclosure as="div" key={faq.question} className="pt-6">
+                                            {({ open }) => (
+                                                <>
+                                                    <dt className="text-lg">
+                                                        <Disclosure.Button className="text-left w-full flex justify-between items-start text-gray-400">
+                                                            <span className="font-medium text-gray-900">{faq.question}</span>
+                                                            <span className="ml-6 h-7 flex items-center">
+                                                                <ChevronDownIcon
+                                                                    className={classNames(open ? '-rotate-180' : 'rotate-0', 'h-6 w-6 transform')}
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </span>
+                                                        </Disclosure.Button>
+                                                    </dt>
+                                                    <Disclosure.Panel as="dd" className="mt-2 pr-12">
+                                                        <p className="text-base text-gray-500">{faq.answer}</p>
+                                                    </Disclosure.Panel>
+                                                </>
+                                            )}
+                                        </Disclosure>
+                                    ))}
+                                </dl>
                             </div>
                         </div>
                     </div>

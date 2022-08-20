@@ -18,6 +18,11 @@ const valTokenHowItWorks = [
         answer:
             "holders of the VT that want immediate liquidity can sell into the liquidity pool, thus making the VT more affordable for repurchase. VT owners that hold until all liquidity in the pool is repurchased will receive the fixed redeemable dollar value.",
     },
+    {
+        question: "Use case",
+        answer:
+            "Replace native token emission.",
+    },
 ]
 
 const royaltyTokenHowItWorks = [
@@ -36,6 +41,11 @@ const royaltyTokenHowItWorks = [
         answer:
             "Increase in DAO or protocol revenue generation creates faster repayment. Decrease in revenue generation results in slower repayment.",
     },
+    {
+        question: "Use case",
+        answer:
+            "Grow TVL and onboard investors.",
+    },
 ]
 
 function classNames(...classes) {
@@ -48,8 +58,9 @@ export function HowItWorks() {
             <div className="max-w-max lg:max-w-7xl mx-auto">
                 <div className="relative z-10 mb-8 md:mb-2 md:px-6">
                     <div className="text-base max-w-prose lg:max-w-none">
+                        <h2 className="text-lg text-blue-600 font-semibold">How it Works</h2>
                         <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
-                            How it works
+                            We give DAOs and protocols the tools to reach their full potential.
                         </p>
                     </div>
                 </div>
@@ -103,13 +114,13 @@ export function HowItWorks() {
                             We give DAOs and protocols the tools to reach their full potential.
                         </p>
                         <p className='text-base text-gray-500'>
-                            Cinch allows DAOs and projects to create ERC-20 tokens that represent the right to receive future revenue. Owners of these tokens will receive a fixed percentage of revenue until a maximum revenue is forwarded. The revenu-share will be implemented according to your preferred method, based on the use case.
+                            Cinch allows DAOs and projects to create ERC-20 tokens that represent the right to receive future revenue. Owners of these tokens will receive a fixed percentage of revenue until a maximum revenue is forwarded. The revenue-share will be implemented according to your preferred method, based on the use case.
                         </p>
                         <div className="mt-10 lg:grid lg:grid-cols-2 lg:gap-6">
                             <div className="text-gray-500 lg:max-w-none bg-gray-50 p-10 rounded-xl shadow-lg">
                                 <h2 className="text-2xl leading-6 text-blue-600 font-semibold">Value Token</h2>
                                 <p className='mt-5 text-base'>
-                                    Use case: replace native token emission to minimize dilution and sell pressure
+                                    A promise to repay that has instant liquidity.
                                 </p>
                                 <dl className="space-y-6 divide-y divide-gray-200">
                                     {valTokenHowItWorks.map((faq) => (
@@ -139,7 +150,7 @@ export function HowItWorks() {
                             <div className="text-gray-500 lg:mt-0 bg-gray-50 p-10 rounded-xl shadow-lg">
                                 <h2 className="text-2xl leading-6 text-blue-600 font-semibold">Royalty Token</h2>
                                 <p className='mt-5 text-base'>
-                                    Use case: TVL growth via customer incentives and investor onboarding
+                                    Receive a fixed proportion of protocol revenue on a weekly or monthly basis.
                                 </p>
                                 <dl className="space-y-6 divide-y divide-gray-200">
                                     {royaltyTokenHowItWorks.map((faq) => (

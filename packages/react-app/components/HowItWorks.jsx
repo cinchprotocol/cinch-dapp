@@ -116,7 +116,7 @@ export function HowItWorks() {
                         <p className='text-base text-gray-500'>
                             Cinch allows DAOs and projects to create ERC-20 tokens that represent the right to receive future revenue. Owners of these tokens will receive a fixed percentage of revenue until a maximum revenue is forwarded. The revenue-share will be implemented according to your preferred method, based on the use case.
                         </p>
-                        <div className="mt-10 lg:grid lg:grid-cols-2 lg:gap-6">
+                        <div className="mt-10 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10">
                             <div className="text-gray-500 lg:max-w-none bg-gray-50 p-10 rounded-xl shadow-lg">
                                 <h2 className="text-2xl leading-6 text-blue-600 font-semibold">Value Token</h2>
                                 <p className='mt-5 text-base'>

@@ -2,21 +2,8 @@
 import { TrendingDownIcon, CurrencyDollarIcon, AdjustmentsIcon, ChartSquareBarIcon } from '@heroicons/react/outline'
 import { CheckIcon as CheckIconSolid, ChevronDownIcon } from '@heroicons/react/solid'
 const tiers = [
-
     {
-        name: 'Grow TVL [royalty tokens]',
-        href: '#',
-        description: 'All the basics for starting a new business',
-        features: [
-            'Issue royalty tokens to potential institutional customers',
-            'Temporary fee reimbursements for new users',
-            'Time-bound revenue-share for next 100 customers',
-            'Issue revenue-share tokens as a reward for referrals',
-            'Reward integration partners with revenue-share tokens'
-        ],
-    },
-    {
-        name: 'Replace emissions [value tokens]',
+        name: 'Value Token',
         href: '#',
         description: 'All the basics for starting a new business',
         features: [
@@ -25,6 +12,18 @@ const tiers = [
             'Issue value tokens to part-time contributors',
             'Issue value tokens to DAO contributors',
             'Issue value tokens to governance participants and voters'
+        ],
+    },
+    {
+        name: 'Royalty Token',
+        href: '#',
+        description: 'All the basics for starting a new business',
+        features: [
+            'Issue royalty tokens to potential institutional customers',
+            'Temporary fee reimbursements for new users',
+            'Time-bound revenue-share for next 100 customers',
+            'Issue revenue-share tokens as a reward for referrals',
+            'Reward integration partners with revenue-share tokens'
         ],
     }
 ]

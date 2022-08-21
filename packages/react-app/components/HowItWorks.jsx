@@ -6,17 +6,17 @@ const valTokenHowItWorks = [
     {
         question: "1. Choose redeemable value",
         answer:
-            "each ERC-20 Value Token (VT) represents a fixed redeemable dollar value (example: $1.25/token). VT entitles the holder to receive the fixed redeemable dollar value from the issuing protocol.",
+            "Each ERC-20 Value Token represents a fixed redeemable dollar value (example: $1.25/token). Value Token entitles the holder to receive the fixed redeemable dollar value from the issuing protocol.",
     },
     {
         question: "2. Setup recurring DEX purchases",
         answer:
-            "a Uniswap v3 liquidity pair will be created between the Value Token and a liquid stablecoin. The DAO or protocol commits to using a fixed proportion of revenue to perform automatic repurchases from the Liquidity Pool on a weekly or monthly basis. The DAO or protocol cannot stop the automatic purchases from the liquidity pool until all VTs are repurchased and burned.",
+            "A Uniswap v3 liquidity pair will be created between the Value Token and a liquid stablecoin. The DAO or protocol commits to using a fixed proportion of revenue to perform automatic repurchases from the Liquidity Pool on a weekly or monthly basis. The DAO or protocol cannot stop the automatic purchases from the liquidity pool until all Value Tokens are repurchased and burned.",
     },
     {
         question: "3. Trade for liquidity or hold for yield",
         answer:
-            "holders of the VT that want immediate liquidity can sell into the liquidity pool, thus making the VT more affordable for repurchase. VT owners that hold until all liquidity in the pool is repurchased will receive the fixed redeemable dollar value.",
+            "Holders of the Value Token that want immediate liquidity can sell into the liquidity pool, thus making the Value Token more affordable for repurchase. Value Token owners that hold until all liquidity in the pool is repurchased will receive the fixed redeemable dollar value.",
     },
     {
         question: "Use case",
@@ -29,12 +29,12 @@ const royaltyTokenHowItWorks = [
     {
         question: "1. Choose Royalty Token inputs",
         answer:
-            "Each RT represents a portion of revenue-share.",
+            "Each Royalty Token represents a portion of revenue-share.",
     },
     {
         question: "2. Specify expiration criteria",
         answer:
-            "Holders of Royalty Tokens will receive a fixed proportion of DAO or protocol revenue on a recurring basis (weekly or monthly), until a maximum amount. After which the RTs get burned.",
+            "Holders of Royalty Tokens will receive a fixed proportion of DAO or protocol revenue on a recurring basis (weekly or monthly), until a maximum amount. After which the Royalty Tokens get burned.",
     },
     {
         question: "3. Create value for your customers",
@@ -60,7 +60,7 @@ export function HowItWorks() {
                     <div className="text-base max-w-prose lg:max-w-none">
                         <h2 className="text-lg text-blue-600 font-semibold">How it Works</h2>
                         <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
-                            We give DAOs and protocols the tools to reach their full potential.
+                            Tools for DAOs & Protocols to reach their full potential.
                         </p>
                     </div>
                 </div>
@@ -111,16 +111,13 @@ export function HowItWorks() {
                     </svg>
                     <div className="relative md:bg-white md:p-6">
                         <p className='text-base text-gray-500'>
-                            We give DAOs and protocols the tools to reach their full potential.
-                        </p>
-                        <p className='text-base text-gray-500'>
                             Cinch allows DAOs and projects to create ERC-20 tokens that represent the right to receive future revenue. Owners of these tokens will receive a fixed percentage of revenue until a maximum revenue is forwarded. The revenue-share will be implemented according to your preferred method, based on the use case.
                         </p>
                         <div className="mt-10 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10">
                             <div className="text-gray-500 lg:max-w-none bg-gray-50 p-10 rounded-xl shadow-lg">
                                 <h2 className="text-2xl leading-6 text-blue-600 font-semibold">Value Token</h2>
                                 <p className='mt-5 text-base'>
-                                    A promise to repay that has instant liquidity.
+                                    A promise to pay that has instant liquidity.
                                 </p>
                                 <dl className="space-y-6 divide-y divide-gray-200">
                                     {valTokenHowItWorks.map((faq) => (
@@ -150,7 +147,7 @@ export function HowItWorks() {
                             <div className="text-gray-500 lg:mt-0 bg-gray-50 p-10 rounded-xl shadow-lg">
                                 <h2 className="text-2xl leading-6 text-blue-600 font-semibold">Royalty Token</h2>
                                 <p className='mt-5 text-base'>
-                                    Receive a fixed proportion of protocol revenue on a weekly or monthly basis.
+                                    Recurring revenue-share payments.
                                 </p>
                                 <dl className="space-y-6 divide-y divide-gray-200">
                                     {royaltyTokenHowItWorks.map((faq) => (

@@ -11,7 +11,7 @@ import logoTuple from "/images/logos/tuple.svg";
 
 export function Hero() {
   return (
-    <Container className="pt-10 pb-16 text-center">
+    <Container className="pb-10 text-center">
       <div className="lg:grid lg:grid-cols-2 lg:gap-8">
         <div className="mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 sm:text-center lg:px-0 lg:text-left lg:flex lg:items-center">
 
@@ -42,7 +42,8 @@ export function Hero() {
             {/* Illustration taken from Lucid Illustrations: https://lucid.pixsellz.io/ */}
             <img
               className="w-full lg:absolute lg:inset-y-0 lg:left-0 lg:h-full lg:w-auto lg:max-w-none"
-              src="/hero.jpg"
+              // src="/hero.jpg"
+              src="/testHero.svg"
               alt=""
             />
           </div>

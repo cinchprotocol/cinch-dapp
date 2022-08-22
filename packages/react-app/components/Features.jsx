@@ -1,79 +1,82 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { TrendingDownIcon, CurrencyDollarIcon, AdjustmentsIcon, ChartSquareBarIcon } from '@heroicons/react/outline'
+import { ClockIcon, AdjustmentsIcon, TrendingUpIcon, CurrencyDollarIcon, ViewGridAddIcon, ChartSquareBarIcon } from '@heroicons/react/outline'
 
 const features = [
   {
     name: 'Access capital with $0 collateral and 0% dilution',
     description:
-      'Cinch’s marketplace makes it possible to trade future revenue for capital today. No collateral required.',
+      'Cinch’s network of buyers and secondary marketplace makes it possible to create custom and transferable revenue-share tokens. Use revenue-share tokens instead of native tokens to protect your community from unwanted and unnecessary dilution.',
     icon: CurrencyDollarIcon,
   },
   {
     name: 'Reduce native token sell pressure',
     description:
-      'Some DEX liquidity is useful for price discovery, but constant sell pressure is extremely damaging to the token price. Reduce excess token emissions that lead to sell pressure.',
+      'Some DEX liquidity is useful for price discovery, but constant sell pressure is extremely damaging to the native token price. Reduce excess token emissions that lead to sell pressure by issuing revenue-share tokens to short-term holders instead.',
     icon: ChartSquareBarIcon,
   },
   {
-    name: 'Preserve native tokens during a bear market',
-    description: 'Your treasury has a finite amount of tokens. Force selling tokens at all-time lows is painful. Preserve tokens and minimize dilution with Cinch by minting and issuing revenue tokens instead.',
-    icon: TrendingDownIcon,
+    name: 'Go-to-market leverage',
+    description: 'Attracting customers is critically important to the long-term survival of projects. Custom and transferable revenue-share tokens give DAOs and projects a complementary tool with which to attract customers, form partnerships, and onboard investors.',
+    icon: AdjustmentsIcon,
   },
 
   {
-    name: 'Flexibility & control',
+    name: 'Use revenue to grow TVL',
     description:
-      'Choose how much future revenue to tokenize. Choose how the tokens get distributed. Track & view token analytics.',
-    icon: AdjustmentsIcon,
+      'Revenue-share tokens create a reward mechanism for a totally new set of potential investors and customers. Leverage a powerful new tool to broaden your customer base. Achieve product-market fit and reach critical scale as quickly as possible.',
+    icon: TrendingUpIcon,
+  },
+  ,
+  {
+    name: 'Save developer bandwidth',
+    description: 'Web3 moves fast and your team is hard at work improving your product. We know because ours is too. Creating Value Tokens or Royalty Tokens can be done by a single team member thanks to Cinch\'s integrated infrastructure. The longest part of the process will be obtaining governance approval.',
+    icon: ClockIcon,
+  },
+
+  {
+    name: 'Seamless onboarding',
+    description:
+      'Our solution allows DAOs and protocols to set up revenue-share token infrastructure in record time simply by answering a few simple questions. Easily setup, mint, and manage revenue-share tokens via our dashboard.',
+    icon: ViewGridAddIcon,
   },
 ]
 
 export function Features() {
   return (
-    <div className="bg-gray-50 overflow-hidden">
-      <div className="relative max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <svg
-          className="absolute top-0 left-full transform -translate-x-1/2 -translate-y-3/4 lg:left-auto lg:right-full lg:translate-x-2/3 lg:translate-y-1/4"
-          width={404}
-          height={784}
-          fill="none"
-          viewBox="0 0 404 784"
-          aria-hidden="true"
-        >
-          <defs>
-            <pattern
-              id="8b1b5f72-e944-4457-af67-0c6d15a99f38"
-              x={0}
-              y={0}
-              width={20}
-              height={20}
-              patternUnits="userSpaceOnUse"
-            >
-              <rect x={0} y={0} width={4} height={4} className="text-gray-200" fill="currentColor" />
-            </pattern>
-          </defs>
-          <rect width={404} height={784} fill="url(#8b1b5f72-e944-4457-af67-0c6d15a99f38)" />
-        </svg>
+    <div className="py-12 bg-sky-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h2 className="text-lg text-blue-600 font-semibold">Benefits</h2>
+          <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
+            Customizable and transferrable ERC-20 revenue-share tokens.
+          </p>
+          {/* <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+          Lorem ipsum dolor sit amet consect adipisicing elit. Possimus magnam voluptatum cupiditate veritatis in
+          accusamus quisquam.
+        </p> */}
+        </div>
 
-        <div className="relative lg:grid lg:grid-cols-3 lg:gap-x-8">
-          <div className="lg:col-span-1">
-            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              A new way to manage your treasury.
-            </h2>
-          </div>
-          <dl className="mt-10 space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:mt-0 lg:col-span-2">
+        <div className="mt-10">
+          <ul
+            role="list"
+            className="mx-auto grid max-w-2xl grid-cols-1 gap-6 text-sm sm:grid-cols-2 lg:max-w-none lg:grid-cols-3"
+          >
             {features.map((feature) => (
-              <div key={feature.name}>
-                <dt>
-                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white">
-                    <feature.icon className="h-6 w-6" aria-hidden="true" />
-                  </div>
-                  <p className="mt-5 text-lg leading-6 font-medium text-gray-900">{feature.name}</p>
-                </dt>
-                <dd className="mt-2 text-base text-gray-500">{feature.description}</dd>
-              </div>
+              <li
+                key={feature.name}
+                className="p-6"
+              >
+                <div className='flex justify-center'>
+                  <feature.icon className="h-14 w-14 text-blue-500" />
+                </div>
+
+                <h3 className="mt-5 text-2xl text-center font-semibold text-gray-900">
+                  {feature.name}
+                </h3>
+                <p className="mt-2 text-base text-center text-gray-500">{feature.description}</p>
+              </li>
             ))}
-          </dl>
+          </ul>
         </div>
       </div>
     </div>

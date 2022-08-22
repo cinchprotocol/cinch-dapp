@@ -78,6 +78,7 @@ function MobileNavigation() {
             className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5"
           >
             <MobileNavLink href="#about">About</MobileNavLink>
+            <MobileNavLink href="https://mirror.xyz/0x7352724d097517b11ccB2FED15FA4C557A42192f">Blog</MobileNavLink>
             {/* <MobileNavLink href="#testimonials">Testimonials</MobileNavLink>
             <MobileNavLink href="#pricing">Pricing</MobileNavLink>
             <hr className="m-2 border-slate-300/40" />
@@ -108,9 +109,10 @@ export function Header() {
               <NavLink href="#about">About</NavLink>
               <NavLink href="https://mirror.xyz/0x7352724d097517b11ccB2FED15FA4C557A42192f">Blog</NavLink>
             </div>
-            <Button href="/" color="blue">
+            <Button href="https://tr61ro2oj6g.typeform.com/to/N5Oam3nb"
+              target="blank" color="blue">
               <span>
-                Launch App
+                Get in touch
               </span>
             </Button>
             <div className="-mr-1 md:hidden">

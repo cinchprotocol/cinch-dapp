@@ -2,7 +2,7 @@ export function About() {
   return (
     <div id="about" className="relative py-16 bg-white overflow-hidden">
       <div className="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full">
-        <div className="relative h-full text-lg max-w-prose mx-auto" aria-hidden="true">
+        <div className="relative h-full max-w-prose mx-auto" aria-hidden="true">
           <svg
             className="absolute top-12 left-full transform translate-x-32"
             width={404}
@@ -55,7 +55,7 @@ export function About() {
               Who we are
             </span>
           </h1>
-          <p className="mt-8 text-xl text-gray-500 leading-8">
+          <p className="mt-8 text-gray-500 leading-8">
             Cinch is a decentralized exchange for blockchain revenue streams. Projects can easily structure revenue agreements and access non-dilutive financing in a fast and efficient way. Our marketplace allows investors, projects, and DeFi participants to buy and sell revenue streams in a secure manner. We enable a vibrant secondary market for revenue streams that ultimately results in the best possible cost of capital for web3 projects.
           </p>
         </div>

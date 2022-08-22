@@ -9,10 +9,10 @@ export function CallToAction() {
     <div className="bg-gradient-to-r from-cyan-500 to-blue-600">
       <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-          <span className="block">Ready to dive in?</span>
+          <span className="block">Connect with us.</span>
         </h2>
         <p className="mt-4 text-lg leading-6 text-blue-200">
-          Connect with us to find out how revenue-share tokens can transform how you manage your treasury.
+          V1.0 coming soon. Learn about becoming an official launch partner.
         </p>
         <a
           href="https://tr61ro2oj6g.typeform.com/to/N5Oam3nb"

@@ -7,7 +7,7 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 
-function Home({ web3 }) {
+function Dashboard({ web3 }) {
   console.log(`🗄 web3 context:`, web3);
 
   return (
@@ -26,7 +26,7 @@ function Home({ web3 }) {
 
         <div className="flex flex-1 flex-col h-screen w-full items-center">
           <div className="text-center" style={{ margin: 64 }}>
-            <span>dApp main page</span>
+            <span>Dashboard</span>
             <br />
           </div>
         </div>
@@ -36,4 +36,4 @@ function Home({ web3 }) {
   );
 }
 
-export default Web3Consumer(Home);
+export default Web3Consumer(Dashboard);

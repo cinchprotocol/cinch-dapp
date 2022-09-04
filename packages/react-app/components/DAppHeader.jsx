@@ -7,6 +7,7 @@ import { Button } from "/components/Button";
 import { Container } from "/components/Container";
 import { Logo } from "/components/Logo";
 import { NavLink } from "/components/NavLink";
+import { Account } from "../components";
 
 function MobileNavLink({ href, children }) {
   return (
@@ -78,7 +79,7 @@ function MobileNavigation() {
   );
 }
 
-export function DAppHeader() {
+export function DAppHeader(props) {
   return (
     <header className="py-10">
       <Container>
@@ -93,6 +94,11 @@ export function DAppHeader() {
             </Button>
           </div>
         </nav>
+        <div className="flex flex-1 justify-between items-center">
+          <div className="mr-6">
+            <Account {...props?.web3} />
+          </div>
+        </div>
       </Container>
     </header>
   );

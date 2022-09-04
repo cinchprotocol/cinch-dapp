@@ -5,7 +5,6 @@ import { InputNumber, Select, Modal } from "antd";
 const { Option } = Select;
 
 import { CommonHead } from "/components/CommonHead";
-import { Account } from "../components";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
@@ -43,14 +42,8 @@ function InvestIdleFinance({ web3 }) {
   return (
     <>
       <CommonHead />
-      <DAppHeader />
+      <DAppHeader web3={web3} />
       <main>
-        <div className="flex flex-1 justify-between items-center">
-          <div className="mr-6">
-            <Account {...web3} />
-          </div>
-        </div>
-
         <div className="flex flex-1 flex-col h-screen w-full items-center">
           <div className="text-center" style={{ margin: 64 }}>
             <HeaderText01>Invest in Idle Finance</HeaderText01>

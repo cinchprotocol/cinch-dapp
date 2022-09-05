@@ -9,10 +9,10 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-import { getAllIds, getData } from "/components/MockData";
+import { getAllRevenueStreamForSaleIds, getRevenueStreamData } from "/components/MockData";
 
 export async function getStaticPaths() {
-  const paths = getAllIds();
+  const paths = getAllRevenueStreamForSaleIds();
   return {
     paths,
     fallback: false,
@@ -20,7 +20,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const data = getData(params.id);
+  const data = getRevenueStreamData(params.id);
   return {
     props: {
       data,

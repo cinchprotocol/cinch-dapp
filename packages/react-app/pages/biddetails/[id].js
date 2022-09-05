@@ -8,10 +8,10 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-import { getAllRevenueStreamForSaleIds, getRevenueStreamData } from "/components/MockData";
+import { getAllBidIds, getBidData } from "/components/MockData";
 
 export async function getStaticPaths() {
-  const paths = getAllRevenueStreamForSaleIds();
+  const paths = getAllBidIds();
   return {
     paths,
     fallback: false,
@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const data = getRevenueStreamData(params.id);
+  const data = getBidData(params.id);
   return {
     props: {
       data,
@@ -27,9 +27,10 @@ export async function getStaticProps({ params }) {
   };
 }
 
-function RevenueStream({ web3, data }) {
+function BidDetail({ web3, data }) {
   console.log("web3", web3, "data", data);
-  const bidProposalsRoute = `/bidproposals/${data?.id}`;
+  const acceptBidsRoute = `/acceptbids/${data?.id}`;
+  const denyBidsRoute = `/denybids/${data?.id}`;
   const router = useRouter();
   return (
     <>
@@ -38,18 +39,29 @@ function RevenueStream({ web3, data }) {
       <main>
         <div className="flex flex-1 flex-col h-screen w-full items-center">
           <div className="text-center" style={{ margin: 64 }}>
-            <HeaderText01>{data?.name}</HeaderText01>
+            <HeaderText01>Offer summary</HeaderText01>
+            <p>{data?.name}</p>
             <p>{data?.description}</p>
+            <p>{data?.id}</p>
+            <p>{data?.price}</p>
+            <p>{data?.addressToReceiveRevenueShare}</p>
+            <p>{data?.contactInfo}</p>
           </div>
           <div className="text-center" style={{ margin: 64 }}>
             <Button
               onClick={() => {
-                router.push(bidProposalsRoute);
+                router.push(acceptBidsRoute);
               }}
             >
-              Bid
+              Accept
             </Button>
-            ;
+            <Button
+              onClick={() => {
+                router.push(denyBidsRoute);
+              }}
+            >
+              Deny
+            </Button>
           </div>
         </div>
       </main>
@@ -58,4 +70,4 @@ function RevenueStream({ web3, data }) {
   );
 }
 
-export default Web3Consumer(RevenueStream);
+export default Web3Consumer(BidDetail);

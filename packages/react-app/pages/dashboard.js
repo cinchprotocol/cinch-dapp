@@ -28,6 +28,11 @@ function Dashboard({ web3 }) {
               <span>Buy Revenue Stream</span>
             </Button>
           </div>
+          <div className="text-center" style={{ margin: 64 }}>
+            <Button href="/listrevenuestreambids" color="blue">
+              <span>List Bids</span>
+            </Button>
+          </div>
         </div>
       </main>
       <Footer />

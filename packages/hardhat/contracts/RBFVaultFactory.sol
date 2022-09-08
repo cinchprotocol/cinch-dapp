@@ -6,19 +6,14 @@ import "./RBFVault.sol";
 
 /**
  * @title RBFVaultFactory
- * @notice Contract allows to create vaults which allows Lender to secure royalty revenue streams from a NFT collection of borrower and split payments between them based on agreed terms
+ * @notice Contract allows to create vaults which allows Lender to secure royalty revenue streams from a borrower(DAO/Protocols) and split payments between them based on agreed terms
  * @dev Should be deployed once for the app
  */
 contract RBFVaultFactory is Ownable {
-    address public cEtherContract;
     event RBFVaultCreated(
         address indexed collectionAddress,
         address indexed vaultAddress
-    );
-
-    constructor(address _cEtherContract) {
-        cEtherContract = _cEtherContract;
-    }
+    );   
 
     mapping(address => address) public collectionVault;
     modifier collectionVaultDoesntExist(address collectionAddress) {
@@ -89,15 +84,10 @@ contract RBFVaultFactory is Ownable {
         RBFVault vault = new RBFVault{value: msg.value}(
             collectionAddress,
             parties,
-            shares,
-            cEtherContract
+            shares
         );
         collectionVault[collectionAddress] = address(vault);
 
         emit RBFVaultCreated(collectionAddress, address(vault));
-    }
-
-    function updateCompoundEthContract(address updatedCEtherContract) public onlyOwner {
-        cEtherContract = updatedCEtherContract;
-    }
+    }   
 }

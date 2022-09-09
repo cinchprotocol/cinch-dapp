@@ -99,9 +99,8 @@ contract BidStorage {
     );
 
     event BidCancelled(
-        uint256 _id,
-        address indexed _tokenAddress,
-        uint256 indexed _tokenId,
+        uint256 _bidId,
+        uint256 indexed _itemId,
         address indexed _bidder
     );
 

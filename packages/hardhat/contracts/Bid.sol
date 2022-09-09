@@ -154,6 +154,8 @@ contract Bid is Ownable, Pausable, BidStorage {
     {
         Bid memory bid = _getBid(_itemId, _bidId);
 
+// TODO check if the items belongs to current user
+
         // Check if the bid is valid.
         require(bid.expiresAt >= block.timestamp, "Bid#acceptBid: BID_EXPIRED");
 
@@ -175,67 +177,62 @@ contract Bid is Ownable, Pausable, BidStorage {
 
     /**
      * @dev Remove expired bids
-     * @param _tokenAddresses - address[] of the ERC721 tokens
      * @param _itemIds - uint256[] of the token ids
      * @param _bidders - address[] of the bidders
      */
     function removeExpiredBids(
-        address[] memory _tokenAddresses,
         uint256[] memory _itemIds,
         address[] memory _bidders
     ) public {
-        uint256 loopLength = _tokenAddresses.length;
+        uint256 loopLength = _itemIds.length;
 
         require(
-            loopLength == _itemIds.length && loopLength == _bidders.length,
-            "ERC721Bid#removeExpiredBids: LENGHT_MISMATCH"
+            loopLength == _bidders.length,
+            "Bid#removeExpiredBids: LENGHT_MISMATCH"
         );
 
         for (uint256 i = 0; i < loopLength; i++) {
-            _removeExpiredBid(_tokenAddresses[i], _itemIds[i], _bidders[i]);
+            _removeExpiredBid(_itemIds[i], _bidders[i]);
         }
     }
 
     /**
      * @dev Remove expired bid
-     * @param _tokenAddress - address of the ERC721 token
      * @param _itemId - uint256 of the token id
      * @param _bidder - address of the bidder
      */
     function _removeExpiredBid(
-        address _tokenAddress,
         uint256 _itemId,
         address _bidder
     ) internal {
         (
-            uint256 bidIndex,
-            bytes32 bidId,
+            uint256 bidId,
             ,
             ,
             uint256 expiresAt
-        ) = getBidByBidder(_tokenAddress, _itemId, _bidder);
+        ) = getBidByBidder(_itemId, _bidder);
 
         require(
             expiresAt < block.timestamp,
-            "ERC721Bid#_removeExpiredBid: BID_NOT_EXPIRED"
+            "Bid#_removeExpiredBid: BID_NOT_EXPIRED"
         );
 
-        _cancelBid(bidIndex, bidId, _tokenAddress, _itemId, _bidder);
+        _cancelBid(bidId, _itemId, _bidder);
     }
 
     /**
      * @dev Cancel a bid for an ERC721 token
-     * @param _tokenAddress - address of the ERC721 token
      * @param _itemId - uint256 of the token id
      */
-    function cancelBid(address _tokenAddress, uint256 _itemId)
+    function cancelBid(uint256 _itemId)
         public
         whenNotPaused
     {
+
+        //TODO - check if caller is the bidder
         address sender = _msgSender();
         // Get active bid
-        (uint256 bidIndex, bytes32 bidId, , , ) = getBidByBidder(
-            _tokenAddress,
+        (uint256 bidId, , , ) = getBidByBidder(
             _itemId,
             sender
         );
@@ -245,47 +242,30 @@ contract Bid is Ownable, Pausable, BidStorage {
 
     /**
      * @dev Cancel a bid for an ERC721 token
-     * @param _bidIndex - uint256 of the index of the bid
      * @param _bidId - bytes32 of the bid id
-     * @param _tokenAddress - address of the ERC721 token
      * @param _itemId - uint256 of the token id
      * @param _bidder - address of the bidder
      */
     function _cancelBid(
-        uint256 _bidIndex,
-        bytes32 _bidId,
-        address _tokenAddress,
+        uint256 _bidId,
         uint256 _itemId,
         address _bidder
     ) internal {
-        // Delete bid references
-        delete bidIndexByBidId[_bidId];
-        delete bidIdByItemAndBidder[_tokenAddress][_itemId][_bidder];
-
-        // Check if the bid is at the end of the mapping
-        uint256 lastBidIndex = bidCounterByToken[_tokenAddress][_itemId] - 1;
-        if (lastBidIndex != _bidIndex) {
-            // Move last bid to the removed place
-            Bid storage lastBid = bidsByItem[_tokenAddress][_itemId][
-                lastBidIndex
-            ];
-            bidsByItem[_tokenAddress][_itemId][_bidIndex] = lastBid;
-            bidIndexByBidId[lastBid.id] = _bidIndex;
-        }
-
-        // Delete empty index
-        delete bidsByItem[_tokenAddress][_itemId][lastBidIndex];
+        // TODO - need this? Delete bid references
+        delete bidIdByItemAndBidder[_itemId][_bidder];
+    
+    //TODO - validate this- Delete empty index
+        delete bidsByItem[_itemId][_bidId];
 
         // Decrease bids counter
-        bidCounterByToken[_tokenAddress][_itemId]--;
+        bidCounterByToken[_itemId]--;
 
         // emit BidCancelled event
-        emit BidCancelled(_bidId, _tokenAddress, _itemId, _bidder);
+        emit BidCancelled(_bidId, _itemId, _bidder);
     }
 
     /**
      * @dev Check if the bidder has a bid for an specific token.
-     * @param _tokenAddress - address of the ERC721 token
      * @param _itemId - uint256 of the token id
      * @param _bidder - address of the bidder
      * @return bool whether the bidder has an active bid
@@ -295,7 +275,7 @@ contract Bid is Ownable, Pausable, BidStorage {
         view
         returns (bool)
     {
-        bytes32 bidId = bidIdByItemAndBidder[_tokenAddress][_itemId][_bidder];
+        bytes32 bidId = bidIdByItemAndBidder[_itemId][_bidder];
 
         (bidId, bidder, price, expiresAt) = getBidByItem(_itemId, bidId);
         if (_bidder == bidder) {
@@ -320,8 +300,7 @@ contract Bid is Ownable, Pausable, BidStorage {
         public
         view
         returns (
-            uint256 bidIndex,
-            bytes32 bidId,
+            uint256 bidId,
             address bidder,
             uint256 price,
             uint256 expiresAt

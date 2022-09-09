@@ -7,25 +7,40 @@ pragma solidity ^0.8.0;
  */
 interface ERC20Interface {
     function balanceOf(address from) external view returns (uint256);
-    function transferFrom(address from, address to, uint tokens) external returns (bool);
-    function allowance(address owner, address spender) external view returns (uint256);
-}
 
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokens
+    ) external returns (bool);
+
+    function allowance(address owner, address spender)
+        external
+        view
+        returns (uint256);
+}
 
 /**
  * @title Interface for contracts conforming to ERC-721
  */
 interface ERC721Interface {
     function ownerOf(uint256 _tokenId) external view returns (address _owner);
-    function transferFrom(address _from, address _to, uint256 _tokenId) external;
+
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _tokenId
+    ) external;
+
     function supportsInterface(bytes4) external view returns (bool);
 }
 
-
 interface ERC721Verifiable is ERC721Interface {
-    function verifyFingerprint(uint256, bytes memory) external view returns (bool);
+    function verifyFingerprint(uint256, bytes memory)
+        external
+        view
+        returns (bool);
 }
-
 
 contract BidStorage {
     // 182 days - 26 weeks - 6 months
@@ -38,33 +53,28 @@ contract BidStorage {
 
     struct Bid {
         // Bid Id
-        bytes32 id;
+        uint256 id;
+        // item id
+        uint256 itemId;
         // Bidder address
         address bidder;
-        // ERC721 address
-        address tokenAddress;
-        // ERC721 token id
-        uint256 tokenId;
+        // Revenue receiver
+        address revenueReceiver;
         // Price for the bid in wei
         uint256 price;
         // Time when this bid ends
         uint256 expiresAt;
-        // Fingerprint for composable
-        bytes fingerprint;
     }
 
     // MANA token
     ERC20Interface public manaToken;
 
-    // Bid by token address => token id => bid index => bid
-    mapping(address => mapping(uint256 => mapping(uint256 => Bid))) internal bidsByToken;
-    // Bid count by token address => token id => bid counts
-    mapping(address => mapping(uint256 => uint256)) public bidCounterByToken;
-    // Index of the bid at bidsByToken mapping by bid id => bid index
-    mapping(bytes32 => uint256) public bidIndexByBidId;
-    // Bid id by token address => token id => bidder address => bidId
-    mapping(address => mapping(uint256 => mapping(address => bytes32))) public bidIdByTokenAndBidder;
-
+    // Bid by item id => bid id => bid
+    mapping(uint256 => mapping(uint256 => Bid)) internal bidsByItem;
+    // Bid count by item id => bid counts
+    mapping(uint256 => uint256) public bidCounterByItem;
+    // Bid id by item id => bidder address => bidId
+    mapping(uint256 => mapping(address => uint256)) public bidIdByItemAndBidder;
 
     address public feesCollector;
 
@@ -73,33 +83,34 @@ contract BidStorage {
 
     // EVENTS
     event BidCreated(
-      bytes32 _id,
-      address indexed _tokenAddress,
-      uint256 indexed _tokenId,
-      address indexed _bidder,
-      uint256 _price,
-      uint256 _expiresAt,
-      bytes _fingerprint
+        uint256 indexed _bidId,
+        uint256 indexed _itemId,
+        address indexed _bidder,
+        uint256 _price,
+        uint256 _expiresAt
     );
 
     event BidAccepted(
-      bytes32 _id,
-      address indexed _tokenAddress,
-      uint256 indexed _tokenId,
-      address _bidder,
-      address indexed _seller,
-      uint256 _price,
-      uint256 _fee
+         uint256 indexed _bidId,
+        uint256 _itemId,       
+        address indexed _bidder,
+        address indexed _seller,
+        uint256 _price
     );
 
     event BidCancelled(
-      bytes32 _id,
-      address indexed _tokenAddress,
-      uint256 indexed _tokenId,
-      address indexed _bidder
+        uint256 _id,
+        address indexed _tokenAddress,
+        uint256 indexed _tokenId,
+        address indexed _bidder
     );
 
-    event ChangedFeesCollectorCutPerMillion(uint256 _feesCollectorCutPerMillion);
+    event ChangedFeesCollectorCutPerMillion(
+        uint256 _feesCollectorCutPerMillion
+    );
     event ChangedRoyaltiesCutPerMillion(uint256 _royaltiesCutPerMillion);
-    event FeesCollectorSet(address indexed _oldFeesCollector, address indexed _newFeesCollector);
+    event FeesCollectorSet(
+        address indexed _oldFeesCollector,
+        address indexed _newFeesCollector
+    );
 }

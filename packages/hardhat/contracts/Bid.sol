@@ -14,48 +14,32 @@ contract Bid is Ownable, Pausable, BidStorage {
 
     /**
      * @dev Constructor of the contract.
-     * @param _owner - owner
      * @param _feesCollector - fees collector
-     * @param _manaToken - Address of the ERC20 accepted for this marketplace
-     * @param _royaltiesManager - Royalties manager contract
      * @param _feesCollectorCutPerMillion - fees collector cut per million
-     * @param _royaltiesCutPerMillion - royalties cut per million
      */
     constructor(
-        address _owner,
         address _feesCollector,
-        address _manaToken,
-        IRoyaltiesManager _royaltiesManager,
         uint256 _feesCollectorCutPerMillion,
         uint256 _royaltiesCutPerMillion
     ) Pausable() {
-        // EIP712 init
-        _initializeEIP712("Decentraland Bid", "2");
-
         // Address init
         setFeesCollector(_feesCollector);
-        setRoyaltiesManager(_royaltiesManager);
 
         // Fee init
         setFeesCollectorCutPerMillion(_feesCollectorCutPerMillion);
-        setRoyaltiesCutPerMillion(_royaltiesCutPerMillion);
-
-        manaToken = ERC20Interface(_manaToken);
-        // Set owner
-        transferOwnership(_owner);
     }
 
     /**
-     * @dev Place a bid for an ERC721 token with fingerprint.
+     * @dev Place a bid for an item.
      * @notice Tokens can have multiple bids by different users.
      * Users can have only one bid per token.
      * If the user places a bid and has an active bid for that token,
      * the older one will be replaced with the new one.
-     * @param _tokenAddress - address of the ERC721 token
-     * @param _itemId - uint256 of the token id
+    * @param _itemId - uint256 of the token id
      * @param _price - uint256 of the price for the bid
+       * @param _revenueReceiver - address where revenue will be forwarded
      * @param _duration - uint256 of the duration in seconds for the bid
-     * @param _fingerprint - bytes of ERC721 token fingerprint
+   
      */
     function placeBid(
         uint256 _itemId,
@@ -83,17 +67,12 @@ contract Bid is Ownable, Pausable, BidStorage {
             "Bid#_placeBid: DURATION_MUST_BE_LTE_MAX_BID_DURATION"
         );
 
-         require(
+        require(
             _revenueReceiver != address(0),
             "Bid#_placeBid: INVALID_REVENUE_RECEIVER"
         );
 
-        //TODO find item owner
-        //address tokenOwner = token.ownerOf(_itemId);
-        // require(
-        //     tokenOwner != address(0) && tokenOwner != sender,
-        //     "ERC721Bid#_placeBid: ALREADY_OWNED_TOKEN"
-        // );
+        //TODO check if caller is not the item owner
 
         uint256 expiresAt = block.timestamp + _duration;
 
@@ -104,7 +83,7 @@ contract Bid is Ownable, Pausable, BidStorage {
 
         if (_bidderHasABid(_itemId, sender)) {
             bytes32 oldBidId;
-            (bidIndex, oldBidId, , , ) = getBidByBidder(_itemId, sender);
+            (oldBidId, , , ) = getBidByBidder(_itemId, sender);
 
             // TODO - Update older bid
         } else {
@@ -131,40 +110,28 @@ contract Bid is Ownable, Pausable, BidStorage {
     }
 
     /**
-     * @dev Used as the only way to accept a bid.
-     * The token owner should send the token to this contract using safeTransferFrom.
-     * The last parameter (bytes) should be the bid id.
-     * @notice  The ERC721 smart contract calls this function on the recipient
-     * after a `safetransfer`. This function MAY throw to revert and reject the
-     * transfer. Return of other than the magic value MUST result in the
-     * transaction being reverted.
-     * Note:
-     * Contract address is always the message sender.
-     * This method should be seen as 'acceptBid'.
-     * It validates that the bid id matches an active bid for the bid token.
-     * @param _from The address which previously owned the token
-     * @param _itemId The NFT identifier which is being transferred
-     * @param _data Additional data with no specified format
-     * @return `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`
+     * @param _itemId The identifier of the item
+     * @param _bidId bid identifier for the item
+     * @return `bool`
      */
     function acceptBid(uint256 _itemId, uint256 _bidId)
         public
         whenNotPaused
-        returns (bytes4)
+        returns (bool)
     {
         Bid memory bid = _getBid(_itemId, _bidId);
 
-// TODO check if the items belongs to current user
+        // TODO check if the items belongs to current user
 
         // Check if the bid is valid.
         require(bid.expiresAt >= block.timestamp, "Bid#acceptBid: BID_EXPIRED");
 
         // Delete bid references from contract storage
         delete bidsByItem[_itemId][_bidId];
-        delete bidIdByItemAndBidder[_itemId][bidder];
+        delete bidIdByItemAndBidder[_itemId][bid.bidder];
 
         // TODO- need this?  Reset bid counter to invalidate other bids placed for the token
-        delete bidCounterByToken[_itemId];
+        delete bidCounterByItem[_itemId];
 
         // TODO - Setup custom multi-sig logic, fee destination address is updated
 
@@ -172,7 +139,8 @@ contract Bid is Ownable, Pausable, BidStorage {
 
         emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);
 
-        return ERC721_Received;
+        // TODO check scenarios where it will be false
+        return true;
     }
 
     /**
@@ -201,16 +169,11 @@ contract Bid is Ownable, Pausable, BidStorage {
      * @param _itemId - uint256 of the token id
      * @param _bidder - address of the bidder
      */
-    function _removeExpiredBid(
-        uint256 _itemId,
-        address _bidder
-    ) internal {
-        (
-            uint256 bidId,
-            ,
-            ,
-            uint256 expiresAt
-        ) = getBidByBidder(_itemId, _bidder);
+    function _removeExpiredBid(uint256 _itemId, address _bidder) internal {
+        (uint256 bidId, , , uint256 expiresAt) = getBidByBidder(
+            _itemId,
+            _bidder
+        );
 
         require(
             expiresAt < block.timestamp,
@@ -221,27 +184,20 @@ contract Bid is Ownable, Pausable, BidStorage {
     }
 
     /**
-     * @dev Cancel a bid for an ERC721 token
+     * @dev Cancel a bid for an token
      * @param _itemId - uint256 of the token id
      */
-    function cancelBid(uint256 _itemId)
-        public
-        whenNotPaused
-    {
-
+    function cancelBid(uint256 _itemId) public whenNotPaused {
         //TODO - check if caller is the bidder
         address sender = _msgSender();
         // Get active bid
-        (uint256 bidId, , , ) = getBidByBidder(
-            _itemId,
-            sender
-        );
+        (uint256 bidId, , , ) = getBidByBidder(_itemId, sender);
 
-        _cancelBid(bidIndex, bidId, _tokenAddress, _itemId, sender);
+        _cancelBid(bidId, _itemId, sender);
     }
 
     /**
-     * @dev Cancel a bid for an ERC721 token
+     * @dev Cancel a bid for an token
      * @param _bidId - bytes32 of the bid id
      * @param _itemId - uint256 of the token id
      * @param _bidder - address of the bidder
@@ -253,12 +209,12 @@ contract Bid is Ownable, Pausable, BidStorage {
     ) internal {
         // TODO - need this? Delete bid references
         delete bidIdByItemAndBidder[_itemId][_bidder];
-    
-    //TODO - validate this- Delete empty index
+
+        //TODO - validate this- Delete empty index
         delete bidsByItem[_itemId][_bidId];
 
         // Decrease bids counter
-        bidCounterByToken[_itemId]--;
+        bidCounterByItem[_itemId]--;
 
         // emit BidCancelled event
         emit BidCancelled(_bidId, _itemId, _bidder);
@@ -287,11 +243,9 @@ contract Bid is Ownable, Pausable, BidStorage {
     /**
      * @dev Get the active bid id and index by a bidder and an specific token.
      * @notice If the bidder has not a valid bid, the transaction will be reverted.
-     * @param _tokenAddress - address of the ERC721 token
      * @param _itemId - uint256 of the token id
      * @param _bidder - address of the bidder
-     * @return bidIndex - uint256 of the bid index to be used within bidsByItem mapping
-     * @return bidId - bytes32 of the bid id
+     * @return bidId - uint256 of the bid id
      * @return bidder - address of the bidder address
      * @return price - uint256 of the bid price
      * @return expiresAt - uint256 of the expiration time
@@ -314,11 +268,10 @@ contract Bid is Ownable, Pausable, BidStorage {
     }
 
     /**
-     * @dev Get an ERC721 token bid by index
-     * @param _tokenAddress - address of the ERC721 token
+     * @dev Get a bid by item
      * @param _itemId - uint256 of the token id
-     * @param _index - uint256 of the index
-     * @return bytes32 of the bid id
+     * @param _bidId - uint256 of the bid Id
+     * @return uint256 of the bid id
      * @return address of the bidder address
      * @return uint256 of the bid price
      * @return uint256 of the expiration time
@@ -327,7 +280,7 @@ contract Bid is Ownable, Pausable, BidStorage {
         public
         view
         returns (
-            bytes32,
+            uint256,
             address,
             uint256,
             uint256
@@ -338,11 +291,9 @@ contract Bid is Ownable, Pausable, BidStorage {
     }
 
     /**
-     * @dev Get the active bid id and index by a bidder and an specific token.
-     * @notice If the index is not valid, it will revert.
-     * @param _tokenAddress - address of the ERC721 token
-     * @param _itemId - uint256 of the index
-     * @param _index - uint256 of the index
+     * @notice If the bidId is not valid, it will revert.
+     * @param _itemId - uint256 of the item id
+     * @param _bidId - uint256 of the bid id
      * @return Bid
      */
     function _getBid(uint256 _itemId, uint256 _bidId)
@@ -351,7 +302,7 @@ contract Bid is Ownable, Pausable, BidStorage {
         returns (Bid memory)
     {
         require(
-            _bidId < bidCounterByToken[_itemId],
+            _bidId < bidCounterByItem[_itemId],
             "Bid#_getBid: INVALID_BID_ID"
         );
         return bidsByItem[_itemId][_bidId];
@@ -370,29 +321,10 @@ contract Bid is Ownable, Pausable, BidStorage {
 
         require(
             feesCollectorCutPerMillion + royaltiesCutPerMillion < 1000000,
-            "ERC721Bid#setFeesCollectorCutPerMillion: TOTAL_FEES_MUST_BE_BETWEEN_0_AND_999999"
+            "Bid#setFeesCollectorCutPerMillion: TOTAL_FEES_MUST_BE_BETWEEN_0_AND_999999"
         );
 
         emit ChangedFeesCollectorCutPerMillion(feesCollectorCutPerMillion);
-    }
-
-    /**
-     * @dev Sets the share cut for the royalties that's
-     *  charged to the seller on a successful sale
-     * @param _royaltiesCutPerMillion - fees for royalties
-     */
-    function setRoyaltiesCutPerMillion(uint256 _royaltiesCutPerMillion)
-        public
-        onlyOwner
-    {
-        royaltiesCutPerMillion = _royaltiesCutPerMillion;
-
-        require(
-            feesCollectorCutPerMillion + royaltiesCutPerMillion < 1000000,
-            "ERC721Bid#setRoyaltiesCutPerMillion: TOTAL_FEES_MUST_BE_BETWEEN_0_AND_999999"
-        );
-
-        emit ChangedRoyaltiesCutPerMillion(royaltiesCutPerMillion);
     }
 
     /**
@@ -402,7 +334,7 @@ contract Bid is Ownable, Pausable, BidStorage {
     function setFeesCollector(address _newFeesCollector) public onlyOwner {
         require(
             _newFeesCollector != address(0),
-            "ERC721Bid#setFeesCollector: INVALID_FEES_COLLECTOR"
+            "Bid#setFeesCollector: INVALID_FEES_COLLECTOR"
         );
 
         emit FeesCollectorSet(feesCollector, _newFeesCollector);
@@ -410,86 +342,9 @@ contract Bid is Ownable, Pausable, BidStorage {
     }
 
     /**
-     * @notice Set the royalties manager
-     * @param _newRoyaltiesManager - royalties manager
-     */
-    function setRoyaltiesManager(IRoyaltiesManager _newRoyaltiesManager)
-        public
-        onlyOwner
-    {
-        require(
-            address(_newRoyaltiesManager).isContract(),
-            "ERC721Bid#setRoyaltiesManager: INVALID_ROYALTIES_MANAGER"
-        );
-
-        emit RoyaltiesManagerSet(royaltiesManager, _newRoyaltiesManager);
-        royaltiesManager = _newRoyaltiesManager;
-    }
-
-    /**
      * @dev Pause the contract
      */
     function pause() external onlyOwner {
         _pause();
-    }
-
-    /**
-     * @dev Convert bytes to bytes32
-     * @param _data - bytes
-     * @return bytes32
-     */
-    function _bytesToBytes32(bytes memory _data)
-        internal
-        pure
-        returns (bytes32)
-    {
-        require(
-            _data.length == 32,
-            "ERC721Bid#_bytesToBytes32: DATA_LENGHT_SHOULD_BE_32"
-        );
-
-        bytes32 bidId;
-        // solium-disable-next-line security/no-inline-assembly
-        assembly {
-            bidId := mload(add(_data, 0x20))
-        }
-        return bidId;
-    }
-
-    /**
-     * @dev Check if the token has a valid ERC721 implementation
-     * @param _tokenAddress - address of the token
-     */
-    function _requireERC721(address _tokenAddress) internal view {
-        require(
-            _tokenAddress.isContract(),
-            "ERC721Bid#_requireERC721: ADDRESS_NOT_A_CONTRACT"
-        );
-
-        ERC721Interface token = ERC721Interface(_tokenAddress);
-        require(
-            token.supportsInterface(ERC721_Interface),
-            "ERC721Bid#_requireERC721: INVALID_CONTRACT_IMPLEMENTATION"
-        );
-    }
-
-    /**
-     * @dev Check if the bidder has balance and the contract has enough allowance
-     * to use bidder MANA on his belhalf
-     * @param _bidder - address of bidder
-     * @param _amount - uint256 of amount
-     */
-    function _requireBidderBalance(address _bidder, uint256 _amount)
-        internal
-        view
-    {
-        require(
-            manaToken.balanceOf(_bidder) >= _amount,
-            "ERC721Bid#_requireBidderBalance: INSUFFICIENT_FUNDS"
-        );
-        require(
-            manaToken.allowance(_bidder, address(this)) >= _amount,
-            "ERC721Bid#_requireBidderBalance: CONTRACT_NOT_AUTHORIZED"
-        );
     }
 }

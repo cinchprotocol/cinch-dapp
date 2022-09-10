@@ -11,8 +11,6 @@ contract MarketPlace is ReentrancyGuard {
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
 
-    address payable owner;
-
     constructor() {}
 
     struct MarketItem {

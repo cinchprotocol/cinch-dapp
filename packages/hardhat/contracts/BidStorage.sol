@@ -2,54 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-/**
- * @title Interface for contracts conforming to ERC-20
- */
-interface ERC20Interface {
-    function balanceOf(address from) external view returns (uint256);
-
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokens
-    ) external returns (bool);
-
-    function allowance(address owner, address spender)
-        external
-        view
-        returns (uint256);
-}
-
-/**
- * @title Interface for contracts conforming to ERC-721
- */
-interface ERC721Interface {
-    function ownerOf(uint256 _tokenId) external view returns (address _owner);
-
-    function transferFrom(
-        address _from,
-        address _to,
-        uint256 _tokenId
-    ) external;
-
-    function supportsInterface(bytes4) external view returns (bool);
-}
-
-interface ERC721Verifiable is ERC721Interface {
-    function verifyFingerprint(uint256, bytes memory)
-        external
-        view
-        returns (bool);
-}
 
 contract BidStorage {
     // 182 days - 26 weeks - 6 months
     uint256 public constant MAX_BID_DURATION = 60 days;
     uint256 public constant MIN_BID_DURATION = 1 days;
     uint256 public constant ONE_MILLION = 1000000;
-    bytes4 public constant ERC721_Interface = 0x80ac58cd;
-    bytes4 public constant ERC721_Received = 0x150b7a02;
-    bytes4 public constant ERC721Composable_ValidateFingerprint = 0x8f9f4b63;
+
 
     struct Bid {
         // Bid Id
@@ -66,8 +25,6 @@ contract BidStorage {
         uint256 expiresAt;
     }
 
-    // MANA token
-    ERC20Interface public manaToken;
 
     // Bid by item id => bid id => bid
     mapping(uint256 => mapping(uint256 => Bid)) internal bidsByItem;
@@ -79,7 +36,7 @@ contract BidStorage {
     address public feesCollector;
 
     uint256 public feesCollectorCutPerMillion;
-    uint256 public royaltiesCutPerMillion;
+
 
     // EVENTS
     event BidCreated(

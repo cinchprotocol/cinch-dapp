@@ -17,11 +17,9 @@ contract Bid is Ownable, Pausable, BidStorage {
      * @param _feesCollector - fees collector
      * @param _feesCollectorCutPerMillion - fees collector cut per million
      */
-    constructor(
-        address _feesCollector,
-        uint256 _feesCollectorCutPerMillion,
-        uint256 _royaltiesCutPerMillion
-    ) Pausable() {
+    constructor(address _feesCollector, uint256 _feesCollectorCutPerMillion)
+        Pausable()
+    {
         // Address init
         setFeesCollector(_feesCollector);
 
@@ -320,7 +318,7 @@ contract Bid is Ownable, Pausable, BidStorage {
         feesCollectorCutPerMillion = _feesCollectorCutPerMillion;
 
         require(
-            feesCollectorCutPerMillion + royaltiesCutPerMillion < 1000000,
+            feesCollectorCutPerMillion < 1000000,
             "Bid#setFeesCollectorCutPerMillion: TOTAL_FEES_MUST_BE_BETWEEN_0_AND_999999"
         );
 

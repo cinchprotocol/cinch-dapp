@@ -13,14 +13,12 @@ contract MarketPlace is ReentrancyGuard {
 
     address payable owner;
 
-    constructor() {
-        owner = payable(msg.sender);
-    }
+    constructor() {}
 
     struct MarketItem {
         uint256 itemId;
         string name;
-        address feeCollector; 
+        address feeCollector;
         address multiSig;
         uint256 revenuePct;
         address payable seller;
@@ -52,7 +50,7 @@ contract MarketPlace is ReentrancyGuard {
     }
 
     function createMarketItem(
-         string name,
+        string name,
         address feeCollector,
         address multiSig,
         uint256 revenuePct,
@@ -61,7 +59,6 @@ contract MarketPlace is ReentrancyGuard {
     ) public payable nonReentrant {
         _requireGnosisSafe(multiSig);
         require(price > 0, "Price must be at least 1 wei");
-      
 
         _itemIds.increment();
         uint256 itemId = _itemIds.current();
@@ -76,10 +73,10 @@ contract MarketPlace is ReentrancyGuard {
             payable(address(0)),
             price,
             expAmount
-        );      
+        );
 
         emit MarketItemCreated(
-             itemId,
+            itemId,
             name,
             feeCollector,
             multiSig,
@@ -156,16 +153,11 @@ contract MarketPlace is ReentrancyGuard {
         return items;
     }
 
-     /**
-    * @dev Check if the multi-sig is the Gnosis safe  
-    * @param _multiSig - address of the multi-sig
-    */
-    function _requireGnosisSafe(
-        address _multiSig       
-    )
-        internal
-        view
-    {
-       // "MarketPlace#_requireGnosisSafe: INVALID_MULTISIG"
+    /**
+     * @dev Check if the multi-sig is the Gnosis safe
+     * @param _multiSig - address of the multi-sig
+     */
+    function _requireGnosisSafe(address _multiSig) internal view {
+        // "MarketPlace#_requireGnosisSafe: INVALID_MULTISIG"
     }
 }

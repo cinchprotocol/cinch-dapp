@@ -32,10 +32,10 @@ contract Bid is Ownable, Pausable, BidStorage {
     /**
      * @dev Place a bid for an item.
      * @notice Tokens can have multiple bids by different users.
-     * Users can have only one bid per token.
-     * If the user places a bid and has an active bid for that token,
+     * Users can have only one bid per item.
+     * If the user places a bid and has an active bid for that item,
      * the older one will be replaced with the new one.
-    * @param _itemId - uint256 of the token id
+    * @param _itemId - uint256 of the item id
      * @param _price - uint256 of the price for the bid
        * @param _revenueReceiver - address where revenue will be forwarded
      * @param _duration - uint256 of the duration in seconds for the bid
@@ -130,7 +130,7 @@ contract Bid is Ownable, Pausable, BidStorage {
         delete bidsByItem[_itemId][_bidId];
         delete bidIdByItemAndBidder[_itemId][bid.bidder];
 
-        // TODO- need this?  Reset bid counter to invalidate other bids placed for the token
+        // TODO- need this?  Reset bid counter to invalidate other bids placed for the item
         delete bidCounterByItem[_itemId];
 
         // TODO - Setup custom multi-sig logic, fee destination address is updated
@@ -145,7 +145,7 @@ contract Bid is Ownable, Pausable, BidStorage {
 
     /**
      * @dev Remove expired bids
-     * @param _itemIds - uint256[] of the token ids
+     * @param _itemIds - uint256[] of the item ids
      * @param _bidders - address[] of the bidders
      */
     function removeExpiredBids(
@@ -166,7 +166,7 @@ contract Bid is Ownable, Pausable, BidStorage {
 
     /**
      * @dev Remove expired bid
-     * @param _itemId - uint256 of the token id
+     * @param _itemId - uint256 of the item id
      * @param _bidder - address of the bidder
      */
     function _removeExpiredBid(uint256 _itemId, address _bidder) internal {
@@ -184,8 +184,8 @@ contract Bid is Ownable, Pausable, BidStorage {
     }
 
     /**
-     * @dev Cancel a bid for an token
-     * @param _itemId - uint256 of the token id
+     * @dev Cancel a bid for an item
+     * @param _itemId - uint256 of the item id
      */
     function cancelBid(uint256 _itemId) public whenNotPaused {
         //TODO - check if caller is the bidder
@@ -197,9 +197,9 @@ contract Bid is Ownable, Pausable, BidStorage {
     }
 
     /**
-     * @dev Cancel a bid for an token
+     * @dev Cancel a bid for an item
      * @param _bidId - bytes32 of the bid id
-     * @param _itemId - uint256 of the token id
+     * @param _itemId - uint256 of the item id
      * @param _bidder - address of the bidder
      */
     function _cancelBid(
@@ -221,8 +221,8 @@ contract Bid is Ownable, Pausable, BidStorage {
     }
 
     /**
-     * @dev Check if the bidder has a bid for an specific token.
-     * @param _itemId - uint256 of the token id
+     * @dev Check if the bidder has a bid for an specific item.
+     * @param _itemId - uint256 of the item id
      * @param _bidder - address of the bidder
      * @return bool whether the bidder has an active bid
      */
@@ -233,7 +233,7 @@ contract Bid is Ownable, Pausable, BidStorage {
     {
         bytes32 bidId = bidIdByItemAndBidder[_itemId][_bidder];
 
-        (bidId, bidder, price, expiresAt) = getBidByItem(_itemId, bidId);
+        address bidder = getBidByItem(_itemId, bidId);
         if (_bidder == bidder) {
             return true;
         }
@@ -241,9 +241,9 @@ contract Bid is Ownable, Pausable, BidStorage {
     }
 
     /**
-     * @dev Get the active bid id and index by a bidder and an specific token.
+     * @dev Get the active bid id and index by a bidder and an specific item.
      * @notice If the bidder has not a valid bid, the transaction will be reverted.
-     * @param _itemId - uint256 of the token id
+     * @param _itemId - uint256 of the item id
      * @param _bidder - address of the bidder
      * @return bidId - uint256 of the bid id
      * @return bidder - address of the bidder address
@@ -263,13 +263,13 @@ contract Bid is Ownable, Pausable, BidStorage {
         bidId = bidIdByItemAndBidder[_itemId][_bidder];
         (bidId, bidder, price, expiresAt) = getBidByItem(_itemId, bidId);
         if (_bidder != bidder) {
-            revert("Bid#getBidByBidder: BIDDER_HAS_NOT_ACTIVE_BIDS_FOR_TOKEN");
+            revert("Bid#getBidByBidder: BIDDER_HAS_NOT_ACTIVE_BIDS_FOR_ITEM");
         }
     }
 
     /**
      * @dev Get a bid by item
-     * @param _itemId - uint256 of the token id
+     * @param _itemId - uint256 of the item id
      * @param _bidId - uint256 of the bid Id
      * @return uint256 of the bid id
      * @return address of the bidder address

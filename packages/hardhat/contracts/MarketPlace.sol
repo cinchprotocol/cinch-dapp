@@ -6,9 +6,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "./MarketStorage.sol";
+import "./MarketPlaceStorage.sol";
 
-contract MarketPlace is MarketStorage, Ownable, Pausable, ReentrancyGuard {
+contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
     using Counters for Counters.Counter;
     using Address for address;
     Counters.Counter private _itemIds;

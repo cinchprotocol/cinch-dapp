@@ -2,13 +2,44 @@
 
 pragma solidity ^0.8.0;
 
+contract MarketStorage {
+    // ##########################
+    // #####   Marketplace   #####
+    // ##########################
+    struct MarketItem {
+        uint256 itemId;
+        string name;
+        address feeCollector;
+        address multiSig;
+        uint256 revenuePct;
+        address payable seller;
+        address payable buyer;
+        uint256 price;
+        uint256 expAmount;
+    }
 
-contract BidStorage {
+    mapping(uint256 => MarketItem) internal idToMarketItem;
+
+    event MarketItemCreated(
+        uint256 indexed itemId,
+        string indexed name,
+        address indexed feeCollector,
+        address multiSig,
+        uint256 revenuePct,
+        address seller,
+        address buyer,
+        uint256 price,
+        uint256 expAmount
+    );
+
+    // ##########################
+    // #####   Bid   #####
+    // ##########################
+
     // 182 days - 26 weeks - 6 months
     uint256 public constant MAX_BID_DURATION = 60 days;
     uint256 public constant MIN_BID_DURATION = 1 days;
     uint256 public constant ONE_MILLION = 1000000;
-
 
     struct Bid {
         // Bid Id
@@ -25,7 +56,6 @@ contract BidStorage {
         uint256 expiresAt;
     }
 
-
     // Bid by item id => bid id => bid
     mapping(uint256 => mapping(uint256 => Bid)) internal bidsByItem;
     // Bid count by item id => bid counts
@@ -37,7 +67,6 @@ contract BidStorage {
 
     uint256 public feesCollectorCutPerMillion;
 
-
     // EVENTS
     event BidCreated(
         uint256 indexed _bidId,
@@ -48,8 +77,8 @@ contract BidStorage {
     );
 
     event BidAccepted(
-         uint256 indexed _bidId,
-        uint256 _itemId,       
+        uint256 indexed _bidId,
+        uint256 _itemId,
         address indexed _bidder,
         address indexed _seller,
         uint256 _price

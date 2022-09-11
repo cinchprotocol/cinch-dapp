@@ -48,8 +48,8 @@ function RevenueRoyaltyInputs({ web3 }) {
         updatedBy: web3?.address,
         updatedAt: moment().format(),
         isActive: true,
-        //name: formValues?.name,
-        //description: formValues?.description,
+        name: formValues?.name || "Revenue Royalty",
+        description: formValues?.description || "Description",
         feeCollectorAddress: formValues?.feeCollectorAddress,
         multiSigAddress: formValues?.multiSigAddress,
         revenueProportion: parseFloat(formValues?.revenueProportion),
@@ -155,7 +155,7 @@ function RevenueRoyaltyInputs({ web3 }) {
 
               <Form.Item
                 label="Contact information (optional)"
-                name="contactInformation"
+                name="contact"
                 rules={[
                   {
                     required: false,
@@ -195,7 +195,7 @@ function RevenueRoyaltyInputs({ web3 }) {
             <p>multiSigAddress {formValues?.multiSigAddress}</p>
             <p>revenueProportion {formValues?.revenueProportion}</p>
             <p>expiryAmount {formValues?.expiryAmount}</p>
-            <p>contactInformation {formValues?.contactInformation}</p>
+            <p>contact {formValues?.contact}</p>
           </Modal>
         </div>
       </main>

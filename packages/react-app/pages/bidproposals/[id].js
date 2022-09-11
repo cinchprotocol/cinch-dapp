@@ -1,18 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Web3Consumer } from "../../helpers/Web3Context";
 import "antd/dist/antd.css";
-import { InputNumber, Select, Modal, Form, Input } from "antd";
+import { InputNumber, Select, Modal, Form, Input, message } from "antd";
 import { useRouter } from "next/router";
+import * as Realm from "realm-web";
+import _ from "lodash";
+import moment from "moment";
 
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-import { getAllRevenueStreamForSaleIds, getRevenueStreamData } from "/components/MockData";
+//import { getAllRevenueStreamForSaleIds, getRevenueStreamData } from "/components/MockData";
+import {
+  getAllRevenueStreamForSaleIds,
+  getOneRevenueStreamForSaleWith,
+  insertOneWith,
+} from "../../helpers/mongodbhelper";
 
 export async function getStaticPaths() {
-  const paths = getAllRevenueStreamForSaleIds();
+  const ids = await getAllRevenueStreamForSaleIds();
+  const paths = ids.map(id => {
+    return {
+      params: {
+        id: id,
+      },
+    };
+  });
   return {
     paths,
     fallback: false,
@@ -20,7 +35,8 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const data = getRevenueStreamData(params.id);
+  const objId = Realm.BSON.ObjectId.createFromHexString(params.id);
+  const data = _.omit(await getOneRevenueStreamForSaleWith({ _id: objId }), ["_id"]);
   return {
     props: {
       data,
@@ -29,11 +45,19 @@ export async function getStaticProps({ params }) {
 }
 
 function BidProposal({ web3, data }) {
-  console.log("web3", web3, "data", data);
-  const bidProposalsRoute = `/bidproposals/${data?.id}`;
+  //console.log("web3", web3, "data", data);
+  //const bidProposalsRoute = `/bidproposals/${data?.id}`;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formValues, setFromValues] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!web3 || !web3.address) {
+      message.warning("Please connect your wallet first", 5, () => {
+        router.push("/dashboard");
+      });
+    }
+  }, [web3]);
 
   const onFormFinish = values => {
     console.log("Success:", values);
@@ -49,9 +73,28 @@ function BidProposal({ web3, data }) {
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
-    router.push("/dashboard");
+  const handleOk = async () => {
+    try {
+      const doc = {
+        createdBy: web3?.address,
+        createdAt: moment().format(),
+        updatedBy: web3?.address,
+        updatedAt: moment().format(),
+        targetRevenueStreamId: data?.id,
+        targetRevenueCreatedBy: data?.createdBy,
+        price: formValues?.price,
+        addressToReceiveRevenueShare: formValues?.addressToReceiveRevenueShare,
+        isActive: true,
+        isAccepted: false,
+        contact: formValues?.contact,
+        //metadata: {},
+      };
+      await insertOneWith("bidProposal", doc);
+      setIsModalVisible(false);
+      router.push("/dashboard");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleCancel = () => {
@@ -95,12 +138,7 @@ function BidProposal({ web3, data }) {
                   },
                 ]}
               >
-                <InputNumber
-                  style={{
-                    width: "100%",
-                  }}
-                  placeholder="Amount"
-                />
+                <Input />
               </Form.Item>
               <Form.Item
                 label="Address to receive revenue-share"
@@ -121,7 +159,7 @@ function BidProposal({ web3, data }) {
 
               <Form.Item
                 label="Contact information (optional)"
-                name="contactInformation"
+                name="contact"
                 rules={[
                   {
                     required: false,

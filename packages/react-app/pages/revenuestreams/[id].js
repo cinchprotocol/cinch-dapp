@@ -2,16 +2,26 @@ import React, { useState } from "react";
 import { Web3Consumer } from "../../helpers/Web3Context";
 import "antd/dist/antd.css";
 import { useRouter } from "next/router";
+import * as Realm from "realm-web";
+import _ from "lodash";
 
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-import { getAllRevenueStreamForSaleIds, getRevenueStreamData } from "/components/MockData";
+//import { getAllRevenueStreamForSaleIds, getRevenueStreamData } from "/components/MockData";
+import { getAllRevenueStreamForSaleIds, getOneRevenueStreamForSaleWith } from "../../helpers/mongodbhelper";
 
 export async function getStaticPaths() {
-  const paths = getAllRevenueStreamForSaleIds();
+  const ids = await getAllRevenueStreamForSaleIds();
+  const paths = ids.map(id => {
+    return {
+      params: {
+        id: id,
+      },
+    };
+  });
   return {
     paths,
     fallback: false,
@@ -19,7 +29,8 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const data = getRevenueStreamData(params.id);
+  const objId = Realm.BSON.ObjectId.createFromHexString(params.id);
+  const data = _.omit(await getOneRevenueStreamForSaleWith({ _id: objId }), ["_id"]);
   return {
     props: {
       data,
@@ -49,7 +60,6 @@ function RevenueStream({ web3, data }) {
             >
               Bid
             </Button>
-            ;
           </div>
         </div>
       </main>

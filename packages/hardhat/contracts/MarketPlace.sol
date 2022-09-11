@@ -356,10 +356,11 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
      * @param _itemId - uint256 of the item id
      */
     function cancelBid(uint256 _itemId) public whenNotPaused {
-        //TODO - check if caller is the bidder
         address sender = _msgSender();
+
         // Get active bid
         Bid memory bid = getBidByBidder(_itemId, sender);
+        require(bid.bidder == sender, "Bid#cancelBid: ONLY_BIDDER_CAN_CANCEL");
 
         _cancelBid(bid.id, _itemId, sender);
     }

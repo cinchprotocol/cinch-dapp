@@ -36,7 +36,6 @@ contract MarketPlaceStorage {
     // #####   Bid   #####
     // ##########################
 
-    // 182 days - 26 weeks - 6 months
     uint256 public constant MAX_BID_DURATION = 60 days;
     uint256 public constant MIN_BID_DURATION = 1 days;
     uint256 public constant ONE_MILLION = 1000000;

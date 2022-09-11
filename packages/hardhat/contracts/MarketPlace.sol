@@ -149,6 +149,37 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         return items;
     }
 
+    function fetchMyBids() public view returns (Bid[] memory) {
+        uint256 itemCount = _itemIds.current();
+        uint256 unsoldItemCount = _itemIds.current() - _itemsSold.current();
+        uint256 currentIndex = 0;
+        uint256 bidCount = 0;
+        address sender = _msgSender();
+
+        for (uint256 i = 0; i < itemCount; i++) {
+            uint256 itemId = i + 1;
+            if (
+                idToMarketItem[itemId].buyer == address(0) &&
+                _bidderHasABid(itemId, sender)
+            ) {
+                bidCount++;
+            }
+        }
+        Bid[] memory bids = new Bid[](bidCount);
+        for (uint256 i = 0; i < itemCount; i++) {
+            uint256 itemId = i + 1;
+            if (
+                idToMarketItem[itemId].buyer == address(0) &&
+                _bidderHasABid(itemId, sender)
+            ) {
+                bids[currentIndex] = getBidByBidder(itemId, sender);
+                currentIndex += 1;
+            }
+        }
+
+        return bids;
+    }
+
     /**
      * @dev Check if the multi-sig is the Gnosis safe
      * @param _multiSig - address of the multi-sig
@@ -180,7 +211,7 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         uint256 _price,
         address _revenueReceiver,
         uint256 _duration
-    ) public whenNotPaused {
+    ) public payable whenNotPaused {
         address sender = _msgSender();
 
         require(_price > 0, "Bid#_placeBid: PRICE_MUST_BE_GT_0");
@@ -216,7 +247,7 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         // TODO transfer money into escrow
 
         if (_bidderHasABid(_itemId, sender)) {
-            bytes32 oldBidId;
+            uint256 oldBidId;
             (oldBidId, , , ) = getBidByBidder(_itemId, sender);
 
             // TODO - Update older bid
@@ -401,7 +432,7 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         )
     {
         bidId = bidIdByItemAndBidder[_itemId][_bidder];
-        (, bidder, , ) = getBidByItem(_itemId, bidId);
+        (bidId, bidder, price, expiresAt) = getBidByItem(_itemId, bidId);
         if (_bidder != bidder) {
             revert("Bid#getBidByBidder: BIDDER_HAS_NOT_ACTIVE_BIDS_FOR_ITEM");
         }

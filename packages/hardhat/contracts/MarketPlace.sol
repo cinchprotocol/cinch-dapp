@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -151,7 +151,6 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
 
     function fetchMyBids() public view returns (Bid[] memory) {
         uint256 itemCount = _itemIds.current();
-        uint256 unsoldItemCount = _itemIds.current() - _itemsSold.current();
         uint256 currentIndex = 0;
         uint256 bidCount = 0;
         address sender = _msgSender();
@@ -414,10 +413,7 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
      * @notice If the bidder has not a valid bid, the transaction will be reverted.
      * @param _itemId - uint256 of the item id
      * @param _bidder - address of the bidder
-     * @return bidId - uint256 of the bid id
-     * @return bidder - address of the bidder address
-     * @return price - uint256 of the bid price
-     * @return expiresAt - uint256 of the expiration time
+     * @return bid - bid struct
      */
     function getBidByBidder(uint256 _itemId, address _bidder)
         public
@@ -435,10 +431,7 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
      * @dev Get a bid by item
      * @param _itemId - uint256 of the item id
      * @param _bidId - uint256 of the bid Id
-     * @return uint256 of the bid id
-     * @return address of the bidder address
-     * @return uint256 of the bid price
-     * @return uint256 of the expiration time
+     * @return bid - bid struct
      */
     function getBidByItem(uint256 _itemId, uint256 _bidId)
         public

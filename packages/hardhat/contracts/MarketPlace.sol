@@ -248,7 +248,7 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
 
         if (_bidderHasABid(_itemId, sender)) {
             uint256 oldBidId;
-            (oldBidId, , , ) = getBidByBidder(_itemId, sender);
+            Bid memory oldBid = getBidByBidder(_itemId, sender);
 
             // TODO - Update older bid
         } else {
@@ -341,17 +341,14 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
      * @param _bidder - address of the bidder
      */
     function _removeExpiredBid(uint256 _itemId, address _bidder) internal {
-        (uint256 bidId, , , uint256 expiresAt) = getBidByBidder(
-            _itemId,
-            _bidder
-        );
+        Bid memory bid = getBidByBidder(_itemId, _bidder);
 
         require(
-            expiresAt < block.timestamp,
+            bid.expiresAt < block.timestamp,
             "Bid#_removeExpiredBid: BID_NOT_EXPIRED"
         );
 
-        _cancelBid(bidId, _itemId, _bidder);
+        _cancelBid(bid.id, _itemId, _bidder);
     }
 
     /**
@@ -362,9 +359,9 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         //TODO - check if caller is the bidder
         address sender = _msgSender();
         // Get active bid
-        (uint256 bidId, , , ) = getBidByBidder(_itemId, sender);
+        Bid memory bid = getBidByBidder(_itemId, sender);
 
-        _cancelBid(bidId, _itemId, sender);
+        _cancelBid(bid.id, _itemId, sender);
     }
 
     /**
@@ -404,8 +401,8 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
     {
         uint256 bidId = bidIdByItemAndBidder[_itemId][_bidder];
 
-        (, address bidder, , ) = getBidByItem(_itemId, bidId);
-        if (_bidder == bidder) {
+        Bid memory bid = getBidByItem(_itemId, bidId);
+        if (_bidder == bid.bidder) {
             return true;
         }
         return false;
@@ -424,16 +421,11 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
     function getBidByBidder(uint256 _itemId, address _bidder)
         public
         view
-        returns (
-            uint256 bidId,
-            address bidder,
-            uint256 price,
-            uint256 expiresAt
-        )
+        returns (Bid memory bid)
     {
-        bidId = bidIdByItemAndBidder[_itemId][_bidder];
-        (bidId, bidder, price, expiresAt) = getBidByItem(_itemId, bidId);
-        if (_bidder != bidder) {
+        uint256 bidId = bidIdByItemAndBidder[_itemId][_bidder];
+        bid = getBidByItem(_itemId, bidId);
+        if (_bidder != bid.bidder) {
             revert("Bid#getBidByBidder: BIDDER_HAS_NOT_ACTIVE_BIDS_FOR_ITEM");
         }
     }
@@ -450,15 +442,9 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
     function getBidByItem(uint256 _itemId, uint256 _bidId)
         public
         view
-        returns (
-            uint256,
-            address,
-            uint256,
-            uint256
-        )
+        returns (Bid memory bid)
     {
-        Bid memory bid = _getBid(_itemId, _bidId);
-        return (bid.id, bid.bidder, bid.price, bid.expiresAt);
+        return _getBid(_itemId, _bidId);
     }
 
     /**

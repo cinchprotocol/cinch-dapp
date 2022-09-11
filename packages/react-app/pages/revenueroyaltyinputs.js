@@ -1,20 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Web3Consumer } from "../helpers/Web3Context";
 import "antd/dist/antd.css";
-import { InputNumber, Select, Modal, Form, Input } from "antd";
+import { InputNumber, Select, Modal, Form, Input, message } from "antd";
 const { Option } = Select;
 import { useRouter } from "next/router";
+import moment from "moment";
 
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
+import { insertOneWith } from "../helpers/mongodbhelper";
 
 function RevenueRoyaltyInputs({ web3 }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formValues, setFromValues] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!web3 || !web3.account) {
+      message.warning("Please connect your wallet first", 5, () => {
+        router.push("/dashboard");
+      });
+    }
+  }, [web3]);
 
   const onFormFinish = values => {
     console.log("Success:", values);
@@ -30,9 +40,29 @@ function RevenueRoyaltyInputs({ web3 }) {
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
-    router.push("/dashboard");
+  const handleOk = async () => {
+    try {
+      const doc = {
+        createdBy: web3?.address,
+        createdAt: moment().format(),
+        updatedBy: web3?.address,
+        updatedAt: moment().format(),
+        isActive: true,
+        //name: formValues?.name,
+        //description: formValues?.description,
+        feeCollectorAddress: formValues?.feeCollectorAddress,
+        multiSigAddress: formValues?.multiSigAddress,
+        revenueProportion: parseFloat(formValues?.revenueProportion),
+        expiryAmount: formValues?.expiryAmount,
+        contact: formValues?.contact,
+        //metadata: {},
+      };
+      await insertOneWith("revenueStreamForSale", doc);
+      setIsModalVisible(false);
+      router.push("/dashboard");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleCancel = () => {
@@ -105,12 +135,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                   },
                 ]}
               >
-                <InputNumber
-                  style={{
-                    width: "100%",
-                  }}
-                  placeholder="%"
-                />
+                <Input />
               </Form.Item>
               <p>% of revenue traded as a royalty</p>
 
@@ -124,12 +149,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                   },
                 ]}
               >
-                <InputNumber
-                  style={{
-                    width: "100%",
-                  }}
-                  placeholder="Amount"
-                />
+                <Input />
               </Form.Item>
               <p>Royalty will end after this amount of revenue</p>
 

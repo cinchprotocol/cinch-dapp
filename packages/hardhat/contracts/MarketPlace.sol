@@ -216,9 +216,15 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         require(_price > 0, "Bid#_placeBid: PRICE_MUST_BE_GT_0");
 
         MarketItem memory item = idToMarketItem[_itemId];
+
+        require(
+            _itemId > 0 || _itemId <= _itemIds.current(),
+            "Bid#placeBid: INVALID_ITEM"
+        );
+
         require(
             item.price == msg.value,
-            "Bid#acceptBid: PRICE_SHOULD_BE_GTE_ASKING_PRICE"
+            "Bid#placeBid: PRICE_SHOULD_BE_GTE_ASKING_PRICE"
         );
 
         require(
@@ -400,7 +406,9 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         returns (bool)
     {
         uint256 bidId = bidIdByItemAndBidder[_itemId][_bidder];
-
+        if (bidId == 0) {
+            return false;
+        }
         Bid memory bid = getBidByItem(_itemId, bidId);
         if (_bidder == bid.bidder) {
             return true;

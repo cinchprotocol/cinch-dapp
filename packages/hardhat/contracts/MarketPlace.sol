@@ -199,9 +199,9 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
      * Users can have only one bid per item.
      * If the user places a bid and has an active bid for that item,
      * the older one will be replaced with the new one.
-    * @param _itemId - uint256 of the item id
+     * @param _itemId - uint256 of the item id
      * @param _price - uint256 of the price for the bid
-       * @param _revenueReceiver - address where revenue will be forwarded
+     * @param _revenueReceiver - address where revenue will be forwarded
      * @param _duration - uint256 of the duration in seconds for the bid
    
      */

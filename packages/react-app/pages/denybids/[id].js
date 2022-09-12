@@ -3,16 +3,26 @@ import { Web3Consumer } from "../../helpers/Web3Context";
 import "antd/dist/antd.css";
 import { Select, Form, Input } from "antd";
 import { useRouter } from "next/router";
+import * as Realm from "realm-web";
+import _ from "lodash";
 
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-import { getAllBidIds, getBidData } from "/components/MockData";
+//import { getAllBidIds, getBidData } from "/components/MockData";
+import { getAllBidProposalIds, getOneBidProposalWith } from "../../helpers/mongodbhelper";
 
 export async function getStaticPaths() {
-  const paths = getAllBidIds();
+  const ids = await getAllBidProposalIds();
+  const paths = ids?.map(id => {
+    return {
+      params: {
+        id: id,
+      },
+    };
+  });
   return {
     paths,
     fallback: false,
@@ -20,7 +30,8 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const data = getBidData(params.id);
+  const objId = Realm.BSON.ObjectId.createFromHexString(params.id);
+  const data = _.omit(await getOneBidProposalWith({ _id: objId }), ["_id"]);
   return {
     props: {
       data,

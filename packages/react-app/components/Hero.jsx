@@ -43,8 +43,8 @@ export function Hero() {
               {/* Illustration taken from Lucid Illustrations: https://lucid.pixsellz.io/ */}
               <img
                 className="w-full lg:absolute lg:inset-y-0 lg:left-0 lg:h-full lg:w-auto lg:max-w-none"
-                // src="/hero.jpg"
-                src="/testHero.svg"
+                 src="/hero4.png"
+                //src="/testHero.svg"
                 alt=""
               />
             </div>

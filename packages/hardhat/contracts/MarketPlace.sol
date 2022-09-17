@@ -506,4 +506,26 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
     function pause() external onlyOwner {
         _pause();
     }
+
+    function createTestItem1() public payable {
+        createMarketItem(
+            "Test Item 1",
+            0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,
+            0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,
+            50,
+            1500,
+            1500
+        );
+    }
+
+    function createTestItem2() public payable {
+        createMarketItem(
+            "Test Item 2",
+            0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,
+            0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,
+            50,
+            1500,
+            1500
+        );
+    }
 }

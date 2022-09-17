@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 function MyApp({ Component, pageProps }) {
   const prevTheme = useRef("light");
   const router = useRouter();
-  const defaultWeb3Provider = process.env.DEFAULT_WEB3_PROVIDER || "rinkeby";
+  const defaultWeb3Provider = process.env.DEFAULT_WEB3_PROVIDER || "localhost";
 
   const themes = {
     dark: `/css/dark-theme.css`,

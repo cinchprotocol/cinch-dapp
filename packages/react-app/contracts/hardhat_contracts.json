@@ -5,7 +5,7 @@
       "chainId": "31337",
       "contracts": {
         "MarketPlace": {
-          "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+          "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
           "abi": [
             {
               "inputs": [
@@ -994,42 +994,6 @@
                 }
               ],
               "name": "transferOwnership",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            }
-          ]
-        },
-        "YourContract": {
-          "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-          "abi": [
-            {
-              "inputs": [],
-              "stateMutability": "nonpayable",
-              "type": "constructor"
-            },
-            {
-              "inputs": [],
-              "name": "purpose",
-              "outputs": [
-                {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "string",
-                  "name": "newPurpose",
-                  "type": "string"
-                }
-              ],
-              "name": "setPurpose",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"

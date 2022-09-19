@@ -25,11 +25,9 @@ function Dashboard({ web3 }) {
       <Container>
         <main>
 
-          <div className="mt-10">
-            <div className="text-left pb-2 border-b border-gray-200">
-              <h2>Dashboard</h2>
-            </div>
-            <div className="bg-white p-10">
+          <div className="mt-10 h-screen">
+            <HeaderText01>Dashboard</HeaderText01>
+            <div className="bg-slate-50 rounded-lg p-10 min-h-[50%]">
               {address ? (
                 <div>
                   <Tabs defaultActiveKey="1" onChange={callback}>

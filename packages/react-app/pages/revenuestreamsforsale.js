@@ -8,20 +8,20 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-//import { revenueStreamForSaleDatas } from "/components/MockData";
-import { getAllRevenueStreamForSale } from "../helpers/mongodbhelper";
+// import { getAllRevenueStreamForSale } from "../helpers/mongodbhelper";
+import { getAllRevenueStreamForSale } from "../helpers/marketplacehelper";
 
 function RevenueStreamsForSale({ web3 }) {
   const [dataSource, setDataSource] = useState([]);
 
   const reloadData = async () => {
-    const data = await getAllRevenueStreamForSale();
+    const data = await getAllRevenueStreamForSale(web3);
     setDataSource(data);
   };
 
   useEffect(() => {
     reloadData();
-  }, []);
+  }, [web3]);
 
   const columns = [
     {

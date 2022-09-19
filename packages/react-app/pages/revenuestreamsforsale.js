@@ -18,6 +18,11 @@ function RevenueStreamsForSale({ web3 }) {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (name, record) => {
+        const { id } = record;
+        const targetRoute = `/revenuestreams/${id}`;
+        return <a href={targetRoute} class="no-underline hover:underline font-bold text-lg">{name}</a>
+      },
     },
     {
       title: "Description",
@@ -31,9 +36,7 @@ function RevenueStreamsForSale({ web3 }) {
         const { id } = record;
         const targetRoute = `/revenuestreams/${id}`;
         return (
-          <Space size="middle">
-            <Button href={targetRoute}>Select</Button>
-          </Space>
+          <Button className="text-white" href={targetRoute}>Select</Button>
         );
       },
     },

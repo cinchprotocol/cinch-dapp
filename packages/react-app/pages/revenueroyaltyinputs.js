@@ -17,7 +17,9 @@ function RevenueRoyaltyInputs({ web3 }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formValues, setFromValues] = useState(null);
   const router = useRouter();
+  const marketPlaceContract = web3?.writeContracts["MarketPlace"];
 
+  /*
   useEffect(() => {
     if (!web3 || !web3.account) {
       message.warning("Please connect your wallet first", 5, () => {
@@ -25,6 +27,7 @@ function RevenueRoyaltyInputs({ web3 }) {
       });
     }
   }, [web3]);
+  */
 
   const onFormFinish = values => {
     console.log("Success:", values);
@@ -42,6 +45,7 @@ function RevenueRoyaltyInputs({ web3 }) {
 
   const handleOk = async () => {
     try {
+      /*
       const doc = {
         createdBy: web3?.address,
         createdAt: moment().format(),
@@ -50,16 +54,37 @@ function RevenueRoyaltyInputs({ web3 }) {
         isActive: true,
         name: formValues?.name || "Revenue Royalty",
         description: formValues?.description || "Description",
-        feeCollectorAddress: formValues?.feeCollectorAddress,
+        feeCollectorAddress: formValues?.feeCollectorContractAddress,
         multiSigAddress: formValues?.multiSigAddress,
         revenueProportion: parseFloat(formValues?.revenueProportion),
         expiryAmount: formValues?.expiryAmount,
         contact: formValues?.contact,
         //metadata: {},
       };
+      console.log(`📝 doc:`, doc);
       await insertOneWith("revenueStreamForSale", doc);
-      setIsModalVisible(false);
-      router.push("/dashboard");
+      */
+
+      //TODO: add UI for price
+      const txRes = await web3?.tx(
+        marketPlaceContract?.createMarketItem(
+          formValues?.name || "Revenue Royalty",
+          formValues?.feeCollectorContractAddress,
+          formValues?.multiSigAddress,
+          formValues?.revenueProportion,
+          "9999",
+          formValues?.expiryAmount,
+          {},
+        ),
+        res => {
+          console.log("📡 Transaction createMarketItem:", res);
+          if (res.status == 1) {
+            setIsModalVisible(false);
+            router.push("/dashboard");
+          }
+        },
+      );
+      console.log("txRes", txRes);
     } catch (err) {
       console.log(err);
     }

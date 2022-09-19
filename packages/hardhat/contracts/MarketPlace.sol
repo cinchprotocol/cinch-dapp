@@ -40,6 +40,14 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         return idToMarketItem[marketItemId];
     }
 
+    function getMarketItemCount()
+        public
+        view
+        returns (uint256)
+    {
+        return _itemIds.current();
+    }
+
     function createMarketItem(
         string memory name,
         address feeCollector,

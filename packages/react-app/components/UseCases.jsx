@@ -6,8 +6,8 @@ export function UseCases() {
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="lg:text-center">
                     <h2 class="text-lg font-semibold text-blue-600">Use Case</h2>
-                    <p class="mt-2 text-3xl font-bold leading-8 tracking-tight text-gray-900 sm:text-4xl">Why use revenue tokens?</p>
-                    <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Lorem ipsum dolor sit amet consect adipisicing elit. Possimus magnam voluptatum cupiditate veritatis in accusamus quisquam.</p>
+                    <span class="mt-2 text-3xl font-bold leading-8 tracking-tight text-gray-900 sm:text-4xl">Why use revenue tokens?</span>
+                    <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Tokens that derive value from revenue have advantages over native tokens.</p>
                 </div>
 
                 <div class="mt-10">
@@ -22,7 +22,7 @@ export function UseCases() {
                                 <p class="ml-16 text-lg font-medium leading-6 text-gray-900">Non-dilutive to native tokens (i.e. equity)
                                 </p>
                             </dt>
-                            <dd class="mt-2 ml-16 text-base text-gray-500">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.</dd>
+                            <dd class="mt-2 ml-16 text-base text-gray-500">Issuing revenue tokens does not reduce the entire community’s ownership in the project.</dd>
                         </div>
 
                         <div class="relative">
@@ -34,7 +34,7 @@ export function UseCases() {
                                 </div>
                                 <p class="ml-16 text-lg font-medium leading-6 text-gray-900">Compensation mechanism for people who don’t share the long-term vision.</p>
                             </dt>
-                            <dd class="mt-2 ml-16 text-base text-gray-500">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.</dd>
+                            <dd class="mt-2 ml-16 text-base text-gray-500">A new way to compensate stakeholders that cause sell pressure.</dd>
                         </div>
 
                         <div class="relative">
@@ -46,7 +46,7 @@ export function UseCases() {
                                 </div>
                                 <p class="ml-16 text-lg font-medium leading-6 text-gray-900"> Make untradable assets tradable (i.e., royalties).</p>
                             </dt>
-                            <dd class="mt-2 ml-16 text-base text-gray-500">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.</dd>
+                            <dd class="mt-2 ml-16 text-base text-gray-500">Turn stranded assets into tradeable tokens used to reduce risk.</dd>
                         </div>
 
                         <div class="relative">
@@ -58,7 +58,7 @@ export function UseCases() {
                                 </div>
                                 <p class="ml-16 text-lg font-medium leading-6 text-gray-900"> Create unique incentives to attract large customers</p>
                             </dt>
-                            <dd class="mt-2 ml-16 text-base text-gray-500">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.</dd>
+                            <dd class="mt-2 ml-16 text-base text-gray-500">A differentiated set of incentives for institutional capital.</dd>
                         </div>
                     </dl>
                 </div>

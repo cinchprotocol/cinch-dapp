@@ -45,12 +45,10 @@ function RevenueRoyaltyInputs({ web3 }) {
       <DAppHeader web3={web3} />
       <main>
         <div className="flex flex-1 flex-col h-screen w-full items-center">
-          <div className="text-center" style={{ margin: 32 }}>
+          <div className="" style={{ margin: 32 }}>
             <Form
               name="basic"
-              labelCol={{
-                span: 8,
-              }}
+
               wrapperCol={{
                 span: 24,
               }}
@@ -61,11 +59,14 @@ function RevenueRoyaltyInputs({ web3 }) {
               onFinishFailed={onFormFinishFailed}
               autoComplete="off"
               requiredMark={false}
-              labelWrap
+              layout="verticle"
+              size="large"
             >
               <Form.Item
                 label="Fee_collector contract address"
                 name="feeCollectorContractAddress"
+                extra="Enter the contract address that consolidates fees(The revenue royalty will be implemented by changing
+                  the destination wallet address of this contract)"
                 rules={[
                   {
                     required: true,
@@ -76,14 +77,12 @@ function RevenueRoyaltyInputs({ web3 }) {
               >
                 <Input />
               </Form.Item>
-              <p>
-                Enter the contract address that consolidates fees(The revenue royalty will be implemented by changing
-                the destination wallet address of this contract)
-              </p>
+
 
               <Form.Item
                 label="Multi-sig_address"
                 name="multiSigAddress"
+                extra="Contrat that controls the inputs to the fee_collector contract"
                 rules={[
                   {
                     required: true,
@@ -93,11 +92,11 @@ function RevenueRoyaltyInputs({ web3 }) {
               >
                 <Input />
               </Form.Item>
-              <p>Contrat that controls the inputs to the fee_collector contract</p>
 
               <Form.Item
                 label="Revenue_proportion"
                 name="revenueProportion"
+                extra="% of revenue traded as a royalty"
                 rules={[
                   {
                     required: true,
@@ -112,11 +111,12 @@ function RevenueRoyaltyInputs({ web3 }) {
                   placeholder="%"
                 />
               </Form.Item>
-              <p>% of revenue traded as a royalty</p>
+
 
               <Form.Item
                 label="Expiry_amount"
                 name="expiryAmount"
+                extra="Royalty will end after this amount of revenue"
                 rules={[
                   {
                     required: true,
@@ -131,11 +131,13 @@ function RevenueRoyaltyInputs({ web3 }) {
                   placeholder="Amount"
                 />
               </Form.Item>
-              <p>Royalty will end after this amount of revenue</p>
+
 
               <Form.Item
                 label="Contact information (optional)"
                 name="contactInformation"
+                extra="Enter your preferred contact information to receive notifications on the status of your royalty listing,
+                its implementation, and its performance"
                 rules={[
                   {
                     required: false,
@@ -146,10 +148,7 @@ function RevenueRoyaltyInputs({ web3 }) {
               >
                 <Input />
               </Form.Item>
-              <p>
-                Enter your preferred contact information to receive notifications on the status of your royalty listing,
-                its implementation, and its performance
-              </p>
+
 
               <Form.Item
                 wrapperCol={{

@@ -170,18 +170,47 @@ function RevenueRoyaltyInputs({ web3 }) {
               </div>
 
               <Modal
-                title="Revenue royalty listing"
+                title=""
                 visible={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
                 okText="Confirm list revenue royalty"
+                width={800}
               >
-                <p>Summary</p>
-                <p>feeCollectorContractAddress {formValues?.feeCollectorContractAddress}</p>
-                <p>multiSigAddress {formValues?.multiSigAddress}</p>
-                <p>revenueProportion {formValues?.revenueProportion}</p>
-                <p>expiryAmount {formValues?.expiryAmount}</p>
-                <p>contactInformation {formValues?.contactInformation}</p>
+
+                <div>
+                  <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-xl font-medium leading-6 text-gray-900">Review listing Information</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Please verify details, this helps avoiding any delay. </p>
+                  </div>
+                  <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+                    <dl class="sm:divide-y sm:divide-gray-200">
+                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Fee Collector Contract Address</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.feeCollectorContractAddress}</dd>
+                      </div>
+                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Multi-Sig Address</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.multiSigAddress}</dd>
+                      </div>
+                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Revenue Proportion</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.revenueProportion}</dd>
+                      </div>
+                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Expiry Amount</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.expiryAmount}</dd>
+                      </div>
+                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Contact Information</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.contactInformation}</dd>
+                      </div>
+
+                    </dl>
+                  </div>
+                </div>
+
+
               </Modal>
             </div>
           </div>

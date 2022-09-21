@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Web3Consumer } from "../../helpers/Web3Context";
 import "antd/dist/antd.css";
+import { Container } from "/components/Container";
 import { useRouter } from "next/router";
 import * as Realm from "realm-web";
 import _ from "lodash";
@@ -126,9 +127,9 @@ function RevenueStream({ web3, data }) {
       <DAppHeader web3={web3} />
       <main>
         <div>
-          <div>
+          <Container>
             {/* info */}
-            <div className="max-w-2xl mx-auto pt-10 pb-16 px-4 bg-slate-50 rounded-lg shadow mb-10 sm:px-6 lg:max-w-7xl lg:pt-10 lg:pb-24 lg:px-8 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr]">
+            <div className="pt-10 pb-16 px-4 bg-slate-50 rounded-lg shadow mb-10 sm:px-6 lg:pt-10 lg:pb-24 lg:px-8 lg:grid lg:grid-cols-4 lg:grid-rows-[auto,auto,1fr]">
               <div className="lg:col-span-2 lg:pr-8">
                 <div className="flex justify-start">
                   <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
@@ -178,9 +179,9 @@ function RevenueStream({ web3, data }) {
               </div>
 
               {/* BID */}
-              <div className="ml-5 mt-4 lg:mt-0 lg:row-span-3 shadow-2xl p-10 ">
+              <div className="mx-5 mt-4 lg:mt-0 lg:col-span-2 shadow-2xl p-10 ">
                 <div>
-                  <h3 className="text-xl text-center text-gray-900">Place Bid</h3>
+                  <h3 className="text-xl text-center font-semibold text-gray-900">Place Bid</h3>
                   <Form
                     name="basic"
                     wrapperCol={{
@@ -195,6 +196,7 @@ function RevenueStream({ web3, data }) {
                     labelWrap
                     layout="verticle"
                     requiredMark="required"
+                    size="large"
                   >
                     <Form.Item
                       label="Price"
@@ -241,7 +243,7 @@ function RevenueStream({ web3, data }) {
 
 
                     <Form.Item>
-                      <Button className="w-full" type="primary" htmlType="submit">
+                      <Button className="w-full" htmlType="submit">
                         Review Bid
                       </Button>
                     </Form.Item>
@@ -279,7 +281,7 @@ function RevenueStream({ web3, data }) {
                 </div>
               </div>
             </div>
-          </div>
+          </Container>
         </div>
       </main>
       <Footer />

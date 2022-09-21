@@ -26,10 +26,7 @@ function MyApp({ Component, pageProps }) {
       <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme.current}>
         <>
           <Head>
-            <link
-              rel="icon"
-              href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏗</text></svg>"
-            />
+            <link rel="icon" type="image/x-icon" href="cinch_logo.png"></link>
           </Head>
           {router?.pathname === "/" ? null : <NetworkDisplay />}
           {router?.pathname === "/" ? null : <DevUI />}

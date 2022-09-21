@@ -1,61 +1,66 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { TrendingDownIcon, CurrencyDollarIcon, AdjustmentsIcon, ChartSquareBarIcon } from '@heroicons/react/outline'
 import { CheckIcon as CheckIconSolid, ChevronDownIcon } from '@heroicons/react/solid'
-const tiers = [
-    {
-        name: 'Value Token',
-        href: '#',
-        description: 'All the basics for starting a new business',
-        features: [
-            'Issue value tokens to liquidity providers',
-            'Issue value tokens as bounty rewards',
-            'Issue value tokens to part-time contributors',
-            'Issue value tokens to DAO contributors',
-            'Issue value tokens to governance participants and voters'
-        ],
-    },
-    {
-        name: 'Royalty Token',
-        href: '#',
-        description: 'All the basics for starting a new business',
-        features: [
-            'Issue royalty tokens to potential institutional customers',
-            'Temporary fee reimbursements for new users',
-            'Time-bound revenue-share for next 100 customers',
-            'Issue revenue-share tokens as a reward for referrals',
-            'Reward integration partners with revenue-share tokens'
-        ],
-    }
-]
+
 export function UseCases() {
     return (
-        <div className="bg-gray-50 pb-20">
-            <div className="max-w-7xl mx-auto pt-20 px-4 sm:px-6 lg:px-8">
-                <div className="sm:flex sm:flex-col sm:align-center">
-                    <h1 className="text-4xl tracking-tight font-bold text-gray-900 sm:text-center">Use Cases</h1>
-                    {/* <p className="mt-5 text-xl text-gray-500 sm:text-center">
-                        Start building for free, then add a site plan to go live. Account plans unlock additional features.
-                    </p> */}
+        <div className="bg-slate-50 py-12">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-aos="fade-up">
+                <div class="lg:text-center">
+                    <h2 class="text-lg font-semibold text-blue-600">Use Case</h2>
+                    <span class="mt-2 text-3xl font-bold leading-8 tracking-tight text-gray-900 sm:text-4xl">Why use revenue tokens?</span>
+                    <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Tokens that derive value from revenue have advantages over native tokens.</p>
                 </div>
-                <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10">
-                    {tiers.map((tier) => (
-                        <div key={tier.name} className="rounded-xl shadow-lg divide-y divide-gray-200 bg-white">
-                            <div className="p-10">
-                                {/* <h2 className="text-2xl leading-6 font-medium text-gray-900">{tier.name}</h2> */}
-                                <h2 className="text-2xl leading-6 text-blue-600 font-semibold">{tier.name}</h2>
-                                {/* <p className="mt-4 text-sm text-gray-500">{tier.description}</p> */}
-                                <ul role="list" className="mt-6 space-y-4">
-                                    {tier.features.map((feature) => (
-                                        <li key={feature} className="flex space-x-3">
-                                            <CheckIconSolid className="flex-shrink-0 h-5 w-5 text-green-500" aria-hidden="true" />
-                                            <span className="text-base text-gray-600">{feature}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
 
+                <div class="mt-10">
+                    <dl class="space-y-10 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10 md:space-y-0">
+                        <div class="relative">
+                            <dt>
+                                <div class="absolute flex h-12 w-12 items-center justify-center rounded-md bg-blue-500 text-white">
+                                    <svg class="absolute h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                </div>
+                                <p class="ml-16 text-lg font-medium leading-6 text-gray-900">Non-dilutive to native tokens (i.e. equity)
+                                </p>
+                            </dt>
+                            <dd class="mt-2 ml-16 text-base text-gray-500">Issuing revenue tokens does not reduce the entire community’s ownership in the project.</dd>
                         </div>
-                    ))}
+
+                        <div class="relative">
+                            <dt>
+                                <div class="absolute flex h-12 w-12 items-center justify-center rounded-md bg-blue-500 text-white">
+                                    <svg class="absolute h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                </div>
+                                <p class="ml-16 text-lg font-medium leading-6 text-gray-900">Compensation mechanism for people who don’t share the long-term vision.</p>
+                            </dt>
+                            <dd class="mt-2 ml-16 text-base text-gray-500">A new way to compensate stakeholders that cause sell pressure.</dd>
+                        </div>
+
+                        <div class="relative">
+                            <dt>
+                                <div class="absolute flex h-12 w-12 items-center justify-center rounded-md bg-blue-500 text-white">
+                                    <svg class="absolute h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                </div>
+                                <p class="ml-16 text-lg font-medium leading-6 text-gray-900"> Make untradable assets tradable (i.e., royalties).</p>
+                            </dt>
+                            <dd class="mt-2 ml-16 text-base text-gray-500">Turn stranded assets into tradeable tokens used to reduce risk.</dd>
+                        </div>
+
+                        <div class="relative">
+                            <dt>
+                                <div class="absolute flex h-12 w-12 items-center justify-center rounded-md bg-blue-500 text-white">
+                                    <svg class="absolute h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                </div>
+                                <p class="ml-16 text-lg font-medium leading-6 text-gray-900"> Create unique incentives to attract large customers</p>
+                            </dt>
+                            <dd class="mt-2 ml-16 text-base text-gray-500">A differentiated set of incentives for institutional capital.</dd>
+                        </div>
+                    </dl>
                 </div>
             </div>
 

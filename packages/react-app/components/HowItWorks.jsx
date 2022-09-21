@@ -54,7 +54,7 @@ function classNames(...classes) {
 
 export function HowItWorks() {
     return (
-        <div className="py-16 xl:py-36 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
+        <div className="py-16 xl:py-36 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden" data-aos="fade-up">
             <div className="max-w-max lg:max-w-7xl mx-auto">
                 <div className="relative z-10 mb-8 md:mb-2 md:px-6">
                     <div className="text-base max-w-prose lg:max-w-none">
@@ -114,7 +114,7 @@ export function HowItWorks() {
                             Cinch allows DAOs and projects to create ERC-20 tokens that represent the right to receive future revenue. Owners of these tokens will receive a fixed percentage of revenue until a maximum revenue is forwarded. The revenue-share will be implemented according to your preferred method, based on the use case.
                         </p>
                         <div className="mt-10 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10">
-                            <div className="text-gray-500 lg:max-w-none bg-gray-50 p-10 rounded-xl shadow-lg">
+                            <div className="text-gray-500 lg:max-w-none bg-slate-50 p-10 rounded-2xl shadow-md">
                                 <h2 className="text-2xl leading-6 text-blue-600 font-semibold">Value Token</h2>
                                 <p className='mt-5 text-base'>
                                     A promise to pay that has instant liquidity.
@@ -144,7 +144,7 @@ export function HowItWorks() {
                                     ))}
                                 </dl>
                             </div>
-                            <div className="text-gray-500 lg:mt-0 bg-gray-50 p-10 rounded-xl shadow-lg">
+                            <div className="text-gray-500 lg:mt-0 bg-slate-50 p-10 rounded-2xl shadow-md">
                                 <h2 className="text-2xl leading-6 text-blue-600 font-semibold">Royalty Token</h2>
                                 <p className='mt-5 text-base'>
                                     Recurring revenue-share payments.

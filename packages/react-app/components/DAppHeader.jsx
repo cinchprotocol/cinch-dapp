@@ -85,21 +85,24 @@ export function DAppHeader(props) {
       <Container>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
-            <Logo className="h-10 w-auto" />
-            <Button href="/dapp" color="blue">
-              <span>Home</span>
-            </Button>
-            <Button href="/dashboard" color="blue">
-              <span>Dashboard</span>
-            </Button>
+            <Link href="#" aria-label="Home">
+              <Logo className="h-10 w-auto" />
+            </Link>
+            <div class="ml-10 space-x-8 sm:block md:block lg:block">
+              <NavLink href="revenuestreamsforsale">Buy Revenue</NavLink>
+            </div>
+            <div class="ml-10 space-x-8 md:block lg:block">
+              <NavLink href="revenuesharemechanism">Sell Revenue</NavLink>
+            </div>
+            <div class="ml-10 space-x-8 lg:block">
+              <NavLink href="dashboard">Dashboard</NavLink>
+            </div>
           </div>
-        </nav>
-        <div className="flex flex-1 justify-between items-center">
-          <div className="mr-6">
+          <div className="flex items-center gap-x-5 md:gap-x-8">
             <Account {...props?.web3} />
           </div>
-        </div>
+        </nav>
       </Container>
-    </header>
+    </header>   
   );
 }

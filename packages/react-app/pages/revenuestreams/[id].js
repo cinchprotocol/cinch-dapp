@@ -4,7 +4,7 @@ import "antd/dist/antd.css";
 import { useRouter } from "next/router";
 import * as Realm from "realm-web";
 import _ from "lodash";
-
+import { InputNumber, Select, Modal, Form, Input, message } from "antd";
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
@@ -45,6 +45,8 @@ export async function getStaticProps({ params }) {
 function RevenueStream({ web3, data }) {
   //console.log("web3", web3, "data", data);
   const [data2, setData2] = useState(data);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [formValues, setFromValues] = useState(null);
 
   const reloadData = async () => {
     const d = await getOneRevenueStreamForSaleWith(web3, data.id);
@@ -54,6 +56,67 @@ function RevenueStream({ web3, data }) {
   useEffect(() => {
     reloadData();
   }, [web3, data]);
+
+  const onFormFinish = values => {
+    console.log("Success:", values);
+    setFromValues(values);
+    showModal();
+  };
+
+  const onFormFinishFailed = errorInfo => {
+    console.log("Failed:", errorInfo);
+  };
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = async () => {
+    try {
+      /*
+      const doc = {
+        createdBy: web3?.address,
+        createdAt: moment().format(),
+        updatedBy: web3?.address,
+        updatedAt: moment().format(),
+        targetRevenueStreamId: data2?.id,
+        targetRevenueCreatedBy: data2?.createdBy,
+        price: formValues?.price,
+        addressToReceiveRevenueShare: formValues?.addressToReceiveRevenueShare,
+        isActive: true,
+        isAccepted: false,
+        contact: formValues?.contact,
+        //metadata: {},
+      };
+      await insertOneWith("bidProposal", doc);
+      setIsModalVisible(false);
+      router.push("/dashboard");
+      */
+
+      //TODO: add UI for duration
+      const txRes = await web3?.tx(
+        marketPlaceContract?.placeBid(data2?.id, formValues?.price, formValues?.addressToReceiveRevenueShare, 86400, {
+          from: web3?.address,
+          value: formValues?.price,
+        }),
+        res => {
+          console.log("📡 Transaction placeBid:", res);
+          if (res.status == 1) {
+            setIsModalVisible(false);
+            router.push("/dashboard");
+          }
+        },
+      );
+      console.log("txRes", txRes);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
 
   const bidProposalsRoute = `/bidproposals/${data2?.id}`;
   const router = useRouter();
@@ -76,10 +139,10 @@ function RevenueStream({ web3, data }) {
                 </div>
                 <div>
                   {/* Description and details */}
-                  <h3 className="sr-only">Description</h3>
+                  <h3 className="sr-only text-gray-900">Description</h3>
 
                   <div className="space-y-6">
-                    <p className="text-base text-gray-900">
+                    <p className="text-base text-gray-600">
                       {/* {data?.description} */}
                       placeholder for the protocol description
                     </p>
@@ -117,52 +180,102 @@ function RevenueStream({ web3, data }) {
               {/* BID */}
               <div className="ml-5 mt-4 lg:mt-0 lg:row-span-3 shadow-2xl p-10 ">
                 <div>
-                  <h3 className="text-lg text-gray-900">BID</h3>
-                  <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-                    <div className="py-3 flex justify-between text-sm font-medium">
-                      <dt className="text-gray-500">BID Duration (Days)</dt>
-                      <dd className="text-gray-900">{7}</dd>
-                    </div>
+                  <h3 className="text-xl text-center text-gray-900">Place Bid</h3>
+                  <Form
+                    name="basic"
+                    wrapperCol={{
+                      span: 24,
+                    }}
+                    initialValues={{
+                      remember: true,
+                    }}
+                    onFinish={onFormFinish}
+                    onFinishFailed={onFormFinishFailed}
+                    autoComplete="off"
+                    labelWrap
+                    layout="verticle"
+                    requiredMark="required"
+                  >
+                    <Form.Item
+                      label="Price"
+                      name="price"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please input the price",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      label="Address to receive revenue-share"
+                      name="addressToReceiveRevenueShare"
+                      extra="Fee consolidator contract will forward revenue to this address"
+                      rules={[
+                        {
+                          required: true,
+                          message:
+                            "The revenue royalty will be implemented by adding this wallet address to the fee consolidator contract",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
 
-                    <div className="py-3 flex justify-between text-sm font-medium">
-                      <dt className="text-gray-500">Revenue Receiver</dt>
-                      <dd className="text-lg text-gray-900">Oxfdfdfdfdfdf</dd>
-                    </div>
+                    <Form.Item
+                      label="Contact information (optional)"
+                      name="contact"
+                      extra=" Receive notifications on the status of your royalty listing,
+                      its implementation, and its performance"
+                      rules={[
+                        {
+                          required: false,
+                          message:
+                            "Enter your preferred contact information to receive notifications on the status of your royalty listing, its implementation, and its performance",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
 
-                    <div className="py-3 flex justify-between text-sm font-medium">
-                      <dt className="text-gray-500">Implied Purchase Discount</dt>
-                      <dd className="text-lg text-gray-900">{50}</dd>
-                    </div>
 
-                    <div className="py-3 flex justify-between text-sm font-medium">
-                      <dt className="text-gray-500">Bid Price</dt>
-                      <dd className="text-lg text-gray-900">
-                        {"$" + 100 + " USD"}
-                      </dd>
-                    </div>
-                  </dl>
-                  <div class="grid place-items-center">
-                    <div class="mt-5 w-full">
-                      {/* <PercentageSlider defaultValue={50} onChange={onSliderValueChange} />
-                      <p className="font-bold text-lg">{bidAmount.toFixed(2) + " ETH"}</p>
-                    </div>
-                    <button
-                      className="w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      onClick={() => {
-                        onBidClick();
-                      }}
-                      children={"BID " + getFormatedCurrencyValue(bidAmount) + " ETH"}
-                    /> */}
-
-                      <Button
-                        onClick={() => {
-                          router.push(bidProposalsRoute);
-                        }}
-                      >
-                        Bid
+                    <Form.Item>
+                      <Button className="w-full" type="primary" htmlType="submit">
+                        Review Bid
                       </Button>
+                    </Form.Item>
+                  </Form>
+                  <Modal
+                    title=""
+                    visible={isModalVisible}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    okText="Confirm Bid"
+                    width={650}
+                  >
+
+                    <div>
+                      <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-xl font-medium leading-6 text-gray-900">Review Bid Information</h3>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500">Please verify details, this helps avoiding any delay. </p>
+                      </div>
+                      <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+                        <dl class="sm:divide-y sm:divide-gray-200">
+                          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Price</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.price}</dd>
+                          </div>
+                          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Address to receive revenue-share</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.addressToReceiveRevenueShare}</dd>
+                          </div>
+                        </dl>
+                      </div>
                     </div>
-                  </div>
+
+
+                  </Modal>
                 </div>
               </div>
             </div>

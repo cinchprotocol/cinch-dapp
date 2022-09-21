@@ -152,26 +152,28 @@ function RevenueStream({ web3, data }) {
 
                 <div className="mt-10 mb-10">
                   <div>
-                    <h3 className="text-lg text-gray-900">COLLECTION STATS</h3>
+                    {/* <h3 className="text-lg text-gray-900">COLLECTION STATS</h3> */}
                     <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
                       <div className="py-3 flex justify-between text-sm font-medium">
-                        <dt className="text-gray-500">Ratings</dt>
-                        <dd className="text-gray-900">A+</dd>
+                        <dt className="text-gray-500">Revenue proportion</dt>
+                        <dd className="text-gray-900">50%</dd>
                       </div>
                       <div className="py-3 flex justify-between text-sm font-medium">
-                        <dt className="text-gray-500">Prior Period Revnue (ETH)</dt>
+                        <dt className="text-gray-500">Expiry amount</dt>
 
                         <dd className="text-gray-900">
-                          1,00,000
+                          $1,000,000
                         </dd>
                       </div>
 
 
                       <div className="py-3 flex justify-between text-sm font-medium">
-                        <dt className="text-gray-500">Coef. of Variation</dt>
-                        <dd className="text-gray-900">
-                          {0.8}
-                        </dd>
+                        <dt className="text-gray-500">Fee collector address</dt>
+                        <dd className="text-gray-900">0xEdfdb5f2f02432F1E3271582056ECd0f884126aC</dd>
+                      </div>
+                      <div className="py-3 flex justify-between text-sm font-medium">
+                        <dt className="text-gray-500">Multi-sig address</dt>
+                        <dd className="text-gray-900">0xEdfdb5f2f02432F1E3271582056ECd0f884126aC</dd>
                       </div>
                     </dl>
                   </div>

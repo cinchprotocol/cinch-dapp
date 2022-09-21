@@ -6,6 +6,8 @@ import { DevUI, NetworkDisplay, ThemeSwitch } from "../components";
 import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import 'aos/dist/aos.css';
+import AOS from 'aos';
 
 function MyApp({ Component, pageProps }) {
   const prevTheme = useRef("light");
@@ -19,6 +21,8 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     prevTheme.current = window.localStorage.getItem("theme");
+    AOS.init({     
+    });
   }, []);
 
   return (

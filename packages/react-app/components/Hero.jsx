@@ -13,14 +13,14 @@ export function Hero() {
   return (
     <div className="pb-10 bg-slate-50">
       <Container >
-        <div className="lg:grid lg:grid-cols-12">
+        <div className="lg:grid lg:grid-cols-12" data-aos="fade-up">
           <div className="mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 sm:text-center lg:px-0 lg:text-left lg:flex lg:items-center lg:col-span-6">
 
             <div className="lg:py-24">
               <span className="block text-sm font-semibold tracking-wide text-slate-500 sm:text-base lg:text-md">
                 INTRODUCING NEXT GENERATION TOKENOMICS
               </span>
-              <h1 className="mt-4 text-4xl tracking-tight font-bold sm:mt-5 sm:text-6xl sm:tracking-tight lg:mt-6 xl:text-6xl xl:tracking-tight">
+              <h1 className="mt-2 text-4xl tracking-tight font-bold sm:text-6xl sm:tracking-tight xl:text-6xl xl:tracking-tight">
                 <span className="text-slate-900">Turn revenue streams into </span>
                 <span className="text-blue-500">revenue tokens</span>
               </h1>

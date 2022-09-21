@@ -3,7 +3,7 @@ import { CheckIcon as CheckIconSolid, ChevronDownIcon } from '@heroicons/react/s
 export function UseCases() {
     return (
         <div className="bg-slate-50 py-12">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-aos="fade-up">
                 <div class="lg:text-center">
                     <h2 class="text-lg font-semibold text-blue-600">Use Case</h2>
                     <span class="mt-2 text-3xl font-bold leading-8 tracking-tight text-gray-900 sm:text-4xl">Why use revenue tokens?</span>

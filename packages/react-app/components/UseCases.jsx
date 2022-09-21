@@ -2,7 +2,7 @@ import { CheckIcon as CheckIconSolid, ChevronDownIcon } from '@heroicons/react/s
 
 export function UseCases() {
     return (
-        <div className="bg-gray-50 py-12">
+        <div className="bg-slate-50 py-12">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="lg:text-center">
                     <h2 class="text-lg font-semibold text-blue-600">Use Case</h2>

@@ -282,6 +282,9 @@ function RevenueStream({ web3, data }) {
                   </Modal>
                 </div>
               </div>
+              <div className="mt-14 lg:col-span-4">
+              <h3 className="text-xl font-semibold text-gray-900">Offers Received</h3>
+              </div>
             </div>
           </Container>
         </div>

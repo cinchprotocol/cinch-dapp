@@ -231,8 +231,13 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         );
 
         require(
-            item.price == msg.value,
+            _price >= item.price,
             "Bid#placeBid: PRICE_SHOULD_BE_GTE_ASKING_PRICE"
+        );
+
+        require(
+            _price == msg.value,
+            "Bid#placeBid: TX_VALUE_SHOULD_BE_SAME_AS_PRICE"
         );
 
         require(

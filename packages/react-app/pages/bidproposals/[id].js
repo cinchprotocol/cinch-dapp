@@ -12,19 +12,22 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-//import { getAllRevenueStreamForSaleIds, getRevenueStreamData } from "/components/MockData";
+/*
 import {
   getAllRevenueStreamForSaleIds,
   getOneRevenueStreamForSaleWith,
   insertOneWith,
 } from "../../helpers/mongodbhelper";
+*/
+import { getOneRevenueStreamForSaleWith } from "../../helpers/marketplacehelper";
 
 export async function getStaticPaths() {
-  const ids = await getAllRevenueStreamForSaleIds();
+  // const ids = await getAllRevenueStreamForSaleIds();
+  const ids = _.range(1, 1000);
   const paths = ids.map(id => {
     return {
       params: {
-        id: id,
+        id: id.toString(),
       },
     };
   });
@@ -35,8 +38,11 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const objId = Realm.BSON.ObjectId.createFromHexString(params.id);
-  const data = _.omit(await getOneRevenueStreamForSaleWith({ _id: objId }), ["_id"]);
+  // const objId = Realm.BSON.ObjectId.createFromHexString(params.id);
+  // const data = _.omit(await getOneRevenueStreamForSaleWith({ _id: objId }), ["_id"]);
+  const data = {
+    id: params.id,
+  };
   return {
     props: {
       data,
@@ -51,13 +57,16 @@ function BidProposal({ web3, data }) {
   const [formValues, setFromValues] = useState(null);
   const router = useRouter();
 
+  const marketPlaceContract = web3?.writeContracts["MarketPlace"];
+  const [data2, setData2] = useState(data);
+  const reloadData = async () => {
+    const d = await getOneRevenueStreamForSaleWith(web3, data.id);
+    setData2(d);
+    console.log("data2", d);
+  };
   useEffect(() => {
-    if (!web3 || !web3.address) {
-      message.warning("Please connect your wallet first", 5, () => {
-        router.push("/dashboard");
-      });
-    }
-  }, [web3]);
+    reloadData();
+  }, [web3, data]);
 
   const onFormFinish = values => {
     console.log("Success:", values);
@@ -75,13 +84,14 @@ function BidProposal({ web3, data }) {
 
   const handleOk = async () => {
     try {
+      /*
       const doc = {
         createdBy: web3?.address,
         createdAt: moment().format(),
         updatedBy: web3?.address,
         updatedAt: moment().format(),
-        targetRevenueStreamId: data?.id,
-        targetRevenueCreatedBy: data?.createdBy,
+        targetRevenueStreamId: data2?.id,
+        targetRevenueCreatedBy: data2?.createdBy,
         price: formValues?.price,
         addressToReceiveRevenueShare: formValues?.addressToReceiveRevenueShare,
         isActive: true,
@@ -92,6 +102,23 @@ function BidProposal({ web3, data }) {
       await insertOneWith("bidProposal", doc);
       setIsModalVisible(false);
       router.push("/dashboard");
+      */
+
+      //TODO: add UI for duration
+      const txRes = await web3?.tx(
+        marketPlaceContract?.placeBid(data2?.id, formValues?.price, formValues?.addressToReceiveRevenueShare, 86400, {
+          from: web3?.address,
+          value: formValues?.price,
+        }),
+        res => {
+          console.log("📡 Transaction placeBid:", res);
+          if (res.status == 1) {
+            setIsModalVisible(false);
+            router.push("/dashboard");
+          }
+        },
+      );
+      console.log("txRes", txRes);
     } catch (err) {
       console.log(err);
     }

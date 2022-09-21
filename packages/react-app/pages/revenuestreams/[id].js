@@ -53,7 +53,7 @@ function RevenueStream({ web3, data }) {
 
   useEffect(() => {
     reloadData();
-  }, [web3]);
+  }, [web3, data]);
 
   const bidProposalsRoute = `/bidproposals/${data2?.id}`;
   const router = useRouter();

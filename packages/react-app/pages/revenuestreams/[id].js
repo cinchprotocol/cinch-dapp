@@ -35,12 +35,12 @@ function RevenueStream({ web3, data }) {
     <>
       <CommonHead />
       <DAppHeader web3={web3} />
-      <main>       
-        <div className="bg-white">
+      <main>
+        <div>
           <div>
             {/* info */}
-            <div className="max-w-2xl mx-auto pt-10 pb-16 px-4 sm:px-6 lg:max-w-7xl lg:pt-10 lg:pb-24 lg:px-8 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8">
-              <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
+            <div className="max-w-2xl mx-auto pt-10 pb-16 px-4 bg-slate-50 rounded-lg shadow mb-10 sm:px-6 lg:max-w-7xl lg:pt-10 lg:pb-24 lg:px-8 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr]">
+              <div className="lg:col-span-2 lg:pr-8">
                 <div className="flex justify-start">
                   <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                     {data?.name}
@@ -84,8 +84,8 @@ function RevenueStream({ web3, data }) {
                 </div>
               </div>
 
-              {/* Terms */}
-              <div className="mt-4 lg:mt-0 lg:row-span-3">
+              {/* BID */}
+              <div className="ml-5 mt-4 lg:mt-0 lg:row-span-3 shadow-2xl p-10 ">
                 <div>
                   <h3 className="text-lg text-gray-900">BID</h3>
                   <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
@@ -124,13 +124,13 @@ function RevenueStream({ web3, data }) {
                       children={"BID " + getFormatedCurrencyValue(bidAmount) + " ETH"}
                     /> */}
 
-<Button
-              onClick={() => {
-                router.push(bidProposalsRoute);
-              }}
-            >
-              Bid
-            </Button>
+                      <Button
+                        onClick={() => {
+                          router.push(bidProposalsRoute);
+                        }}
+                      >
+                        Bid
+                      </Button>
                     </div>
                   </div>
                 </div>

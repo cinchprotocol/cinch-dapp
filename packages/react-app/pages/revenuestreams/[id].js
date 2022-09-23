@@ -45,12 +45,14 @@ export async function getStaticProps({ params }) {
 
 function RevenueStream({ web3, data }) {
   //console.log("web3", web3, "data", data);
+  const marketPlaceContract = web3?.writeContracts["MarketPlace"];
   const [data2, setData2] = useState(data);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formValues, setFromValues] = useState(null);
 
   const reloadData = async () => {
     const d = await getOneRevenueStreamForSaleWith(web3, data.id);
+    console.log("d", d);
     setData2(d);
   };
 
@@ -118,7 +120,6 @@ function RevenueStream({ web3, data }) {
     setIsModalVisible(false);
   };
 
-
   const bidProposalsRoute = `/bidproposals/${data2?.id}`;
   const router = useRouter();
   return (
@@ -136,7 +137,6 @@ function RevenueStream({ web3, data }) {
                     {/* {data?.name} */}
                     Protocol Name
                   </h1>
-
                 </div>
                 <div>
                   {/* Description and details */}
@@ -156,24 +156,21 @@ function RevenueStream({ web3, data }) {
                     <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Revenue proportion</dt>
-                        <dd className="text-gray-900">50%</dd>
+                        <dd className="text-gray-900">{data2.revenueProportion}%</dd>
                       </div>
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Expiry amount</dt>
 
-                        <dd className="text-gray-900">
-                          $1,000,000
-                        </dd>
+                        <dd className="text-gray-900">{data2?.expiryAmount}</dd>
                       </div>
-
 
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Fee collector address</dt>
-                        <dd className="text-gray-900">0xEdfdb5f2f02432F1E3271582056ECd0f884126aC</dd>
+                        <dd className="text-gray-900">{data2?.feeCollectorAddress}</dd>
                       </div>
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Multi-sig address</dt>
-                        <dd className="text-gray-900">0xEdfdb5f2f02432F1E3271582056ECd0f884126aC</dd>
+                        <dd className="text-gray-900">{data2?.multiSigAddress}</dd>
                       </div>
                     </dl>
                   </div>
@@ -243,7 +240,6 @@ function RevenueStream({ web3, data }) {
                       <Input />
                     </Form.Item>
 
-
                     <Form.Item>
                       <Button className="w-full" htmlType="submit">
                         Review Bid
@@ -258,32 +254,33 @@ function RevenueStream({ web3, data }) {
                     okText="Confirm Bid"
                     width={650}
                   >
-
                     <div>
-                      <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-xl font-medium leading-6 text-gray-900">Review Bid Information</h3>
-                        <p class="mt-1 max-w-2xl text-sm text-gray-500">Please verify details, this helps avoiding any delay. </p>
+                      <div className="px-4 py-5 sm:px-6">
+                        <h3 className="text-xl font-medium leading-6 text-gray-900">Review Bid Information</h3>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                          Please verify details, this helps avoiding any delay.{" "}
+                        </p>
                       </div>
-                      <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
-                        <dl class="sm:divide-y sm:divide-gray-200">
-                          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Price</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.price}</dd>
+                      <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                        <dl className="sm:divide-y sm:divide-gray-200">
+                          <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                            <dt className="text-sm font-medium text-gray-500">Price</dt>
+                            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.price}</dd>
                           </div>
-                          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Address to receive revenue-share</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.addressToReceiveRevenueShare}</dd>
+                          <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                            <dt className="text-sm font-medium text-gray-500">Address to receive revenue-share</dt>
+                            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                              {formValues?.addressToReceiveRevenueShare}
+                            </dd>
                           </div>
                         </dl>
                       </div>
                     </div>
-
-
                   </Modal>
                 </div>
               </div>
               <div className="mt-14 lg:col-span-4">
-              <h3 className="text-xl font-semibold text-gray-900">Offers Received</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Offers Received</h3>
               </div>
             </div>
           </Container>

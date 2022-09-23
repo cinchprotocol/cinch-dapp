@@ -32,6 +32,7 @@ function RevenueRoyaltyInputs({ web3 }) {
   const onFormFinish = values => {
     console.log("Success:", values);
     setFromValues(values);
+    console.log("values", values);
     showModal();
   };
 
@@ -64,6 +65,7 @@ function RevenueRoyaltyInputs({ web3 }) {
       console.log(`📝 doc:`, doc);
       await insertOneWith("revenueStreamForSale", doc);
       */
+      console.log("formValues", formValues);
 
       //TODO: add UI for price
       const txRes = await web3?.tx(
@@ -99,16 +101,15 @@ function RevenueRoyaltyInputs({ web3 }) {
       <CommonHead />
       <DAppHeader web3={web3} />
       <header>
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-        </div>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"></div>
       </header>
       <main>
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-
-          <div class="px-4 py-8 sm:px-0">
-            <div class="p-10 rounded-lg bg-slate-50 shadow">
-              <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">Enter details to implement revenue-share</h1>
+        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="px-4 py-8 sm:px-0">
+            <div className="p-10 rounded-lg bg-slate-50 shadow">
+              <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">
+                Enter details to implement revenue-share
+              </h1>
               <div className="max-w-lg">
                 <Form
                   name="basic"
@@ -140,7 +141,6 @@ function RevenueRoyaltyInputs({ web3 }) {
                   >
                     <Input />
                   </Form.Item>
-
 
                   <Form.Item
                     label="Multi-sig address"
@@ -175,7 +175,6 @@ function RevenueRoyaltyInputs({ web3 }) {
                     />
                   </Form.Item>
 
-
                   <Form.Item
                     label="Expiry amount"
                     name="expiryAmount"
@@ -195,7 +194,6 @@ function RevenueRoyaltyInputs({ web3 }) {
                     />
                   </Form.Item>
 
-
                   <Form.Item
                     label="Contact information (optional)"
                     name="contactInformation"
@@ -212,10 +210,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                     <Input />
                   </Form.Item>
 
-
-                  <Form.Item
-
-                  >
+                  <Form.Item>
                     <Button type="primary" htmlType="submit">
                       Review details
                     </Button>
@@ -231,44 +226,49 @@ function RevenueRoyaltyInputs({ web3 }) {
                 okText="Confirm list revenue royalty"
                 width={800}
               >
-
                 <div>
-                  <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-xl font-medium leading-6 text-gray-900">Review listing Information</h3>
-                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Please verify details, this helps avoiding any delay. </p>
+                  <div className="px-4 py-5 sm:px-6">
+                    <h3 className="text-xl font-medium leading-6 text-gray-900">Review listing Information</h3>
+                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                      Please verify details, this helps avoiding any delay.{" "}
+                    </p>
                   </div>
-                  <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
-                    <dl class="sm:divide-y sm:divide-gray-200">
-                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Fee Collector Contract Address</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.feeCollectorContractAddress}</dd>
+                  <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                    <dl className="sm:divide-y sm:divide-gray-200">
+                      <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">Fee Collector Contract Address</dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                          {formValues?.feeCollectorContractAddress}
+                        </dd>
                       </div>
-                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Multi-Sig Address</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.multiSigAddress}</dd>
+                      <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">Multi-Sig Address</dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                          {formValues?.multiSigAddress}
+                        </dd>
                       </div>
-                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Revenue Proportion</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.revenueProportion}</dd>
+                      <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">Revenue Proportion</dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                          {formValues?.revenueProportion}
+                        </dd>
                       </div>
-                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Expiry Amount</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.expiryAmount}</dd>
+                      <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">Expiry Amount</dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.expiryAmount}</dd>
                       </div>
-                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Contact Information</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.contactInformation}</dd>
+                      <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">Contact Information</dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                          {formValues?.contactInformation}
+                        </dd>
                       </div>
-
                     </dl>
                   </div>
                 </div>
-
-
               </Modal>
             </div>
           </div>
-
         </div>
       </main>
 

@@ -16,6 +16,7 @@ function RevenueStreamsForSale({ web3 }) {
 
   const reloadData = async () => {
     const data = await getAllRevenueStreamForSale(web3);
+    console.log("data", data);
     setDataSource(data);
   };
 

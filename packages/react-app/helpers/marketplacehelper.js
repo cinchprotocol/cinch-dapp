@@ -1,3 +1,5 @@
+const { utils } = require("ethers");
+
 export const getAllRevenueStreamForSale = async web3 => {
   const marketPlaceContract = web3?.readContracts["MarketPlace"];
   if (!marketPlaceContract) {
@@ -6,27 +8,7 @@ export const getAllRevenueStreamForSale = async web3 => {
   const itemCount = await marketPlaceContract?.getMarketItemCount();
   const outputData = [];
   for (let i = 1; i <= itemCount; i++) {
-    const item = await marketPlaceContract?.getMarketItem(i);
-    const {
-      name,
-      price,
-      feeCollectorAddress,
-      multiSigAddress,
-      revenueProportion,
-      expiryAmount,
-      isActive = true,
-    } = item;
-    const doc = {
-      id: i,
-      key: i,
-      name,
-      price,
-      feeCollectorAddress,
-      multiSigAddress,
-      revenueProportion,
-      expiryAmount,
-      isActive,
-    };
+    const doc = await getOneRevenueStreamForSaleWith(web3, i);
     outputData.push(doc);
   }
   return outputData;
@@ -38,17 +20,16 @@ export const getOneRevenueStreamForSaleWith = async (web3, id) => {
     return {};
   }
   const item = await marketPlaceContract?.getMarketItem(id);
-  const { name, price, feeCollectorAddress, multiSigAddress, revenueProportion, expiryAmount, isActive = true } = item;
   const doc = {
     id,
     key: id,
-    name,
-    price,
-    feeCollectorAddress,
-    multiSigAddress,
-    revenueProportion,
-    expiryAmount,
-    isActive,
+    name: item?.name,
+    price: utils.formatEther(item?.price),
+    feeCollectorAddress: item?.feeCollector,
+    multiSigAddress: item?.multiSig,
+    revenueProportion: utils.formatEther(item?.revenuePct),
+    expiryAmount: utils.formatEther(item?.expAmount),
+    isActive: true,
   };
   return doc;
 };

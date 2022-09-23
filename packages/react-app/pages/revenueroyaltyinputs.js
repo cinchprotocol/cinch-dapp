@@ -98,132 +98,180 @@ function RevenueRoyaltyInputs({ web3 }) {
     <>
       <CommonHead />
       <DAppHeader web3={web3} />
+      <header>
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        </div>
+      </header>
       <main>
-        <div className="flex flex-1 flex-col h-screen w-full items-center">
-          <div className="text-center" style={{ margin: 32 }}>
-            <Form
-              name="basic"
-              labelCol={{
-                span: 8,
-              }}
-              wrapperCol={{
-                span: 24,
-              }}
-              initialValues={{
-                remember: true,
-              }}
-              onFinish={onFormFinish}
-              onFinishFailed={onFormFinishFailed}
-              autoComplete="off"
-              requiredMark={false}
-              labelWrap
-            >
-              <Form.Item
-                label="Fee_collector contract address"
-                name="feeCollectorContractAddress"
-                rules={[
-                  {
-                    required: true,
-                    message:
-                      "Enter the contract address that consolidates fees(The revenue royalty will be implemented by changing the destination wallet address of this contract)",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <p>
-                Enter the contract address that consolidates fees(The revenue royalty will be implemented by changing
-                the destination wallet address of this contract)
-              </p>
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
 
-              <Form.Item
-                label="Multi-sig_address"
-                name="multiSigAddress"
-                rules={[
-                  {
-                    required: true,
-                    message: "Contrat that controls the inputs to the fee_collector contract",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <p>Contrat that controls the inputs to the fee_collector contract</p>
+          <div class="px-4 py-8 sm:px-0">
+            <div class="p-10 rounded-lg bg-slate-50 shadow">
+              <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">Enter details to implement revenue-share</h1>
+              <div className="max-w-lg">
+                <Form
+                  name="basic"
+                  wrapperCol={{
+                    span: 24,
+                  }}
+                  initialValues={{
+                    remember: true,
+                  }}
+                  onFinish={onFormFinish}
+                  onFinishFailed={onFormFinishFailed}
+                  autoComplete="off"
+                  layout="verticle"
+                  size="large"
+                  requiredMark="required"
+                >
+                  <Form.Item
+                    label="Fee collector contract address"
+                    name="feeCollectorContractAddress"
+                    extra="Enter the contract address that consolidates fees(The revenue royalty will be implemented by changing
+                  the destination wallet address of this contract)"
+                    rules={[
+                      {
+                        required: true,
+                        message:
+                          "Enter the contract address that consolidates fees(The revenue royalty will be implemented by changing the destination wallet address of this contract)",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
 
-              <Form.Item
-                label="Revenue_proportion"
-                name="revenueProportion"
-                rules={[
-                  {
-                    required: true,
-                    message: "% of revenue traded as a royalty",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <p>% of revenue traded as a royalty</p>
 
-              <Form.Item
-                label="Expiry_amount"
-                name="expiryAmount"
-                rules={[
-                  {
-                    required: true,
-                    message: "Royalty will end after this amount of revenue",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <p>Royalty will end after this amount of revenue</p>
+                  <Form.Item
+                    label="Multi-sig address"
+                    name="multiSigAddress"
+                    extra="Contrat that controls the inputs to the fee_collector contract"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Contrat that controls the inputs to the fee_collector contract",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
 
-              <Form.Item
-                label="Contact information (optional)"
-                name="contact"
-                rules={[
-                  {
-                    required: false,
-                    message:
-                      "Enter your preferred contact information to receive notifications on the status of your royalty listing, its implementation, and its performance",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <p>
-                Enter your preferred contact information to receive notifications on the status of your royalty listing,
-                its implementation, and its performance
-              </p>
+                  <Form.Item
+                    label="Revenue proportion"
+                    name="revenueProportion"
+                    extra="% of revenue traded as a royalty"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Enter valid % number",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      style={{
+                        width: "100%",
+                      }}
+                      placeholder="%"
+                    />
+                  </Form.Item>
 
-              <Form.Item
-                wrapperCol={{
-                  offset: 8,
-                  span: 16,
-                }}
+
+                  <Form.Item
+                    label="Expiry amount"
+                    name="expiryAmount"
+                    extra="Royalty will end after this amount of revenue"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Royalty will end after this amount of revenue",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      style={{
+                        width: "100%",
+                      }}
+                      placeholder="Amount"
+                    />
+                  </Form.Item>
+
+
+                  <Form.Item
+                    label="Contact information (optional)"
+                    name="contactInformation"
+                    extra="Enter your preferred contact information to receive notifications on the status of your royalty listing,
+                its implementation, and its performance"
+                    rules={[
+                      {
+                        required: false,
+                        message:
+                          "Enter your preferred contact information to receive notifications on the status of your royalty listing, its implementation, and its performance",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+
+
+                  <Form.Item
+
+                  >
+                    <Button type="primary" htmlType="submit">
+                      Review details
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </div>
+
+              <Modal
+                title=""
+                visible={isModalVisible}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                okText="Confirm list revenue royalty"
+                width={800}
               >
-                <Button type="primary" htmlType="submit">
-                  View listing
-                </Button>
-              </Form.Item>
-            </Form>
+
+                <div>
+                  <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-xl font-medium leading-6 text-gray-900">Review listing Information</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Please verify details, this helps avoiding any delay. </p>
+                  </div>
+                  <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+                    <dl class="sm:divide-y sm:divide-gray-200">
+                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Fee Collector Contract Address</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.feeCollectorContractAddress}</dd>
+                      </div>
+                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Multi-Sig Address</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.multiSigAddress}</dd>
+                      </div>
+                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Revenue Proportion</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.revenueProportion}</dd>
+                      </div>
+                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Expiry Amount</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.expiryAmount}</dd>
+                      </div>
+                      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Contact Information</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.contactInformation}</dd>
+                      </div>
+
+                    </dl>
+                  </div>
+                </div>
+
+
+              </Modal>
+            </div>
           </div>
-          <Modal
-            title="Revenue royalty listing"
-            visible={isModalVisible}
-            onOk={handleOk}
-            onCancel={handleCancel}
-            okText="Confirm list revenue royalty"
-          >
-            <p>Summary</p>
-            <p>feeCollectorContractAddress {formValues?.feeCollectorContractAddress}</p>
-            <p>multiSigAddress {formValues?.multiSigAddress}</p>
-            <p>revenueProportion {formValues?.revenueProportion}</p>
-            <p>expiryAmount {formValues?.expiryAmount}</p>
-            <p>contact {formValues?.contact}</p>
-          </Modal>
+
         </div>
       </main>
+
       <Footer />
     </>
   );

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Web3Consumer } from "../helpers/Web3Context";
 import "antd/dist/antd.css";
 import { Table, Space } from "antd";
-
+import { Container } from "/components/Container";
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
@@ -53,16 +53,18 @@ function RevenueStreamsForSale({ web3 }) {
     <>
       <CommonHead />
       <DAppHeader web3={web3} />
-      <main>
-        <div className="flex flex-1 flex-col h-screen w-full items-center">
-          <div className="text-center" style={{ margin: 64 }}>
-            <HeaderText01>Select royalty steam</HeaderText01>
+      <Container>
+        <main>
+          <div className="mt-10 h-screen">
+            <HeaderText01>Explore royalty streams on sale</HeaderText01>
+            <div className="bg-slate-50 rounded-lg p-10 min-h-[50%]">
+              <div className="text-center">
+                <Table dataSource={dataSource} columns={columns} />
+              </div>
+            </div>
           </div>
-          <div className="text-center" style={{ margin: 64 }}>
-            <Table dataSource={dataSource} columns={columns} />
-          </div>
-        </div>
-      </main>
+        </main>
+      </Container>
       <Footer />
     </>
   );

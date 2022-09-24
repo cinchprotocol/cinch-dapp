@@ -300,7 +300,7 @@ export function Web3Provider({ children, ...props }) {
     localProvider._network &&
     localProvider._network.chainId === 31337 &&
     yourLocalBalance &&
-    ethers.utils.formatEther(yourLocalBalance) <= 0
+    ethers.utils.formatEther(yourLocalBalance) <= 100
   ) {
     faucetHint = (
       <div style={{ padding: 16 }}>
@@ -309,7 +309,7 @@ export function Web3Provider({ children, ...props }) {
           onClick={() => {
             faucetTx({
               to: address,
-              value: ethers.utils.parseEther("0.01"),
+              value: ethers.utils.parseEther("1500"),
             });
             setFaucetClicked(true);
           }}

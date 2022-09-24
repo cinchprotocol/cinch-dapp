@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Web3Consumer } from "../../helpers/Web3Context";
+import { Web3Consumer } from "../../../helpers/Web3Context";
 import "antd/dist/antd.css";
 import { Container } from "/components/Container";
 import { useRouter } from "next/router";
 import * as Realm from "realm-web";
 import _ from "lodash";
-import { InputNumber, Select, Modal, Form, Input, message } from "antd";
+import { Select, Modal, Form, Input, message, Space, Table } from "antd";
+const { utils } = require("ethers");
+
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-// import { getAllRevenueStreamForSaleIds, getOneRevenueStreamForSaleWith } from "../../helpers/mongodbhelper";
-import { getOneRevenueStreamForSaleWith } from "../../helpers/marketplacehelper";
+import {
+  getOneRevenueStreamForSaleWith,
+  getBidByBidderOfRevenueStream,
+  fetchBidsOfRevenueStream,
+} from "../../../helpers/marketplacehelper";
 
 export async function getStaticPaths() {
-  //const ids = await getAllRevenueStreamForSaleIds();
   const ids = _.range(1, 1000);
   const paths = ids.map(id => {
     return {
@@ -31,8 +35,6 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  //const objId = Realm.BSON.ObjectId.createFromHexString(params.id);
-  //const data = _.omit(await getOneRevenueStreamForSaleWith({ _id: objId }), ["_id"]);
   const data = {
     id: params.id,
   };
@@ -44,14 +46,29 @@ export async function getStaticProps({ params }) {
 }
 
 function RevenueStream({ web3, data }) {
-  //console.log("web3", web3, "data", data);
+  const marketPlaceContract = web3?.writeContracts["MarketPlace"];
   const [data2, setData2] = useState(data);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formValues, setFromValues] = useState(null);
+  const [bidDatas, setBidDatas] = useState([]);
+
+  const isRevenueStreamOwner = data2?.seller === web3?.address;
 
   const reloadData = async () => {
     const d = await getOneRevenueStreamForSaleWith(web3, data.id);
+    console.log("d", d);
     setData2(d);
+
+    let bidDatas;
+    if (isRevenueStreamOwner) {
+      bidDatas = await fetchBidsOfRevenueStream(web3, data.id);
+    } else {
+      const bd = await getBidByBidderOfRevenueStream(web3, data.id, web3?.address);
+      if (bd) {
+        bidDatas = [bd];
+      }
+    }
+    setBidDatas(bidDatas.filter(b => b.price));
   };
 
   useEffect(() => {
@@ -74,32 +91,18 @@ function RevenueStream({ web3, data }) {
 
   const handleOk = async () => {
     try {
-      /*
-      const doc = {
-        createdBy: web3?.address,
-        createdAt: moment().format(),
-        updatedBy: web3?.address,
-        updatedAt: moment().format(),
-        targetRevenueStreamId: data2?.id,
-        targetRevenueCreatedBy: data2?.createdBy,
-        price: formValues?.price,
-        addressToReceiveRevenueShare: formValues?.addressToReceiveRevenueShare,
-        isActive: true,
-        isAccepted: false,
-        contact: formValues?.contact,
-        //metadata: {},
-      };
-      await insertOneWith("bidProposal", doc);
-      setIsModalVisible(false);
-      router.push("/dashboard");
-      */
-
       //TODO: add UI for duration
       const txRes = await web3?.tx(
-        marketPlaceContract?.placeBid(data2?.id, formValues?.price, formValues?.addressToReceiveRevenueShare, 86400, {
-          from: web3?.address,
-          value: formValues?.price,
-        }),
+        marketPlaceContract?.placeBid(
+          data2?.id,
+          utils.parseEther(formValues?.price),
+          formValues?.addressToReceiveRevenueShare,
+          86400,
+          {
+            from: web3?.address,
+            value: utils.parseEther(formValues?.price),
+          },
+        ),
         res => {
           console.log("📡 Transaction placeBid:", res);
           if (res.status == 1) {
@@ -118,8 +121,40 @@ function RevenueStream({ web3, data }) {
     setIsModalVisible(false);
   };
 
+  const bidDatasColumns = [
+    {
+      title: "Bidder",
+      dataIndex: "bidder",
+      key: "bidder",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Revenue Receiver",
+      dataIndex: "revenueReceiver",
+      key: "revenueReceiver",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => {
+        const { id } = record;
+        return isRevenueStreamOwner ? (
+          <Space size="middle">
+            <Button href={`/revenuestreams/${data?.id}/acceptbids/${id}`}>Accept</Button>
+          </Space>
+        ) : (
+          <Space size="middle">
+            <Button href="/wip">Cancel</Button>
+          </Space>
+        );
+      },
+    },
+  ];
 
-  const bidProposalsRoute = `/bidproposals/${data2?.id}`;
   const router = useRouter();
   return (
     <>
@@ -136,7 +171,6 @@ function RevenueStream({ web3, data }) {
                     {/* {data?.name} */}
                     Protocol Name
                   </h1>
-
                 </div>
                 <div>
                   {/* Description and details */}
@@ -156,24 +190,21 @@ function RevenueStream({ web3, data }) {
                     <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Revenue proportion</dt>
-                        <dd className="text-gray-900">50%</dd>
+                        <dd className="text-gray-900">{data2.revenueProportion}%</dd>
                       </div>
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Expiry amount</dt>
 
-                        <dd className="text-gray-900">
-                          $1,000,000
-                        </dd>
+                        <dd className="text-gray-900">{data2?.expiryAmount}</dd>
                       </div>
-
 
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Fee collector address</dt>
-                        <dd className="text-gray-900">0xEdfdb5f2f02432F1E3271582056ECd0f884126aC</dd>
+                        <dd className="text-gray-900">{data2?.feeCollectorAddress}</dd>
                       </div>
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Multi-sig address</dt>
-                        <dd className="text-gray-900">0xEdfdb5f2f02432F1E3271582056ECd0f884126aC</dd>
+                        <dd className="text-gray-900">{data2?.multiSigAddress}</dd>
                       </div>
                     </dl>
                   </div>
@@ -243,7 +274,6 @@ function RevenueStream({ web3, data }) {
                       <Input />
                     </Form.Item>
 
-
                     <Form.Item>
                       <Button className="w-full" htmlType="submit">
                         Review Bid
@@ -258,32 +288,38 @@ function RevenueStream({ web3, data }) {
                     okText="Confirm Bid"
                     width={650}
                   >
-
                     <div>
-                      <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-xl font-medium leading-6 text-gray-900">Review Bid Information</h3>
-                        <p class="mt-1 max-w-2xl text-sm text-gray-500">Please verify details, this helps avoiding any delay. </p>
+                      <div className="px-4 py-5 sm:px-6">
+                        <h3 className="text-xl font-medium leading-6 text-gray-900">Review Bid Information</h3>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                          Please verify details, this helps avoiding any delay.{" "}
+                        </p>
                       </div>
-                      <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
-                        <dl class="sm:divide-y sm:divide-gray-200">
-                          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Price</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.price}</dd>
+                      <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                        <dl className="sm:divide-y sm:divide-gray-200">
+                          <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                            <dt className="text-sm font-medium text-gray-500">Price</dt>
+                            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.price}</dd>
                           </div>
-                          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Address to receive revenue-share</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.addressToReceiveRevenueShare}</dd>
+                          <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                            <dt className="text-sm font-medium text-gray-500">Address to receive revenue-share</dt>
+                            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                              {formValues?.addressToReceiveRevenueShare}
+                            </dd>
                           </div>
                         </dl>
                       </div>
                     </div>
-
-
                   </Modal>
                 </div>
               </div>
               <div className="mt-14 lg:col-span-4">
-              <h3 className="text-xl font-semibold text-gray-900">Offers Received</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {isRevenueStreamOwner ? "Offers Received" : "Bids Placed"}
+                </h3>
+                <div className="text-center" style={{ margin: 64 }}>
+                  <Table dataSource={bidDatas} columns={bidDatasColumns} />
+                </div>
               </div>
             </div>
           </Container>

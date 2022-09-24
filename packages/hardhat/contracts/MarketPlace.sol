@@ -187,6 +187,15 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         return bids;
     }
 
+    function fetchBidsOfItem(uint256 itemId) public view returns (Bid[] memory) {
+        uint256 bidCount = bidCounterByItem[itemId];
+        Bid[] memory bids = new Bid[](bidCount);
+        for (uint256 i = 0; i < bidCount; i++) {
+            bids[i] = bidsByItem[itemId][i];
+        }
+        return bids;
+    }
+
     /**
      * @dev Check if the multi-sig is the Gnosis safe
      * @param _multiSig - address of the multi-sig

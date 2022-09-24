@@ -88,14 +88,14 @@ export function DAppHeader(props) {
             <Link href="#" aria-label="Home">
               <Logo className="h-10 w-auto" />
             </Link>
-            <div class="ml-10 space-x-8 sm:block md:block lg:block">
-              <NavLink href="revenuestreamsforsale">Buy Revenue</NavLink>
+            <div className="ml-10 space-x-8 sm:block md:block lg:block">
+              <NavLink href="/revenuestreamsforsale">Buy Revenue</NavLink>
             </div>
-            <div class="ml-10 space-x-8 md:block lg:block">
-              <NavLink href="revenuesharemechanism">Sell Revenue</NavLink>
+            <div className="ml-10 space-x-8 md:block lg:block">
+              <NavLink href="/revenuesharemechanism">Sell Revenue</NavLink>
             </div>
-            <div class="ml-10 space-x-8 lg:block">
-              <NavLink href="dashboard">Dashboard</NavLink>
+            <div className="ml-10 space-x-8 lg:block">
+              <NavLink href="/dashboard">Dashboard</NavLink>
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
@@ -103,6 +103,6 @@ export function DAppHeader(props) {
           </div>
         </nav>
       </Container>
-    </header>   
+    </header>
   );
 }

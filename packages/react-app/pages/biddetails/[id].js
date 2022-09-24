@@ -40,8 +40,8 @@ export async function getStaticProps({ params }) {
 
 function BidDetail({ web3, data }) {
   console.log("web3", web3, "data", data);
-  const acceptBidsRoute = `/acceptbids/${data?.id}`;
-  const denyBidsRoute = `/denybids/${data?.id}`;
+  const acceptBidsRoute = `/wip`;
+  const denyBidsRoute = `/wip`;
   const router = useRouter();
   return (
     <>

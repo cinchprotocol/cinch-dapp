@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Web3Consumer } from "../helpers/Web3Context";
 import "antd/dist/antd.css";
-import { InputNumber, Select, Modal, Form, Input, message } from "antd";
+import { Select, Modal, Form, Input, message } from "antd";
 const { Option } = Select;
 import { useRouter } from "next/router";
 import moment from "moment";
+const { utils } = require("ethers");
 
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
@@ -18,16 +19,6 @@ function RevenueRoyaltyInputs({ web3 }) {
   const [formValues, setFromValues] = useState(null);
   const router = useRouter();
   const marketPlaceContract = web3?.writeContracts["MarketPlace"];
-
-  /*
-  useEffect(() => {
-    if (!web3 || !web3.account) {
-      message.warning("Please connect your wallet first", 5, () => {
-        router.push("/dashboard");
-      });
-    }
-  }, [web3]);
-  */
 
   const onFormFinish = values => {
     console.log("Success:", values);
@@ -73,9 +64,9 @@ function RevenueRoyaltyInputs({ web3 }) {
           formValues?.name || "Revenue Royalty",
           formValues?.feeCollectorContractAddress,
           formValues?.multiSigAddress,
-          formValues?.revenueProportion,
-          "9999",
-          formValues?.expiryAmount,
+          utils.parseEther(formValues?.revenueProportion),
+          utils.parseEther("0.001"),
+          utils.parseEther(formValues?.expiryAmount),
           {},
         ),
         res => {
@@ -167,12 +158,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                       },
                     ]}
                   >
-                    <InputNumber
-                      style={{
-                        width: "100%",
-                      }}
-                      placeholder="%"
-                    />
+                    <Input />
                   </Form.Item>
 
                   <Form.Item
@@ -186,12 +172,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                       },
                     ]}
                   >
-                    <InputNumber
-                      style={{
-                        width: "100%",
-                      }}
-                      placeholder="Amount"
-                    />
+                    <Input />
                   </Form.Item>
 
                   <Form.Item

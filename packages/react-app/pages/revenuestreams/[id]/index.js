@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Web3Consumer } from "../../helpers/Web3Context";
+import { Web3Consumer } from "../../../helpers/Web3Context";
 import "antd/dist/antd.css";
 import { Container } from "/components/Container";
 import { useRouter } from "next/router";
 import * as Realm from "realm-web";
 import _ from "lodash";
-import { InputNumber, Select, Modal, Form, Input, message } from "antd";
+import { Select, Modal, Form, Input, message, Space, Table } from "antd";
+const { utils } = require("ethers");
+
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-// import { getAllRevenueStreamForSaleIds, getOneRevenueStreamForSaleWith } from "../../helpers/mongodbhelper";
-import { getOneRevenueStreamForSaleWith } from "../../helpers/marketplacehelper";
+import {
+  getOneRevenueStreamForSaleWith,
+  getBidByBidderOfRevenueStream,
+  fetchBidsOfRevenueStream,
+} from "../../../helpers/marketplacehelper";
 
 export async function getStaticPaths() {
-  //const ids = await getAllRevenueStreamForSaleIds();
   const ids = _.range(1, 1000);
   const paths = ids.map(id => {
     return {
@@ -31,8 +35,6 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  //const objId = Realm.BSON.ObjectId.createFromHexString(params.id);
-  //const data = _.omit(await getOneRevenueStreamForSaleWith({ _id: objId }), ["_id"]);
   const data = {
     id: params.id,
   };
@@ -44,16 +46,29 @@ export async function getStaticProps({ params }) {
 }
 
 function RevenueStream({ web3, data }) {
-  //console.log("web3", web3, "data", data);
   const marketPlaceContract = web3?.writeContracts["MarketPlace"];
   const [data2, setData2] = useState(data);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formValues, setFromValues] = useState(null);
+  const [bidDatas, setBidDatas] = useState([]);
+
+  const isRevenueStreamOwner = data2?.seller === web3?.address;
 
   const reloadData = async () => {
     const d = await getOneRevenueStreamForSaleWith(web3, data.id);
     console.log("d", d);
     setData2(d);
+
+    let bidDatas;
+    if (isRevenueStreamOwner) {
+      bidDatas = await fetchBidsOfRevenueStream(web3, data.id);
+    } else {
+      const bd = await getBidByBidderOfRevenueStream(web3, data.id, web3?.address);
+      if (bd) {
+        bidDatas = [bd];
+      }
+    }
+    setBidDatas(bidDatas.filter(b => b.price));
   };
 
   useEffect(() => {
@@ -76,32 +91,18 @@ function RevenueStream({ web3, data }) {
 
   const handleOk = async () => {
     try {
-      /*
-      const doc = {
-        createdBy: web3?.address,
-        createdAt: moment().format(),
-        updatedBy: web3?.address,
-        updatedAt: moment().format(),
-        targetRevenueStreamId: data2?.id,
-        targetRevenueCreatedBy: data2?.createdBy,
-        price: formValues?.price,
-        addressToReceiveRevenueShare: formValues?.addressToReceiveRevenueShare,
-        isActive: true,
-        isAccepted: false,
-        contact: formValues?.contact,
-        //metadata: {},
-      };
-      await insertOneWith("bidProposal", doc);
-      setIsModalVisible(false);
-      router.push("/dashboard");
-      */
-
       //TODO: add UI for duration
       const txRes = await web3?.tx(
-        marketPlaceContract?.placeBid(data2?.id, formValues?.price, formValues?.addressToReceiveRevenueShare, 86400, {
-          from: web3?.address,
-          value: formValues?.price,
-        }),
+        marketPlaceContract?.placeBid(
+          data2?.id,
+          utils.parseEther(formValues?.price),
+          formValues?.addressToReceiveRevenueShare,
+          86400,
+          {
+            from: web3?.address,
+            value: utils.parseEther(formValues?.price),
+          },
+        ),
         res => {
           console.log("📡 Transaction placeBid:", res);
           if (res.status == 1) {
@@ -120,7 +121,40 @@ function RevenueStream({ web3, data }) {
     setIsModalVisible(false);
   };
 
-  const bidProposalsRoute = `/bidproposals/${data2?.id}`;
+  const bidDatasColumns = [
+    {
+      title: "Bidder",
+      dataIndex: "bidder",
+      key: "bidder",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Revenue Receiver",
+      dataIndex: "revenueReceiver",
+      key: "revenueReceiver",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => {
+        const { id } = record;
+        return isRevenueStreamOwner ? (
+          <Space size="middle">
+            <Button href={`/revenuestreams/${data?.id}/acceptbids/${id}`}>Accept</Button>
+          </Space>
+        ) : (
+          <Space size="middle">
+            <Button href="/wip">Cancel</Button>
+          </Space>
+        );
+      },
+    },
+  ];
+
   const router = useRouter();
   return (
     <>
@@ -280,7 +314,12 @@ function RevenueStream({ web3, data }) {
                 </div>
               </div>
               <div className="mt-14 lg:col-span-4">
-                <h3 className="text-xl font-semibold text-gray-900">Offers Received</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {isRevenueStreamOwner ? "Offers Received" : "Bids Placed"}
+                </h3>
+                <div className="text-center" style={{ margin: 64 }}>
+                  <Table dataSource={bidDatas} columns={bidDatasColumns} />
+                </div>
               </div>
             </div>
           </Container>

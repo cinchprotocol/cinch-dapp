@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Web3Consumer } from "../../helpers/Web3Context";
 import "antd/dist/antd.css";
-import { InputNumber, Select, Modal, Form, Input, message } from "antd";
+import { Select, Modal, Form, Input, message } from "antd";
 import { useRouter } from "next/router";
 import * as Realm from "realm-web";
 import _ from "lodash";

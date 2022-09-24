@@ -10,7 +10,6 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-//import { getAllBidIds, getBidData } from "/components/MockData";
 import { getAllBidProposalIds, getOneBidProposalWith } from "../../helpers/mongodbhelper";
 
 export async function getStaticPaths() {

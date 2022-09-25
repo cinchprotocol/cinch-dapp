@@ -40,11 +40,7 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         return idToMarketItem[marketItemId];
     }
 
-    function getMarketItemCount()
-        public
-        view
-        returns (uint256)
-    {
+    function getMarketItemCount() public view returns (uint256) {
         return _itemIds.current();
     }
 
@@ -187,7 +183,11 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         return bids;
     }
 
-    function fetchBidsOfItem(uint256 itemId) public view returns (Bid[] memory) {
+    function fetchBidsOfItem(uint256 itemId)
+        public
+        view
+        returns (Bid[] memory)
+    {
         uint256 bidCount = bidCounterByItem[itemId];
         Bid[] memory bids = new Bid[](bidCount);
         for (uint256 i = 0; i < bidCount; i++) {
@@ -207,8 +207,6 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
     // ##########################
     // #####   Bid   #####
     // ##########################
-
-    Counters.Counter private _bidIds;
 
     /**
      * @dev Place a bid for an item.
@@ -267,26 +265,22 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         require(item.seller != sender, "Bid#_placeBid: SELLER_CANT_PLACE_BID");
 
         uint256 expiresAt = block.timestamp + _duration;
-
-        _bidIds.increment();
-        uint256 bidId = _bidIds.current();
+        uint256 bidId;
 
         // TODO transfer money into escrow
 
         if (_bidderHasABid(_itemId, sender)) {
-            uint256 oldBidId;
             Bid memory oldBid = getBidByBidder(_itemId, sender);
 
             // TODO - Update older bid
+            bidId = oldBid.id;
         } else {
-            // Use the bid counter to assign the index if there is not an active bid.
             bidId = bidCounterByItem[_itemId];
             // Increase bid counter
             bidCounterByItem[_itemId]++;
+            // Set bid references
+            bidIdByItemAndBidder[_itemId][sender] = bidId;
         }
-
-        // Set bid references
-        bidIdByItemAndBidder[_itemId][sender] = bidId;
 
         // Save Bid
         bidsByItem[_itemId][bidId] = Bid({
@@ -332,7 +326,7 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
 
         //TODO - Release fund
 
-        idToMarketItem[_itemId].buyer = payable(msg.sender);
+        idToMarketItem[_itemId].buyer = payable(bid.bidder);
         _itemsSold.increment();
 
         emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);

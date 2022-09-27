@@ -8,47 +8,23 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-// import { getAllRevenueStreamForSale } from "../helpers/mongodbhelper";
 import { getAllRevenueStreamForSale } from "../helpers/marketplacehelper";
+import RevenueStreamTable from "../components/RevenueStreamTable";
 
 function RevenueStreamsForSale({ web3 }) {
-  const [dataSource, setDataSource] = useState([]);
+  const [revenueStreamForSale, setRevenueStreamForSale] = useState([]);
 
   const reloadData = async () => {
-    const data = await getAllRevenueStreamForSale(web3);
-    console.log("data", data);
-    setDataSource(data);
+    const allRevenueStreamForSale = await getAllRevenueStreamForSale(web3);
+    const _revenueStreamForSale = allRevenueStreamForSale.filter(
+      s => s.seller !== web3?.address && s.buyer === "0x0000000000000000000000000000000000000000",
+    );
+    setRevenueStreamForSale(_revenueStreamForSale);
   };
 
   useEffect(() => {
     reloadData();
   }, [web3]);
-
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => {
-        const { id } = record;
-        const targetRoute = `/revenuestreams/${id}`;
-        return (
-          <Space size="middle">
-            <Button href={targetRoute}>Select</Button>
-          </Space>
-        );
-      },
-    },
-  ];
 
   return (
     <>
@@ -60,7 +36,7 @@ function RevenueStreamsForSale({ web3 }) {
             <HeaderText01>Explore royalty streams on sale</HeaderText01>
             <div className="bg-slate-50 rounded-lg p-10 min-h-[50%]">
               <div className="text-center">
-                <Table dataSource={dataSource} columns={columns} />
+                <RevenueStreamTable dataSource={revenueStreamForSale} mode="ForSale" />
               </div>
             </div>
           </div>

@@ -6,7 +6,6 @@ const { Option } = Select;
 import { useRouter } from "next/router";
 import moment from "moment";
 const { utils } = require("ethers");
-
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
@@ -37,35 +36,15 @@ function RevenueRoyaltyInputs({ web3 }) {
 
   const handleOk = async () => {
     try {
-      /*
-      const doc = {
-        createdBy: web3?.address,
-        createdAt: moment().format(),
-        updatedBy: web3?.address,
-        updatedAt: moment().format(),
-        isActive: true,
-        name: formValues?.name || "Revenue Royalty",
-        description: formValues?.description || "Description",
-        feeCollectorAddress: formValues?.feeCollectorContractAddress,
-        multiSigAddress: formValues?.multiSigAddress,
-        revenueProportion: parseFloat(formValues?.revenueProportion),
-        expiryAmount: formValues?.expiryAmount,
-        contact: formValues?.contact,
-        //metadata: {},
-      };
-      console.log(`📝 doc:`, doc);
-      await insertOneWith("revenueStreamForSale", doc);
-      */
       console.log("formValues", formValues);
 
-      //TODO: add UI for price
       const txRes = await web3?.tx(
         marketPlaceContract?.createMarketItem(
           formValues?.name || "Revenue Royalty",
           formValues?.feeCollectorContractAddress,
           formValues?.multiSigAddress,
           utils.parseEther(formValues?.revenueProportion),
-          utils.parseEther("0.001"),
+          utils.parseEther(formValues?.price),
           utils.parseEther(formValues?.expiryAmount),
           {},
         ),
@@ -162,6 +141,20 @@ function RevenueRoyaltyInputs({ web3 }) {
                   </Form.Item>
 
                   <Form.Item
+                    label="Minimum price"
+                    name="price"
+                    extra="minimum price to place a bid"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Enter the minimum price",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item
                     label="Expiry amount"
                     name="expiryAmount"
                     extra="Royalty will end after this amount of revenue"
@@ -233,6 +226,10 @@ function RevenueRoyaltyInputs({ web3 }) {
                         <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                           {formValues?.revenueProportion}
                         </dd>
+                      </div>
+                      <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">Minimum Price</dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.price}</dd>
                       </div>
                       <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                         <dt className="text-sm font-medium text-gray-500">Expiry Amount</dt>

@@ -6,4 +6,13 @@ module.exports = {
     MONGODB_APP_ID: process.env.MONGODB_APP_ID,
     MONGODB_DB_NAME: process.env.MONGODB_DB_NAME,
   },
+  async redirects() {
+    return [
+      {
+        source: "/dapp",
+        destination: "/revenuestreamsforsale",
+        permanent: true,
+      },
+    ];
+  },
 };

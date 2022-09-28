@@ -54,10 +54,11 @@ function AcceptBid({ web3 }) {
             <p>{streamData?.name}</p>
             <p>{streamData?.description}</p>
             <p>{streamData?.id}</p>
-            <p>{streamData?.price}</p>
-            <p>{streamData?.addressToReceiveRevenueShare}</p>
+            <p>{streamData?.priceStr}</p>
             <p>{streamData?.contact}</p>
-            <p>{bidData?.price}</p>
+            <p>{bidData?.bidder}</p>
+            <p>{bidData?.priceStr}</p>
+            <p>{bidData?.revenueReceiver}</p>
           </div>
           <div className="text-center" style={{ margin: 64 }}>
             <Button

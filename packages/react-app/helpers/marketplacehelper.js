@@ -25,14 +25,20 @@ export const getOneRevenueStreamForSaleWith = async (web3, id) => {
     id,
     key: id,
     name: item?.name,
-    price: utils.formatEther(item?.price),
-    feeCollectorAddress: item?.feeCollector,
-    multiSigAddress: item?.multiSig,
-    revenueProportion: utils.formatEther(item?.revenuePct),
-    expiryAmount: utils.formatEther(item?.expAmount),
+    priceStr: utils.formatEther(item?.price),
+    revenuePctStr: utils.formatEther(item?.revenuePct),
+    expAmountStr: utils.formatEther(item?.expAmount),
     isActive: true,
   };
   return doc;
+};
+
+export const formatBid = bid => {
+  return {
+    ...bid,
+    itemIdStr: utils.formatUnits(bid?.itemId, 0),
+    priceStr: utils.formatEther(bid?.price),
+  };
 };
 
 export const getBidByBidderOfRevenueStream = async (web3, revenueStreamId, bidderAddress) => {
@@ -42,11 +48,8 @@ export const getBidByBidderOfRevenueStream = async (web3, revenueStreamId, bidde
       return null;
     }
     const bid = await marketPlaceContract?.getBidByBidder(revenueStreamId, bidderAddress);
-    const data = {
-      ...bid,
-      price: utils.formatEther(bid?.price),
-    };
-    return data;
+    bid.stream = await getOneRevenueStreamForSaleWith(web3, revenueStreamId);
+    return formatBid(bid);
   } catch (err) {
     console.log("getBidByBidderOfRevenueStream err", err);
     return [];
@@ -58,8 +61,14 @@ export const fetchBidsOfRevenueStream = async (web3, revenueStreamId) => {
   if (!marketPlaceContract || !revenueStreamId) {
     return [];
   }
+  const datas = [];
   const bids = await marketPlaceContract?.fetchBidsOfItem(revenueStreamId);
-  const datas = bids ? bids.map(bid => ({ ...bid, price: utils.formatEther(bid?.price) })) : [];
+  const stream = await getOneRevenueStreamForSaleWith(web3, revenueStreamId);
+  for (const bid of bids) {
+    const data = formatBid(bid);
+    data.stream = stream;
+    datas.push(data);
+  }
   return datas;
 };
 
@@ -69,9 +78,20 @@ export const fetchBidOf = async (web3, revenueStreamId, bidId) => {
     return null;
   }
   const bid = await marketPlaceContract?.getBidByItem(revenueStreamId, bidId);
-  const data = {
-    ...bid,
-    price: utils.formatEther(bid?.price),
-  };
+  const data = formatBid(bid);
+  data.stream = await getOneRevenueStreamForSaleWith(web3, revenueStreamId);
   return data;
+};
+
+export const getAllBids = async web3 => {
+  const streams = await getAllRevenueStreamForSale(web3);
+  const allBids = [];
+  for (const stream of streams) {
+    const bids = await fetchBidsOfRevenueStream(web3, stream?.id);
+    bids.forEach(b => {
+      b.stream = stream;
+      allBids.push(formatBid(b));
+    });
+  }
+  return allBids;
 };

@@ -18,6 +18,7 @@ import {
   getBidByBidderOfRevenueStream,
   fetchBidsOfRevenueStream,
 } from "../../../helpers/marketplacehelper";
+import BidTable from "/components/BidTable";
 
 export async function getStaticPaths() {
   const ids = _.range(1, 1000);
@@ -59,16 +60,16 @@ function RevenueStream({ web3, data }) {
     console.log("d", d);
     setData2(d);
 
-    let bidDatas;
+    let bds;
     if (isRevenueStreamOwner) {
-      bidDatas = await fetchBidsOfRevenueStream(web3, data.id);
+      bds = await fetchBidsOfRevenueStream(web3, data.id);
     } else {
       const bd = await getBidByBidderOfRevenueStream(web3, data.id, web3?.address);
       if (bd) {
-        bidDatas = [bd];
+        bds = [bd];
       }
     }
-    setBidDatas(bidDatas.filter(b => b.price));
+    setBidDatas(bds?.filter(b => b.price));
   };
 
   useEffect(() => {
@@ -190,21 +191,21 @@ function RevenueStream({ web3, data }) {
                     <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Revenue proportion</dt>
-                        <dd className="text-gray-900">{data2.revenueProportion}%</dd>
+                        <dd className="text-gray-900">{data2.revenuePctStr}%</dd>
                       </div>
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Expiry amount</dt>
 
-                        <dd className="text-gray-900">{data2?.expiryAmount}</dd>
+                        <dd className="text-gray-900">{data2?.expAmountStr}</dd>
                       </div>
 
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Fee collector address</dt>
-                        <dd className="text-gray-900">{data2?.feeCollectorAddress}</dd>
+                        <dd className="text-gray-900">{data2?.feeCollector}</dd>
                       </div>
                       <div className="py-3 flex justify-between text-sm font-medium">
                         <dt className="text-gray-500">Multi-sig address</dt>
-                        <dd className="text-gray-900">{data2?.multiSigAddress}</dd>
+                        <dd className="text-gray-900">{data2?.multiSig}</dd>
                       </div>
                     </dl>
                   </div>
@@ -317,8 +318,9 @@ function RevenueStream({ web3, data }) {
                 <h3 className="text-2xl font-semibold text-gray-900">
                   {isRevenueStreamOwner ? "Offers Received" : "Bids Placed"}
                 </h3>
-                <div className="mt-5">
-                  <Table dataSource={bidDatas} columns={bidDatasColumns} />
+                
+                <div className="text-center" style={{ margin: 64 }}>
+                  <BidTable web3={web3} dataSource={bidDatas} />
                 </div>
               </div>
             </div>

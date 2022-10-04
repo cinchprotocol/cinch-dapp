@@ -7,8 +7,15 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./MarketPlaceStorage.sol";
+import "./Withdrawable.sol";
 
-contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
+contract MarketPlace is
+    MarketPlaceStorage,
+    Withdrawable,
+    Ownable,
+    Pausable,
+    ReentrancyGuard
+{
     using Counters for Counters.Counter;
     using Address for address;
     Counters.Counter private _itemIds;
@@ -267,8 +274,6 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         uint256 expiresAt = block.timestamp + _duration;
         uint256 bidId;
 
-        // TODO transfer money into escrow
-
         if (_bidderHasABid(_itemId, sender)) {
             Bid memory oldBid = getBidByBidder(_itemId, sender);
 
@@ -397,6 +402,8 @@ contract MarketPlace is MarketPlaceStorage, Ownable, Pausable, ReentrancyGuard {
         uint256 _itemId,
         address _bidder
     ) internal {
+        _increasePendingWithdrawal(_bidder, bidsByItem[_itemId][_bidId].price);
+
         // TODO - need this? Delete bid references
         delete bidIdByItemAndBidder[_itemId][_bidder];
 

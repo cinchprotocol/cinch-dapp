@@ -315,9 +315,10 @@ function RevenueStream({ web3, data }) {
                 </div>
               </div>
               <div className="mt-14 lg:col-span-4">
-                <h3 className="text-xl font-semibold text-gray-900">
+                <h3 className="text-2xl font-semibold text-gray-900">
                   {isRevenueStreamOwner ? "Offers Received" : "Bids Placed"}
                 </h3>
+                
                 <div className="text-center" style={{ margin: 64 }}>
                   <BidTable web3={web3} dataSource={bidDatas} />
                 </div>

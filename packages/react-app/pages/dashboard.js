@@ -12,6 +12,7 @@ import { getAllRevenueStreamForSale, getAllBids } from "../helpers/marketplacehe
 import RevenueStreamTable from "/components/RevenueStreamTable";
 import BidTable from "/components/BidTable";
 const { constants } = require("ethers");
+import WithdrawButton from "/components/WithdrawButton";
 
 function Dashboard({ web3 }) {
   const address = web3?.address;
@@ -77,6 +78,7 @@ function Dashboard({ web3 }) {
                       <RevenueStreamTable dataSource={revenueStreamsBought} mode="Bought" />
                     </TabPane>
                   </Tabs>
+                  <WithdrawButton />
                 </div>
               ) : (
                 <div className="grid place-items-center h-[70vh]">

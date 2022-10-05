@@ -95,3 +95,12 @@ export const getAllBids = async web3 => {
   }
   return allBids;
 };
+
+export const fetchPendingWithdrawal = async ({ web3, address }) => {
+  const marketPlaceContract = web3?.readContracts["MarketPlace"];
+  if (!marketPlaceContract || !address) {
+    return 0;
+  }
+  const pendingWithdrawal = await marketPlaceContract?.pendingWithdrawal(address);
+  return pendingWithdrawal;
+};

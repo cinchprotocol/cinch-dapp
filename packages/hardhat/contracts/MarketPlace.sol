@@ -336,6 +336,15 @@ contract MarketPlace is
 
         emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);
 
+        // Cancel other bids
+        Bid[] memory bids = fetchBidsOfItem(_itemId);
+        for (uint256 i = 0; i < bids.length; i++) {
+            Bid memory _bid = bids[i];
+            if (_bid.id != _bidId) {
+                _cancelBid(_itemId, _bid.id, _bid.bidder);
+            }
+        }
+
         // TODO check scenarios where it will be false
         return true;
     }
@@ -402,6 +411,7 @@ contract MarketPlace is
         uint256 _itemId,
         address _bidder
     ) internal {
+        // Should _increasePendingWithdrawal be called after delete to avoid multiple calls attack ?
         _increasePendingWithdrawal(_bidder, bidsByItem[_itemId][_bidId].price);
 
         // TODO - need this? Delete bid references

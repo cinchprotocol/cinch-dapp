@@ -320,6 +320,15 @@ contract MarketPlace is
         // Check if the bid is valid.
         require(bid.expiresAt >= block.timestamp, "Bid#acceptBid: BID_EXPIRED");
 
+        // Cancel other bids
+        Bid[] memory bids = fetchBidsOfItem(_itemId);
+        for (uint256 i = 0; i < bids.length; i++) {
+            Bid memory _bid = bids[i];
+            if (_bid.id != _bidId) {
+                _cancelBid(_bid.id, _itemId, _bid.bidder);
+            }
+        }
+
         // Delete bid references from contract storage
         delete bidsByItem[_itemId][_bidId];
         delete bidIdByItemAndBidder[_itemId][bid.bidder];
@@ -335,15 +344,6 @@ contract MarketPlace is
         _itemsSold.increment();
 
         emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);
-
-        // Cancel other bids
-        Bid[] memory bids = fetchBidsOfItem(_itemId);
-        for (uint256 i = 0; i < bids.length; i++) {
-            Bid memory _bid = bids[i];
-            if (_bid.id != _bidId) {
-                _cancelBid(_bid.id, _itemId, _bid.bidder);
-            }
-        }
 
         // TODO check scenarios where it will be false
         return true;

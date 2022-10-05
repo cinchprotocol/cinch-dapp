@@ -9,7 +9,7 @@ function WithdrawButton({ web3 }) {
   const [pendingWithdrawal, setPendingWithdrawal] = useState(0);
 
   const reloadData = async () => {
-    const wd = await fetchPendingWithdrawal(web3, web3?.address);
+    const wd = await fetchPendingWithdrawal({ web3, address: web3?.address });
     setPendingWithdrawal(wd);
   };
 
@@ -18,6 +18,7 @@ function WithdrawButton({ web3 }) {
   }, [web3]);
 
   const handleClick = async () => {
+    const marketPlaceContract = web3?.writeContracts["MarketPlace"];
     const txRes = await web3?.tx(marketPlaceContract?.withdraw(), res => {
       console.log("📡 Transaction withdraw:", res);
     });

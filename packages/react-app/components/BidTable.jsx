@@ -4,6 +4,16 @@ import _ from "lodash";
 import { Button } from "/components/Button";
 
 function BidTable({ web3, dataSource, mode }) {
+  const handleCancelBid = async record => {
+    if (record && record.itemId) {
+      const marketPlaceContract = web3?.writeContracts["MarketPlace"];
+      const txRes = await web3?.tx(marketPlaceContract?.cancelBid(record.itemId), res => {
+        console.log("📡 Transaction cancelBid:", res);
+      });
+      console.log("txRes", txRes);
+    }
+  };
+
   const defaultColumns = [
     {
       title: "Target stream ID",
@@ -42,7 +52,13 @@ function BidTable({ web3, dataSource, mode }) {
         } else if (isBidder) {
           return (
             <Space size="middle">
-              <Button href="/wip">Cancel</Button>
+              <Button
+                onClick={() => {
+                  handleCancelBid(record);
+                }}
+              >
+                Cancel
+              </Button>
             </Space>
           );
         } else {

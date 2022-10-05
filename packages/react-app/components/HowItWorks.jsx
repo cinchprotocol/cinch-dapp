@@ -6,17 +6,17 @@ const valTokenHowItWorks = [
     {
         question: "1. Choose redeemable value",
         answer:
-            "Each ERC-20 Value Token represents a fixed redeemable dollar value (example: $1.25/token). Value Token entitles the holder to receive the fixed redeemable dollar value from the issuing protocol.",
+            "Each ERC-20 IOU Token represents a fixed redeemable dollar value (example: $1.25/token). IOU Token entitles the holder to receive the fixed redeemable dollar value from the issuing protocol.",
     },
     {
         question: "2. Setup recurring DEX purchases",
         answer:
-            "A Uniswap v3 liquidity pair will be created between the Value Token and a liquid stablecoin. The DAO or protocol commits to using a fixed proportion of revenue to perform automatic repurchases from the Liquidity Pool on a weekly or monthly basis. The DAO or protocol cannot stop the automatic purchases from the liquidity pool until all Value Tokens are repurchased and burned.",
+            "A Uniswap v3 liquidity pair will be created between the IOU Token and a liquid stablecoin. The DAO or protocol commits to using a fixed proportion of revenue to perform automatic repurchases from the Liquidity Pool on a weekly or monthly basis. The DAO or protocol cannot stop the automatic purchases from the liquidity pool until all IOU Tokens are repurchased and burned.",
     },
     {
         question: "3. Trade for liquidity or hold for yield",
         answer:
-            "Holders of the Value Token that want immediate liquidity can sell into the liquidity pool, thus making the Value Token more affordable for repurchase. Value Token owners that hold until all liquidity in the pool is repurchased will receive the fixed redeemable dollar value.",
+            "Holders of the IOU Token that want immediate liquidity can sell into the liquidity pool, thus making the IOU Token more affordable for repurchase. IOU Token owners that hold until all liquidity in the pool is repurchased will receive the fixed redeemable dollar value.",
     },
     {
         question: "Use case",
@@ -115,7 +115,7 @@ export function HowItWorks() {
                         </p>
                         <div className="mt-10 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10">
                             <div className="text-gray-500 lg:max-w-none bg-slate-50 p-10 rounded-2xl shadow-md">
-                                <h2 className="text-2xl leading-6 text-blue-600 font-semibold">Value Token</h2>
+                                <h2 className="text-2xl leading-6 text-blue-600 font-semibold">IOU Token</h2>
                                 <p className='mt-5 text-base'>
                                     A promise to pay that has instant liquidity.
                                 </p>

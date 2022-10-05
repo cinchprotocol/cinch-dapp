@@ -18,14 +18,14 @@ export function Hero() {
 
             <div className="lg:py-24">
               <span className="block text-sm font-semibold tracking-wide text-slate-500 sm:text-base lg:text-md">
-                INTRODUCING NEXT GENERATION TOKENOMICS
+                INTRODUCING SUSTAINABLE TOKENOMICS
               </span>
               <h1 className="mt-2 text-4xl tracking-tight font-bold sm:text-6xl sm:tracking-tight xl:text-6xl xl:tracking-tight">
                 <span className="text-slate-900">Turn revenue streams into </span>
                 <span className="text-blue-500">revenue tokens</span>
               </h1>
               <p className="mt-3 text-base text-slate-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Leverage the token playbook without ever using treasury funds.
+                Sustainable growth for all blockchain projects.
               </p>
               <div className="mt-10 sm:mt-12">
                 <a

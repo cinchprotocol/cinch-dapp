@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./PaymentSplitter.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 
 //import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -13,10 +13,10 @@ interface ICollectionContract {
 
 /**
  * @title RBFVault
- * @notice Contract allowing Lender to secure royalty revenue streams from a NFT collection of borrower and split payments between them based on agreed terms
- * @dev Should be deployed per NFT collection.
+ * @notice Contract allowing Lender to secure royalty revenue streams
+ * @dev Should be deployed per revenue stream.
  */
-contract RBFVault is PaymentSplitter {
+contract RBFVault {
     enum Status {
         Pending,
         Active,
@@ -24,9 +24,15 @@ contract RBFVault is PaymentSplitter {
         Canceled
     }
 
-    address public collectionOwner;
-    address public collectionAddress;
-    uint256 public purchasePrice;
+    string name;
+    address feeCollector;
+    address multiSig;
+    uint256 revenuePct;
+    uint256 price;
+    uint256 expAmount;
+    address borrower;
+    address lender;
+
     uint256 public constant REVENUE_PERIOD = 52 weeks;
     uint256 public constant TIMEOUT_PERIOD = 1 weeks;
     Status public status;
@@ -36,49 +42,36 @@ contract RBFVault is PaymentSplitter {
     /**
      *
      * @dev Configure data for revenue shares
-     * @param _collectionAddress NFT collection's contract address
-     * @param _parties array of parties involved. 0:Investor 1:Collection Owner
-     * @param _shares array of parties corresponding shares in the revenue. 0:Investor's share, 1: Collection owner's share
      *
      */
     constructor(
-        address _collectionAddress,
-        address[2] memory _parties,
-        uint256[2] memory _shares
-    ) payable PaymentSplitter(_parties, _shares) {
-        collectionAddress = _collectionAddress;
-        collectionOwner = _parties[1];
+        string memory _name,
+        address _feeCollector,
+        address _multiSig,
+        uint256 _revenuePct,
+        uint256 _price,
+        uint256 _expAmount,
+        address _borrower,
+        address _lender
+    ) payable {
+        name = _name;
+        feeCollector = _feeCollector;
+        multiSig = _multiSig;
+        revenuePct = _revenuePct;
+        price = _price;
+        expAmount = _expAmount;
+        borrower = _borrower;
+        lender = _lender;
+
         status = Status.Pending;
-        purchasePrice = msg.value;
         vaultDeployDate = block.timestamp;
     }
 
-    modifier termsSatisfied() {
-        // check if contract time-length completed
-
-        // require(
-        //     block.timestamp > (vaultActivationDate + REVENUE_PERIOD),
-        //     "Revenue period term not complete"
-        // );
-
-        // TODO - check if revenue max limit has reached
-        _;
-    }
-
     /**
-     * @dev Return ownership of the NFT collection back to original owner after the contract's term is satisfied
+     * @dev Check if the terms are satisfied
      */
-    function returnOwnershipToCollectionOwner() external termsSatisfied {
-        ICollectionContract(collectionAddress).transferOwnership(
-            collectionOwner
-        );
-    }
-
-    /**
-     * @dev Check if the ownership of the collection is transferred to this vault
-     */
-    function isVaultOwnsTheCollection() public view returns (bool) {
-        return ICollectionContract(collectionAddress).owner() == address(this);
+    function isTermsSatisfied() public view returns (bool) {
+        // Todo - check fee collector and multi-sig
     }
 
     /**
@@ -86,18 +79,16 @@ contract RBFVault is PaymentSplitter {
      After this any royalty recieved by this collection will be shared between both the party according to agreement
      */
     function activate() external {
-        // TODO - verify collection payout address using oracle
-        require(
-            isVaultOwnsTheCollection(),
-            "Vault: Transfer collection ownership to the the vault"
-        );
+        // TODO - verify fee collector and multi-sig before activate
+
         require(
             status == Status.Pending,
             "Vault: Only vault with'Pending' can be activated"
         );
+
         status = Status.Active;
         vaultActivationDate = block.timestamp;
-        Address.sendValue(payable(_payees[1]), purchasePrice);
+        Address.sendValue(borrower);
     }
 
     function getVaultBalance() public view returns (uint256) {
@@ -112,20 +103,11 @@ contract RBFVault is PaymentSplitter {
     }
 
     /**
-     * @dev Allows lender or borrower to withdrawn their portion of the revenue
-     * @param account Address of the lender/borrower
-     */
-    function release(address payable account) public override {
-        require(status == Status.Active, "Vault: vault is not active");
-        super.release(account);
-    }
-
-    /**
      * @dev Allows the lender to withdrawn deposited money if vault doesn't get activated on agreed upon time
      */
     function refundTheLender() external {
         require(
-            !isVaultOwnsTheCollection(),
+            !isTermsSatisfied(),
             "Vault: Collection already owned by the vault"
         );
 
@@ -140,6 +122,6 @@ contract RBFVault is PaymentSplitter {
         );
 
         status = Status.Canceled;
-        Address.sendValue(payable(_payees[0]), purchasePrice);
+        Address.sendValue(lender);
     }
 }

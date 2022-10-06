@@ -411,9 +411,6 @@ contract MarketPlace is
         uint256 _itemId,
         address _bidder
     ) internal {
-        // Should _increasePendingWithdrawal be called after delete to avoid multiple calls attack ?
-        _increasePendingWithdrawal(_bidder, bidsByItem[_itemId][_bidId].price);
-
         // TODO - need this? Delete bid references
         delete bidIdByItemAndBidder[_itemId][_bidder];
 
@@ -422,6 +419,8 @@ contract MarketPlace is
 
         // Decrease bids counter
         bidCounterByItem[_itemId]--;
+
+        _increasePendingWithdrawal(_bidder, bidsByItem[_itemId][_bidId].price);
 
         // emit BidCancelled event
         emit BidCancelled(_bidId, _itemId, _bidder);

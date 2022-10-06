@@ -32,7 +32,7 @@ function MyApp({ Component, pageProps }) {
             />
           </Head>
           {router?.pathname !== "/debug" ? null : <NetworkDisplay />}
-          {/* {router?.pathname === "/" ? null : <DevUI />} */}
+          {router?.pathname !== "/debug" ? null : <DevUI />}
           {/* {router?.pathname === "/" ? null : <ThemeSwitch />} */}
           <Component {...pageProps} />
         </>

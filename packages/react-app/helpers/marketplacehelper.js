@@ -27,7 +27,6 @@ export const getOneRevenueStreamForSaleWith = async (web3, id) => {
     name: item?.name,
     priceStr: utils.formatEther(item?.price),
     revenuePctStr: _.toNumber(utils.formatEther(item?.revenuePct)).toFixed(0),
-    //revenuePctStr: item?.revenuePct?.toFixed(0) || "0",
     expAmountStr: utils.formatEther(item?.expAmount),
     isActive: true,
   };

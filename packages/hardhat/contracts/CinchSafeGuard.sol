@@ -5,23 +5,7 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IGnosisSafe.sol";
 
-interface ICinchSafeGuard is IGuard {
-    // error NotAuthorized();
-    // error ZeroAddress();
-    // error InvalidExecutor();
-    // error NotStealthRelayer();
-    // error NotExecutor();
-    // function overrideGuardChecks() external view returns (bool _overrideGuardChecks);
-    // function stealthRelayerCheck() external view returns (bool _stealthRelayerCheck);
-    // function executors() external view returns (address[] memory _executorsArray);
-    // function addExecutor(address _executor) external;
-    // function addExecutors(address[] calldata _executorsList) external;
-    // function removeExecutor(address _executor) external;
-    // function setOverrideGuardChecks(bool _overrideGuardChecks) external;
-    // function setStealthRelayerCheck(bool _stealthRelayerCheck) external;
-}
-
-contract CinchSafeGuard is ICinchSafeGuard, Ownable {
+contract CinchSafeGuard is IGuard, Ownable {
     event SetTargetBlocked(address target, bool blocked);
     event SetTargetScoped(address target, bool scoped);
     event SetFallbackBlockedOnTarget(address target, bool blocked);
@@ -108,39 +92,38 @@ contract CinchSafeGuard is ICinchSafeGuard, Ownable {
         uint256 value,
         bytes memory data,
         Enum.Operation operation,
-        uint256,
-        uint256,
-        uint256,
-        address,
-        // solhint-disallow-next-line no-unused-vars
-        address payable,
-        bytes memory,
-        address
+        uint256 safeTxGas,
+        uint256 baseGas,
+        uint256 gasPrice,
+        address gasToken,
+        // solhint-disable-next-line no-unused-vars
+        address payable refundReceiver,
+        bytes memory signatures,
+        address msgSender
     ) external view override {
         require(
             operation != Enum.Operation.DelegateCall ||
-                blockedTargets[to].delegateCallBlocked,
-            "Delegate call not blocked to this address"
+                !blockedTargets[to].delegateCallBlocked,
+            "Delegate call is blocked to this address"
         );
-        require(blockedTargets[to].blocked, "Target address is not blocked");
+        //require(!blockedTargets[to].blocked, "Target address is blocked");
         if (value > 0) {
             require(
-                blockedTargets[to].valueBlocked,
+                !blockedTargets[to].valueBlocked,
                 "Cannot send ETH to this target"
             );
         }
         if (data.length >= 4) {
             require(
-                !blockedTargets[to].scoped ||
-                    blockedTargets[to].blockedFunctions[bytes4(data)],
-                "Target function is not blocked"
+                !blockedTargets[to].blockedFunctions[bytes4(data)],
+                "Target function is blocked"
             );
         } else {
             require(data.length == 0, "Function signature too short");
             require(
                 !blockedTargets[to].scoped ||
-                    blockedTargets[to].fallbackBlocked,
-                "Fallback not blocked for this address"
+                    !blockedTargets[to].fallbackBlocked,
+                "Fallback is blocked for this address"
             );
         }
     }

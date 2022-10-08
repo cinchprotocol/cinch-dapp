@@ -155,7 +155,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                   </Form.Item>
 
                   <Form.Item
-                    label="Expiry amount"
+                    label="Expiry amount (ETH)"
                     name="expiryAmount"
                     extra="Royalty will end after this amount of revenue"
                     rules={[

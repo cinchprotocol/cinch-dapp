@@ -22,24 +22,35 @@ interface ICinchSafeGuard is IGuard {
 }
 
 contract CinchSafeGuard is ICinchSafeGuard, Ownable {
+    event SetTargetBlocked(address target, bool blocked);
+    event SetTargetScoped(address target, bool scoped);
+    event SetFallbackBlockedOnTarget(address target, bool blocked);
+    event SetValueBlockedOnTarget(address target, bool blocked);
+    event SetDelegateCallBlockedOnTarget(address target, bool blocked);
+    event SetFunctionBlockedOnTarget(
+        address target,
+        bytes4 functionSig,
+        bool blocked
+    );
+
     struct Target {
-        bool allowed;
+        bool blocked;
         bool scoped;
-        bool delegateCallAllowed;
-        bool fallbackAllowed;
-        bool valueAllowed;
-        mapping(bytes4 => bool) allowedFunctions;
+        bool delegateCallBlocked;
+        bool fallbackBlocked;
+        bool valueBlocked;
+        mapping(bytes4 => bool) blockedFunctions;
     }
 
-    mapping(address => Target) public allowedTargets;
+    mapping(address => Target) public blockedTargets;
 
     /// @dev Set whether or not calls can be made to an address.
     /// @notice Only callable by owner.
-    /// @param target Address to be allowed/disallowed.
-    /// @param allow Bool to allow (true) or disallow (false) calls to target.
-    function setTargetAllowed(address target, bool allow) public onlyOwner {
-        allowedTargets[target].allowed = allow;
-        emit SetTargetAllowed(target, allowedTargets[target].allowed);
+    /// @param target Address to be blocked/disblocked.
+    /// @param blocked Bool to blocked (true) or disallow (false) calls to target.
+    function setTargetBlocked(address target, bool blocked) public onlyOwner {
+        blockedTargets[target].blocked = blocked;
+        emit SetTargetBlocked(target, blockedTargets[target].blocked);
     }
 
     /// @dev Sets whether or not calls to an address should be scoped to specific function signatures.
@@ -47,49 +58,49 @@ contract CinchSafeGuard is ICinchSafeGuard, Ownable {
     /// @param target Address to be scoped/unscoped.
     /// @param scoped Bool to scope (true) or unscope (false) function calls on target.
     function setScoped(address target, bool scoped) public onlyOwner {
-        allowedTargets[target].scoped = scoped;
-        emit SetTargetScoped(target, allowedTargets[target].scoped);
+        blockedTargets[target].scoped = scoped;
+        emit SetTargetScoped(target, blockedTargets[target].scoped);
     }
 
-    /// @dev Returns bool to indicate if an address is an allowed target.
+    /// @dev Sets whether or not a specific function signature should be blocked on a scoped target.
+    /// @notice Only callable by owner.
+    /// @param target Scoped address on which a function signature should be blocked/disblocked.
+    /// @param functionSig Function signature to be blocked/disblocked.
+    /// @param blocked Bool to blocked (true) or disallow (false) calls a function signature on target.
+    function setBlockedFunction(
+        address target,
+        bytes4 functionSig,
+        bool blocked
+    ) public onlyOwner {
+        blockedTargets[target].blockedFunctions[functionSig] = blocked;
+        emit SetFunctionBlockedOnTarget(
+            target,
+            functionSig,
+            blockedTargets[target].blockedFunctions[functionSig]
+        );
+    }
+
+    /// @dev Returns bool to indicate if an address is an blocked target.
     /// @param target Address to check.
-    function isAllowedTarget(address target) public view returns (bool) {
-        return (allowedTargets[target].allowed);
+    function isBlockedTarget(address target) public view returns (bool) {
+        return (blockedTargets[target].blocked);
     }
 
     /// @dev Returns bool to indicate if an address is scoped.
     /// @param target Address to check.
     function isScoped(address target) public view returns (bool) {
-        return (allowedTargets[target].scoped);
+        return (blockedTargets[target].scoped);
     }
 
-    /// @dev Returns bool to indicate if a function signature is allowed for a target address.
+    /// @dev Returns bool to indicate if a function signature is blocked for a target address.
     /// @param target Address to check.
     /// @param functionSig Signature to check.
-    function isAllowedFunction(address target, bytes4 functionSig)
+    function isBlockedFunction(address target, bytes4 functionSig)
         public
         view
         returns (bool)
     {
-        return (allowedTargets[target].allowedFunctions[functionSig]);
-    }
-
-    /// @dev Sets whether or not a specific function signature should be allowed on a scoped target.
-    /// @notice Only callable by owner.
-    /// @param target Scoped address on which a function signature should be allowed/disallowed.
-    /// @param functionSig Function signature to be allowed/disallowed.
-    /// @param allow Bool to allow (true) or disallow (false) calls a function signature on target.
-    function setAllowedFunction(
-        address target,
-        bytes4 functionSig,
-        bool allow
-    ) public onlyOwner {
-        allowedTargets[target].allowedFunctions[functionSig] = allow;
-        emit SetFunctionAllowedOnTarget(
-            target,
-            functionSig,
-            allowedTargets[target].allowedFunctions[functionSig]
-        );
+        return (blockedTargets[target].blockedFunctions[functionSig]);
     }
 
     function checkTransaction(
@@ -108,28 +119,28 @@ contract CinchSafeGuard is ICinchSafeGuard, Ownable {
     ) external view override {
         require(
             operation != Enum.Operation.DelegateCall ||
-                allowedTargets[to].delegateCallAllowed,
-            "Delegate call not allowed to this address"
+                blockedTargets[to].delegateCallBlocked,
+            "Delegate call not blocked to this address"
         );
-        require(allowedTargets[to].allowed, "Target address is not allowed");
+        require(blockedTargets[to].blocked, "Target address is not blocked");
         if (value > 0) {
             require(
-                allowedTargets[to].valueAllowed,
+                blockedTargets[to].valueBlocked,
                 "Cannot send ETH to this target"
             );
         }
         if (data.length >= 4) {
             require(
-                !allowedTargets[to].scoped ||
-                    allowedTargets[to].allowedFunctions[bytes4(data)],
-                "Target function is not allowed"
+                !blockedTargets[to].scoped ||
+                    blockedTargets[to].blockedFunctions[bytes4(data)],
+                "Target function is not blocked"
             );
         } else {
             require(data.length == 0, "Function signature too short");
             require(
-                !allowedTargets[to].scoped ||
-                    allowedTargets[to].fallbackAllowed,
-                "Fallback not allowed for this address"
+                !blockedTargets[to].scoped ||
+                    blockedTargets[to].fallbackBlocked,
+                "Fallback not blocked for this address"
             );
         }
     }

@@ -75,20 +75,45 @@ contract RBFVault {
     }
 
     /**
+     * @dev Check if the vault is ready to be activated
+     */
+    function isReadyToActivate() public view returns (bool) {
+        require(isFeeCollectorUpdated(), "FEE_COLLECTOR_NOT_IN_PLACE");
+
+        require(isMultisigGuardAdded(), "MULTISIG_GUARD_NOT_IN_PLACE");
+
+        return true;
+    }
+
+    /**
+     * @dev Check if the fee collector is updated
+     */
+    function isFeeCollectorUpdated() public view returns (bool) {
+        // Todo - check fee collector and multi-sig
+    }
+
+    /**
+     * @dev Check if cinch multi-sig guard is added
+     */
+    function isMultisigGuardAdded() public view returns (bool) {
+        // Todo - check fee collector and multi-sig
+    }
+
+    /**
      * @dev Activates the vault after the onwership has been transferred to this vault. Also sends the agreed payment to the collection owner.
      After this any royalty recieved by this collection will be shared between both the party according to agreement
      */
     function activate() external {
-        // TODO - verify fee collector and multi-sig before activate
-
         require(
             status == Status.Pending,
             "Vault: Only vault with'Pending' can be activated"
         );
 
+        require(isReadyToActivate());
+
         status = Status.Active;
         vaultActivationDate = block.timestamp;
-        Address.sendValue(borrower);
+        Address.sendValue(payable(borrower), address(this).balance);
     }
 
     function getVaultBalance() public view returns (uint256) {
@@ -122,6 +147,6 @@ contract RBFVault {
         );
 
         status = Status.Canceled;
-        Address.sendValue(lender);
+        Address.sendValue(payable(lender), address(this).balance);
     }
 }

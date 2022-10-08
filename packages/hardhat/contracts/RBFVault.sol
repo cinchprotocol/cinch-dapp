@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Address.sol";
+import "./interfaces/IGnosisSafe.sol";
 
 //import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -33,6 +34,8 @@ contract RBFVault {
     address borrower;
     address lender;
 
+    address multisigGuard;
+
     uint256 public constant REVENUE_PERIOD = 52 weeks;
     uint256 public constant TIMEOUT_PERIOD = 1 weeks;
     Status public status;
@@ -52,7 +55,8 @@ contract RBFVault {
         uint256 _price,
         uint256 _expAmount,
         address _borrower,
-        address _lender
+        address _lender,
+        address _multisigGuard
     ) payable {
         name = _name;
         feeCollector = _feeCollector;
@@ -62,6 +66,8 @@ contract RBFVault {
         expAmount = _expAmount;
         borrower = _borrower;
         lender = _lender;
+
+        multisigGuard = _multisigGuard;
 
         status = Status.Pending;
         vaultDeployDate = block.timestamp;
@@ -96,7 +102,7 @@ contract RBFVault {
      * @dev Check if cinch multi-sig guard is added
      */
     function isMultisigGuardAdded() public view returns (bool) {
-        // Todo - check fee collector and multi-sig
+        return GnosisSafe(multiSig).getGuard() == multisigGuard;
     }
 
     /**

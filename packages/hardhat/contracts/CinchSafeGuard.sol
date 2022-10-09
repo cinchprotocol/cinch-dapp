@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -101,14 +101,14 @@ contract CinchSafeGuard is IGuard, Ownable {
         uint256 value,
         bytes memory data,
         Enum.Operation operation,
-        uint256 safeTxGas,
-        uint256 baseGas,
-        uint256 gasPrice,
-        address gasToken,
+        uint256, /*safeTxGas*/
+        uint256, /*baseGas*/
+        uint256, /*gasPrice*/
+        address, /*gasToken*/
         // solhint-disable-next-line no-unused-vars
-        address payable refundReceiver,
-        bytes memory signatures,
-        address msgSender
+        address payable, /*refundReceiver*/
+        bytes memory, /*signatures*/
+        address /*msgSender*/
     ) external view override {
         if (overrideGuardChecks) return;
 

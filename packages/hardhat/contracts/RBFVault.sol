@@ -6,7 +6,7 @@ import "./interfaces/IGnosisSafe.sol";
 
 //import "@openzeppelin/contracts/access/Ownable.sol";
 
-//TODO - Speicifc to idle at the moment but should we make this dyamic to work different protocols?
+//TODO - Specific to the idle at the moment but should we make this dyamic to work different protocols?
 interface IBorrowerContract {
     function feeReceiver() external view returns (address);
 }

@@ -17,6 +17,8 @@ contract CinchSafeGuard is IGuard, Ownable {
         bool blocked
     );
 
+    bool public override overrideGuardChecks;
+
     struct Target {
         bool blocked;
         bool scoped;
@@ -87,6 +89,13 @@ contract CinchSafeGuard is IGuard, Ownable {
         return (blockedTargets[target].blockedFunctions[functionSig]);
     }
 
+    function setOverrideGuardChecks(bool _overrideGuardChecks)
+        external
+        onlyOwner
+    {
+        overrideGuardChecks = _overrideGuardChecks;
+    }
+
     function checkTransaction(
         address to,
         uint256 value,
@@ -101,12 +110,14 @@ contract CinchSafeGuard is IGuard, Ownable {
         bytes memory signatures,
         address msgSender
     ) external view override {
+        if (overrideGuardChecks) return;
+
         require(
             operation != Enum.Operation.DelegateCall ||
                 !blockedTargets[to].delegateCallBlocked,
             "Delegate call is blocked to this address"
         );
-        //require(!blockedTargets[to].blocked, "Target address is blocked");
+
         if (value > 0) {
             require(
                 !blockedTargets[to].valueBlocked,
@@ -126,6 +137,8 @@ contract CinchSafeGuard is IGuard, Ownable {
                 "Fallback is blocked for this address"
             );
         }
+
+        //require(!blockedTargets[to].blocked, "Target address is blocked");
     }
 
     // unused

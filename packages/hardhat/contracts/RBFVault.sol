@@ -6,12 +6,6 @@ import "./interfaces/IGnosisSafe.sol";
 
 //import "@openzeppelin/contracts/access/Ownable.sol";
 
-interface ICollectionContract {
-    function transferOwnership(address newOwner) external;
-
-    function owner() external view returns (address);
-}
-
 /**
  * @title RBFVault
  * @notice Contract allowing Lender to secure royalty revenue streams
@@ -95,7 +89,7 @@ contract RBFVault {
      * @dev Check if the fee collector is updated
      */
     function isFeeCollectorUpdated() public view returns (bool) {
-        // Todo - check fee collector and multi-sig
+        // Todo - check fee collector
     }
 
     /**
@@ -119,7 +113,9 @@ contract RBFVault {
 
         status = Status.Active;
         vaultActivationDate = block.timestamp;
-        Address.sendValue(payable(borrower), address(this).balance);
+
+        //TODO - deploy fund
+        //Address.sendValue(payable(borrower), address(this).balance);
     }
 
     function getVaultBalance() public view returns (uint256) {

@@ -8,11 +8,12 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./MarketPlaceStorage.sol";
 import "./Withdrawable.sol";
+import "./RBFVaultFactory.sol";
 
 contract MarketPlace is
     MarketPlaceStorage,
     Withdrawable,
-    Ownable,
+    RBFVaultFactory,
     Pausable,
     ReentrancyGuard
 {
@@ -333,15 +334,23 @@ contract MarketPlace is
         delete bidsByItem[_itemId][_bidId];
         delete bidIdByItemAndBidder[_itemId][bid.bidder];
 
-        // TODO- need this?  Reset bid counter to invalidate other bids placed for the item
+        // Reset bid counter to invalidate other bids placed for the item
         delete bidCounterByItem[_itemId];
-
-        // TODO - Setup custom multi-sig logic, fee destination address is updated
-
-        //TODO - Release fund
 
         idToMarketItem[_itemId].buyer = payable(bid.bidder);
         _itemsSold.increment();
+
+        // Create vault
+        createVault(
+            item.name,
+            item.feeCollector,
+            item.multiSig,
+            item.revenuePct,
+            item.price,
+            item.expAmount,
+            item.seller,
+            item.buyer
+        );
 
         emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);
 

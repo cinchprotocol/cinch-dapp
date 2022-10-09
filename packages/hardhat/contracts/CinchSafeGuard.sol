@@ -17,7 +17,7 @@ contract CinchSafeGuard is IGuard, Ownable {
         bool blocked
     );
 
-    bool public override overrideGuardChecks;
+    bool public overrideGuardChecks;
 
     struct Target {
         bool blocked;

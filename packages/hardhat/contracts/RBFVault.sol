@@ -6,6 +6,11 @@ import "./interfaces/IGnosisSafe.sol";
 
 //import "@openzeppelin/contracts/access/Ownable.sol";
 
+//TODO - Speicifc to idle at the moment but should we make this dyamic to work different protocols?
+interface IBorrowerContract {
+    function feeReceiver() external view returns (address);
+}
+
 /**
  * @title RBFVault
  * @notice Contract allowing Lender to secure royalty revenue streams
@@ -89,7 +94,7 @@ contract RBFVault {
      * @dev Check if the fee collector is updated
      */
     function isFeeCollectorUpdated() public view returns (bool) {
-        // Todo - check fee collector
+        return IBorrowerContract(feeCollector).feeReceiver() == address(this);
     }
 
     /**

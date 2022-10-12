@@ -17,8 +17,8 @@ contract RBFVaultFactory is Ownable {
         address indexed vaultAddress
     );
 
-    mapping(address => address) public borrowerVault;
-    mapping(address => address) public lenderVault;
+    mapping(address => address[]) public borrowerVault;
+    mapping(address => address[]) public lenderVault;
 
     /**
      *
@@ -50,9 +50,25 @@ contract RBFVaultFactory is Ownable {
             lender,
             address(multiSigGuard)
         );
-        borrowerVault[borrower] = address(vault);
-        lenderVault[lender] = address(vault);
+        borrowerVault[borrower].push(address(vault));
+        lenderVault[lender].push(address(vault));
 
         emit RBFVaultCreated(lender, borrower, address(vault));
+    }
+
+    function getlenderVault(address lender)
+        public
+        view
+        returns (address[] memory)
+    {
+        return lenderVault[lender];
+    }
+
+    function getBorrowerVault(address borrower)
+        public
+        view
+        returns (address[] memory)
+    {
+        return borrowerVault[borrower];
     }
 }

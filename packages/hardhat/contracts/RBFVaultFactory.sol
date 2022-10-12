@@ -56,7 +56,7 @@ contract RBFVaultFactory is Ownable {
         emit RBFVaultCreated(lender, borrower, address(vault));
     }
 
-    function getlenderVault(address lender)
+    function getlenderVaults(address lender)
         public
         view
         returns (address[] memory)
@@ -64,7 +64,7 @@ contract RBFVaultFactory is Ownable {
         return lenderVault[lender];
     }
 
-    function getBorrowerVault(address borrower)
+    function getBorrowerVaults(address borrower)
         public
         view
         returns (address[] memory)

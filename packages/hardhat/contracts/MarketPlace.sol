@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -8,11 +8,12 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./MarketPlaceStorage.sol";
 import "./Withdrawable.sol";
+import "./RBFVaultFactory.sol";
 
 contract MarketPlace is
     MarketPlaceStorage,
     Withdrawable,
-    Ownable,
+    RBFVaultFactory,
     Pausable,
     ReentrancyGuard
 {
@@ -333,15 +334,23 @@ contract MarketPlace is
         delete bidsByItem[_itemId][_bidId];
         delete bidIdByItemAndBidder[_itemId][bid.bidder];
 
-        // TODO- need this?  Reset bid counter to invalidate other bids placed for the item
+        // Reset bid counter to invalidate other bids placed for the item
         delete bidCounterByItem[_itemId];
-
-        // TODO - Setup custom multi-sig logic, fee destination address is updated
-
-        //TODO - Release fund
 
         idToMarketItem[_itemId].buyer = payable(bid.bidder);
         _itemsSold.increment();
+
+        // Create vault
+        createVault(
+            item.name,
+            item.feeCollector,
+            item.multiSig,
+            item.revenuePct,
+            item.price,
+            item.expAmount,
+            item.seller,
+            item.buyer
+        );
 
         emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);
 
@@ -411,9 +420,6 @@ contract MarketPlace is
         uint256 _itemId,
         address _bidder
     ) internal {
-        // Should _increasePendingWithdrawal be called after delete to avoid multiple calls attack ?
-        _increasePendingWithdrawal(_bidder, bidsByItem[_itemId][_bidId].price);
-
         // TODO - need this? Delete bid references
         delete bidIdByItemAndBidder[_itemId][_bidder];
 
@@ -422,6 +428,8 @@ contract MarketPlace is
 
         // Decrease bids counter
         bidCounterByItem[_itemId]--;
+
+        _increasePendingWithdrawal(_bidder, bidsByItem[_itemId][_bidId].price);
 
         // emit BidCancelled event
         emit BidCancelled(_bidId, _itemId, _bidder);

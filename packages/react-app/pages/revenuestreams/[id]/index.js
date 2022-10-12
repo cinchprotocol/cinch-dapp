@@ -19,6 +19,7 @@ import {
   fetchBidsOfRevenueStream,
 } from "../../../helpers/marketplacehelper";
 import BidTable from "/components/BidTable";
+import FeeCollectorDashboard from "/components/Dune/FeeCollectorDashboard";
 
 export async function getStaticPaths() {
   const ids = _.range(1, 1000);
@@ -329,6 +330,13 @@ function RevenueStream({ web3, data }) {
                   <BidTable web3={web3} dataSource={bidDatas} />
                 </div>
               </div>
+
+              {/* Revenue Analytics */}
+              {data2?.feeCollector && data2?.feeCollector !== ethers.constants.AddressZero && (
+                <div className="mt-14 lg:col-span-4">
+                  <FeeCollectorDashboard feeCollectorAddress={data2?.feeCollector} />
+                </div>
+              )}
             </div>
           </Container>
         </div>

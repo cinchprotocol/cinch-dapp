@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import * as Realm from "realm-web";
 import _ from "lodash";
 import { Select, Modal, Form, Input, message, Space, Table } from "antd";
-const { utils } = require("ethers");
+const { ethers, utils } = require("ethers");
 
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
@@ -194,7 +194,7 @@ function RevenueStream({ web3, data }) {
                         <dd className="text-gray-900">{data2.revenuePctStr}%</dd>
                       </div>
                       <div className="py-3 flex justify-between text-sm font-medium">
-                        <dt className="text-gray-500">Expiry amount</dt>
+                        <dt className="text-gray-500">Expiry amount (ETH)</dt>
 
                         <dd className="text-gray-900">{data2?.expAmountStr}</dd>
                       </div>
@@ -213,103 +213,109 @@ function RevenueStream({ web3, data }) {
               </div>
 
               {/* BID */}
-              <div className="mx-5 mt-4 lg:mt-0 lg:col-span-2 shadow-2xl p-10 ">
-                <div>
-                  <h3 className="text-xl text-center font-semibold text-gray-900">Place Bid</h3>
-                  <Form
-                    name="basic"
-                    wrapperCol={{
-                      span: 24,
-                    }}
-                    initialValues={{
-                      remember: true,
-                    }}
-                    onFinish={onFormFinish}
-                    onFinishFailed={onFormFinishFailed}
-                    autoComplete="off"
-                    labelWrap
-                    layout="verticle"
-                    requiredMark="required"
-                    size="large"
-                  >
-                    <Form.Item
-                      label="Price"
-                      name="price"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input the price",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                    <Form.Item
-                      label="Address to receive revenue-share"
-                      name="addressToReceiveRevenueShare"
-                      extra="Fee consolidator contract will forward revenue to this address"
-                      rules={[
-                        {
-                          required: true,
-                          message:
-                            "The revenue royalty will be implemented by adding this wallet address to the fee consolidator contract",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Contact information (optional)"
-                      name="contact"
-                      extra=" Receive notifications on the status of your royalty listing,
-                      its implementation, and its performance"
-                      rules={[
-                        {
-                          required: false,
-                          message:
-                            "Enter your preferred contact information to receive notifications on the status of your royalty listing, its implementation, and its performance",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-
-                    <Form.Item>
-                      <Button className="w-full" htmlType="submit">
-                        Review Bid
-                      </Button>
-                    </Form.Item>
-                  </Form>
-                  <Modal
-                    title=""
-                    visible={isModalVisible}
-                    onOk={handleOk}
-                    onCancel={handleCancel}
-                    okText="Confirm Bid"
-                    width={650}
-                  >
+              {data2?.buyer && data2?.buyer === ethers.constants.AddressZero && (
+                <>
+                  <div className="mx-5 mt-4 lg:mt-0 lg:col-span-2 shadow-2xl p-10 ">
                     <div>
-                      <div className="px-4 py-5 sm:px-6">
-                        <h3 className="text-xl font-medium leading-6 text-gray-900">Review Bid Information</h3>
-                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                          Please verify details, this helps avoiding any delay.{" "}
-                        </p>
-                      </div>
-                      <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-                        <dl className="sm:divide-y sm:divide-gray-200">
-                          <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                            <dt className="text-sm font-medium text-gray-500">Price</dt>
-                            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.price}</dd>
+                      <h3 className="text-xl text-center font-semibold text-gray-900">Place Bid</h3>
+                      <Form
+                        name="basic"
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                        initialValues={{
+                          remember: true,
+                        }}
+                        onFinish={onFormFinish}
+                        onFinishFailed={onFormFinishFailed}
+                        autoComplete="off"
+                        labelWrap
+                        layout="verticle"
+                        requiredMark="required"
+                        size="large"
+                      >
+                        <Form.Item
+                          label="Price"
+                          name="price"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please input the price",
+                            },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          label="Address to receive revenue-share"
+                          name="addressToReceiveRevenueShare"
+                          extra="Fee consolidator contract will forward revenue to this address"
+                          rules={[
+                            {
+                              required: true,
+                              message:
+                                "The revenue royalty will be implemented by adding this wallet address to the fee consolidator contract",
+                            },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                          label="Contact information (optional)"
+                          name="contact"
+                          extra=" Receive notifications on the status of your royalty listing,
+                      its implementation, and its performance"
+                          rules={[
+                            {
+                              required: false,
+                              message:
+                                "Enter your preferred contact information to receive notifications on the status of your royalty listing, its implementation, and its performance",
+                            },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+
+                        <Form.Item>
+                          <Button className="w-full" htmlType="submit">
+                            Review Bid
+                          </Button>
+                        </Form.Item>
+                      </Form>
+                      <Modal
+                        title=""
+                        visible={isModalVisible}
+                        onOk={handleOk}
+                        onCancel={handleCancel}
+                        okText="Confirm Bid"
+                        width={650}
+                      >
+                        <div>
+                          <div className="px-4 py-5 sm:px-6">
+                            <h3 className="text-xl font-medium leading-6 text-gray-900">Review Bid Information</h3>
+                            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                              Please verify details, this helps avoiding any delay.{" "}
+                            </p>
                           </div>
-                          <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                            <dt className="text-sm font-medium text-gray-500">Address to receive revenue-share</dt>
-                            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                              {formValues?.addressToReceiveRevenueShare}
-                            </dd>
+                          <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                            <dl className="sm:divide-y sm:divide-gray-200">
+                              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                                <dt className="text-sm font-medium text-gray-500">Price</dt>
+                                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                  {formValues?.price}
+                                </dd>
+                              </div>
+                              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                                <dt className="text-sm font-medium text-gray-500">Address to receive revenue-share</dt>
+                                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                  {formValues?.addressToReceiveRevenueShare}
+                                </dd>
+                              </div>
+                            </dl>
                           </div>
-                        </dl>
-                      </div>
+                        </div>
+                      </Modal>
                     </div>
                   </Modal>
                 </div>

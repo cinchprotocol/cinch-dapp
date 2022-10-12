@@ -10,6 +10,7 @@ import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
 import { getAllRevenueStreamForSale } from "../helpers/marketplacehelper";
 import RevenueStreamTable from "../components/RevenueStreamTable";
+const { ethers } = require("ethers");
 
 function RevenueStreamsForSale({ web3 }) {
   const [revenueStreamForSale, setRevenueStreamForSale] = useState([]);
@@ -17,7 +18,7 @@ function RevenueStreamsForSale({ web3 }) {
   const reloadData = async () => {
     const allRevenueStreamForSale = await getAllRevenueStreamForSale(web3);
     const _revenueStreamForSale = allRevenueStreamForSale.filter(
-      s => s.seller !== web3?.address && s.buyer === "0x0000000000000000000000000000000000000000",
+      s => s.seller !== web3?.address && s.buyer === ethers.constants.AddressZero,
     );
     setRevenueStreamForSale(_revenueStreamForSale);
   };

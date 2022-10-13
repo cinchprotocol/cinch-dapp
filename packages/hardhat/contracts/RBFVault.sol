@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "./interfaces/IGnosisSafe.sol";
@@ -24,22 +24,22 @@ contract RBFVault {
         Canceled
     }
 
-    string name;
-    address feeCollector;
-    address multiSig;
-    uint256 revenuePct;
-    uint256 price;
-    uint256 expAmount;
-    address borrower;
-    address lender;
+    string public name;
+    address public feeCollector;
+    address public multiSig;
+    uint256 public revenuePct;
+    uint256 public price;
+    uint256 public expAmount;
+    address public borrower;
+    address public lender;
 
-    address multisigGuard;
+    address public multisigGuard;
 
     uint256 public constant REVENUE_PERIOD = 52 weeks;
     uint256 public constant TIMEOUT_PERIOD = 1 weeks;
     Status public status;
-    uint256 vaultActivationDate;
-    uint256 vaultDeployDate;
+    uint256 public vaultActivationDate;
+    uint256 public vaultDeployDate;
 
     /**
      *

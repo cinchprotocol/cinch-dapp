@@ -30,7 +30,7 @@ function BidTable({ web3, dataSource, mode }) {
 
       const vaultCreatedEvent = txRes?.events?.find(e => e?.event === "RBFVaultCreated");
       if (vaultCreatedEvent && vaultCreatedEvent.args?.vaultAddress) {
-        router.push(`/vault/${vaultCreatedEvent?.args?.vaultAddress}`);
+        router.push(`/vaults/${vaultCreatedEvent?.args?.vaultAddress}`);
       } else {
         router.push("/dashboard");
       }

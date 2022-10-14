@@ -34,6 +34,10 @@ function Vault({ web3 }) {
     }
   }, [web3, vaultaddress]);
 
+  let classNameIsFeeCollectorUpdated = vaultData?.isFeeCollectorUpdated ? "bg-green-500" : "bg-gray-400";
+  let classNameIsMultisigGuardAdded = vaultData?.isMultisigGuardAdded ? "bg-green-500" : "bg-gray-400";
+  let classNameIsReadyToActivate = vaultData?.isFeeCollectorUpdated && vaultData?.isMultisigGuardAdded ? "bg-green-500" : "bg-gray-400";
+
   return (
     <>
       <CommonHead />
@@ -109,70 +113,67 @@ function Vault({ web3 }) {
               <>
                 <div className="mx-5 mt-4 lg:mt-0 lg:col-span-2 shadow-2xl p-10 ">
                   <div>
-                    <h3 className="text-xl text-center font-semibold text-gray-900">Place Bid</h3>
-                    <Form
-                      name="basic"
-                      wrapperCol={{
-                        span: 24,
-                      }}
-                      initialValues={{
-                        remember: true,
-                      }}
-                      autoComplete="off"
-                      labelWrap
-                      layout="verticle"
-                      requiredMark="required"
-                      size="large"
-                    >
-                      <Form.Item
-                        label="Price"
-                        name="price"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please input the price",
-                          },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
-                      <Form.Item
-                        label="Address to receive revenue-share"
-                        name="addressToReceiveRevenueShare"
-                        extra="Fee consolidator contract will forward revenue to this address"
-                        rules={[
-                          {
-                            required: true,
-                            message:
-                              "The revenue royalty will be implemented by adding this wallet address to the fee consolidator contract",
-                          },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
+                    <h3 className="text-xl text-center font-semibold text-gray-900">Pending Items</h3>
+                    <div class="flow-root mt-10">
+                      <ul role="list" class="-mb-8">
 
-                      <Form.Item
-                        label="Contact information (optional)"
-                        name="contact"
-                        extra=" Receive notifications on the status of your royalty listing,
-                      its implementation, and its performance"
-                        rules={[
-                          {
-                            required: false,
-                            message:
-                              "Enter your preferred contact information to receive notifications on the status of your royalty listing, its implementation, and its performance",
-                          },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
+                        <li>
+                          <div class="relative pb-8">
+                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                            <div class="relative flex space-x-3">
+                              <div>
 
-                      <Form.Item>
-                        <Button className="w-full" htmlType="submit">
-                          Review Bid
-                        </Button>
-                      </Form.Item>
-                    </Form>
+                                <span class={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${classNameIsFeeCollectorUpdated}`}>
+                                  <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                                  </svg>
+                                </span>
+                              </div>
+                              <div className="min-w-0 pt-1.5">
+                                <p class="text-sm text-gray-500">Updated the fee receiver Address</p>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+
+
+
+                        <li>
+                          <div class="relative pb-8">
+                            <div class="relative flex space-x-3">
+                              <div>
+                                <span class={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${classNameIsMultisigGuardAdded}`}>
+                                  <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                                  </svg>
+                                </span>
+                              </div>
+                              <div className="min-w-0 pt-1.5">
+                                <p class="text-sm text-gray-500">Added Cinch multi-Sig guard</p>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+
+                        <li>
+                          <div class="relative pb-8">
+                            <div class="relative flex space-x-3">
+                              <div>
+                                <span class={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${classNameIsReadyToActivate}`}>
+                                  <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                                  </svg>
+                                </span>
+                              </div>
+                              <div className="min-w-0 pt-1.5">
+                                <p class="text-sm text-gray-500">All done. Ready to deploy the fund.</p>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+
                     {/* <Modal
                         title=""
                         visible={isModalVisible}

@@ -21,8 +21,10 @@ export const fetchVaultData = async ({ web3, address }) => {
     expAmount: utils.formatEther(await vaultContract?.expAmount()),
     borrower: await vaultContract?.borrower(),
     lender: await vaultContract?.lender(),
-    status: await vaultContract?.status()
-
+    status: await vaultContract?.status(),
+    isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
+    isMultisigGuardAdded: await vaultContract?.isMultisigGuardAdded(),
+    isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded
   }
   return data;
 };

@@ -56,18 +56,18 @@ export function About() {
             </span>
           </h1>
           <p className="mt-8 text-gray-500 leading-8">
-            Cinch is a decentralized exchange for blockchain revenue streams. Projects can easily structure revenue agreements and access non-dilutive financing in a fast and efficient way. Our marketplace allows investors, projects, and DeFi participants to buy and sell revenue streams in a secure manner. We enable a vibrant secondary market for revenue streams that ultimately results in the best possible cost of capital for web3 projects.
+            Cinch Protocol is a tool that represents revenue streams as transferrable tokens. Cinch Protocol is also a trading platform for buyers of revenue tokens.
           </p>
         </div>
         <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
           <h2>Our vision</h2>
           <p>
-            To be the financial hub for permissionless, uncollateralized, and non-dilutive capital in web3.
+            To be the preferred buying platform for revenue tokens.
           </p>
 
           <h2>Our mission</h2>
           <p>
-            We believe blockchain technology will change the world for the better. Our mission is to provide the infrastructure required to help web3 projects reach their full potential.
+            We believe blockchain technology will change the world for the better. Our mission is to provide the infrastructure required to help blockchain projects reach their full potential.
           </p>
         </div>
       </div>

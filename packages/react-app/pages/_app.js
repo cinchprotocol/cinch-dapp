@@ -6,6 +6,8 @@ import { DevUI, NetworkDisplay, ThemeSwitch } from "../components";
 import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import 'aos/dist/aos.css';
+import AOS from 'aos';
 
 function MyApp({ Component, pageProps }) {
   const prevTheme = useRef("light");
@@ -19,6 +21,8 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     prevTheme.current = window.localStorage.getItem("theme");
+    AOS.init({     
+    });
   }, []);
 
   return (
@@ -26,10 +30,7 @@ function MyApp({ Component, pageProps }) {
       <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme.current}>
         <>
           <Head>
-            <link
-              rel="icon"
-              href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏗</text></svg>"
-            />
+            <link rel="icon" type="image/x-icon" href="cinch_logo.png"></link>
           </Head>
           {router?.pathname !== "/debug" ? null : <NetworkDisplay />}
           {router?.pathname !== "/debug" ? null : <DevUI />}

@@ -149,7 +149,7 @@ function Vault({ web3 }) {
                                 </span>
                               </div>
                               <div className="min-w-0 pt-1.5">
-                                <p class="text-sm text-gray-500">Added Cinch multi-Sig guard.</p>
+                                <p class="text-sm text-gray-500">Added Cinch multi-sig guard.</p>
                               </div>
                             </div>
                           </div>
@@ -166,7 +166,7 @@ function Vault({ web3 }) {
                                 </span>
                               </div>
                               <div className="min-w-0 pt-1.5">
-                                <p class="text-sm text-gray-500">All done. Ready to deploy the fund.</p>
+                                <p class="text-sm text-gray-500">Ready to deploy the funds.</p>
                               </div>
                             </div>
                           </div>

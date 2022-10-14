@@ -130,16 +130,16 @@ function Vault({ web3 }) {
                                 </span>
                               </div>
                               <div className="min-w-0 pt-1.5">
-                                <p class="text-sm text-gray-500">Updated the fee receiver Address</p>
+                                <p class="text-sm text-gray-500">Updated the fee receiver Address.</p>
                               </div>
                             </div>
                           </div>
                         </li>
 
 
-
                         <li>
                           <div class="relative pb-8">
+                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
                             <div class="relative flex space-x-3">
                               <div>
                                 <span class={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${classNameIsMultisigGuardAdded}`}>
@@ -149,7 +149,7 @@ function Vault({ web3 }) {
                                 </span>
                               </div>
                               <div className="min-w-0 pt-1.5">
-                                <p class="text-sm text-gray-500">Added Cinch multi-Sig guard</p>
+                                <p class="text-sm text-gray-500">Added Cinch multi-Sig guard.</p>
                               </div>
                             </div>
                           </div>

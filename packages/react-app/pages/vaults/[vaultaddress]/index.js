@@ -113,7 +113,7 @@ function Vault({ web3 }) {
               <>
                 <div className="mx-5 mt-4 lg:mt-0 lg:col-span-2 shadow-2xl p-10 ">
                   <div>
-                    <h3 className="text-xl text-center font-semibold text-gray-900">Pending Items</h3>
+                    <h3 className="text-xl text-center font-semibold text-gray-900">Pending Action Items</h3>
                     <div class="flow-root mt-10">
                       <ul role="list" class="-mb-8">
 
@@ -173,7 +173,11 @@ function Vault({ web3 }) {
                         </li>
                       </ul>
                     </div>
-
+                    <div>
+                      <Button className="w-full mt-12" htmlType="submit">
+                        Transfer Funds
+                      </Button>
+                    </div>
                     {/* <Modal
                         title=""
                         visible={isModalVisible}

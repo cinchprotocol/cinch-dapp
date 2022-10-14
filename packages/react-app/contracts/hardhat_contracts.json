@@ -1,11 +1,11 @@
 {
-  "31337": {
-    "localhost": {
-      "name": "localhost",
-      "chainId": "31337",
+  "5": {
+    "goerli": {
+      "name": "goerli",
+      "chainId": "5",
       "contracts": {
         "MarketPlace": {
-          "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          "address": "0xF28174acF09e24c67221a919cB4aa2309662dBbD",
           "abi": [
             {
               "inputs": [

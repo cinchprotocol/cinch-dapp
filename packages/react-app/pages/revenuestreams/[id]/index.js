@@ -58,7 +58,6 @@ function RevenueStream({ web3, data }) {
 
   const reloadData = async () => {
     const d = await getOneRevenueStreamForSaleWith(web3, data.id);
-    console.log("d", d);
     setData2(d);
 
     let bds;
@@ -70,12 +69,13 @@ function RevenueStream({ web3, data }) {
         bds = [bd];
       }
     }
+    console.log("isRevenueStreamOwner", isRevenueStreamOwner, "bds", bds);
     setBidDatas(bds?.filter(b => b.price));
   };
 
   useEffect(() => {
     reloadData();
-  }, [web3, data]);
+  }, [web3, data, isRevenueStreamOwner]);
 
   const onFormFinish = values => {
     console.log("Success:", values);

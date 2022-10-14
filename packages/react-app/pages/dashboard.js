@@ -55,41 +55,43 @@ function Dashboard({ web3 }) {
 
   return (
     <>
-      <CommonHead />
-      <DAppHeader web3={web3} />
-      <Container>
-        <main>
-          <div className="mt-10 h-screen">
-            <HeaderText01>Dashboard</HeaderText01>
-            <div className="bg-slate-50 rounded-lg p-10 min-h-[50%]">
-              {address ? (
-                <div>
-                  <Tabs defaultActiveKey="1" onChange={callback}>
-                    <TabPane tab="For Sale" key="1">
-                      <RevenueStreamTable dataSource={revenueStreamsForSale} mode="ForSale" />
-                    </TabPane>
-                    <TabPane tab="Sold" key="2">
-                      <RevenueStreamTable dataSource={revenueStreamsSold} mode="Sold" />
-                    </TabPane>
-                    <TabPane tab="Bids" key="3">
-                      <BidTable web3={web3} dataSource={bids} mode="Bids" />
-                    </TabPane>
-                    <TabPane tab="Bought" key="4">
-                      <RevenueStreamTable dataSource={revenueStreamsBought} mode="Bought" />
-                    </TabPane>
-                  </Tabs>
-                  <WithdrawButton />
-                </div>
-              ) : (
-                <div className="grid place-items-center h-[70vh]">
-                  <h2>Please connect wallet with owner account</h2>
-                </div>
-              )}
+      <div className="bg-slate-50">
+        <CommonHead />
+        <DAppHeader web3={web3} />
+        <Container>
+          <main>
+            <div className="mt-10 h-screen">
+              <HeaderText01>Dashboard</HeaderText01>
+              <div className="bg-white rounded-lg p-10 min-h-[50%]">
+                {address ? (
+                  <div>
+                    <Tabs defaultActiveKey="1" onChange={callback}>
+                      <TabPane tab="For Sale" key="1">
+                        <RevenueStreamTable dataSource={revenueStreamsForSale} mode="ForSale" />
+                      </TabPane>
+                      <TabPane tab="Sold" key="2">
+                        <RevenueStreamTable dataSource={revenueStreamsSold} mode="Sold" />
+                      </TabPane>
+                      <TabPane tab="Bids" key="3">
+                        <BidTable web3={web3} dataSource={bids} mode="Bids" />
+                      </TabPane>
+                      <TabPane tab="Bought" key="4">
+                        <RevenueStreamTable dataSource={revenueStreamsBought} mode="Bought" />
+                      </TabPane>
+                    </Tabs>
+                    <WithdrawButton />
+                  </div>
+                ) : (
+                  <div className="grid place-items-center h-[70vh]">
+                    <h2>Please connect wallet with owner account</h2>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </main>
-      </Container>
-      <Footer />
+          </main>
+        </Container>
+        <Footer />
+      </div>
     </>
   );
 }

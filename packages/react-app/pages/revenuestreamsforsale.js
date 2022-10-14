@@ -29,21 +29,24 @@ function RevenueStreamsForSale({ web3 }) {
 
   return (
     <>
+    <div className="bg-slate-50">
       <CommonHead />
       <DAppHeader web3={web3} />
-      <Container>
-        <main>
-          <div className="mt-10 h-screen">
-            <HeaderText01>Explore royalty streams on sale</HeaderText01>
-            <div className="bg-slate-50 rounded-lg p-10 min-h-[50%]">
-              <div className="text-center">
-                <RevenueStreamTable dataSource={revenueStreamForSale} mode="ForSale" />
+        <Container>
+          <main>
+            <div className="mt-10 h-screen">
+              <HeaderText01>Explore royalty streams on sale</HeaderText01>
+              <div className="bg-white shadow rounded-lg p-10 min-h-[50%]">
+                <div className="text-center">
+                  <RevenueStreamTable dataSource={revenueStreamForSale} mode="ForSale" />
+                </div>
               </div>
             </div>
-          </div>
-        </main>
-      </Container>
-      <Footer />
+          </main>
+        </Container>
+        <Footer />
+      
+        </div>
     </>
   );
 }

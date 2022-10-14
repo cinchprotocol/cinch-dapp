@@ -11,7 +11,9 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     args: [ deployer, 20000 ],
     log: true,
   });
-
+  // const marketPlaceContract = await ethers.getContract("MarketPlace", deployer);
+  // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
+  
   /*
     // Getting a previously deployed contract
     const YourContract = await ethers.getContract("YourContract", deployer);

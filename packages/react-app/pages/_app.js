@@ -12,7 +12,7 @@ import AOS from 'aos';
 function MyApp({ Component, pageProps }) {
   const prevTheme = useRef("light");
   const router = useRouter();
-  const defaultWeb3Provider = process.env.DEFAULT_WEB3_PROVIDER || "rinkeby";
+  const defaultWeb3Provider = process.env.DEFAULT_WEB3_PROVIDER || "goerli";
 
   const themes = {
     dark: `/css/dark-theme.css`,
@@ -32,9 +32,9 @@ function MyApp({ Component, pageProps }) {
           <Head>
             <link rel="icon" type="image/x-icon" href="cinch_logo.png"></link>
           </Head>
-          {router?.pathname === "/" ? null : <NetworkDisplay />}
-          {router?.pathname === "/" ? null : <DevUI />}
-          {router?.pathname === "/" ? null : <ThemeSwitch />}
+          {router?.pathname !== "/debug" ? null : <NetworkDisplay />}
+          {router?.pathname !== "/debug" ? null : <DevUI />}
+          {/* {router?.pathname === "/" ? null : <ThemeSwitch />} */}
           <Component {...pageProps} />
         </>
       </ThemeSwitcherProvider>

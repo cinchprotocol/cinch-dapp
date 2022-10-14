@@ -115,7 +115,9 @@ export function HowItWorks() {
                         </p>
                         <div className="mt-10 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10">
                             <div className="text-gray-500 lg:max-w-none bg-slate-50 p-10 rounded-2xl shadow-md">
+
                                 <h2 className="text-2xl leading-6 text-blue-600 font-semibold">IOU Token</h2>
+
                                 <p className='mt-5 text-base'>
                                     A promise to pay that has instant liquidity.
                                 </p>

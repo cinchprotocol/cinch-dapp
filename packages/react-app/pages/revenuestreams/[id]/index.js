@@ -123,40 +123,6 @@ function RevenueStream({ web3, data }) {
     setIsModalVisible(false);
   };
 
-  const bidDatasColumns = [
-    {
-      title: "Bidder",
-      dataIndex: "bidder",
-      key: "bidder",
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "Revenue Receiver",
-      dataIndex: "revenueReceiver",
-      key: "revenueReceiver",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => {
-        const { id } = record;
-        return isRevenueStreamOwner ? (
-          <Space size="middle">
-            <Button href={`/revenuestreams/${data?.id}/acceptbids/${id}`}>Accept</Button>
-          </Space>
-        ) : (
-          <Space size="middle">
-            <Button href="/wip">Cancel</Button>
-          </Space>
-        );
-      },
-    },
-  ];
-
   const router = useRouter();
   return (
     <>
@@ -309,7 +275,9 @@ function RevenueStream({ web3, data }) {
                                   </dd>
                                 </div>
                                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                                  <dt className="text-sm font-medium text-gray-500">Address to receive revenue-share</dt>
+                                  <dt className="text-sm font-medium text-gray-500">
+                                    Address to receive revenue-share
+                                  </dt>
                                   <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                     {formValues?.addressToReceiveRevenueShare}
                                   </dd>
@@ -334,7 +302,6 @@ function RevenueStream({ web3, data }) {
                   <BidTable web3={web3} dataSource={bidDatas} />
                 </div>
               </div>
-
 
               {/* Revenue Analytics */}
               {data2?.feeCollector && data2?.feeCollector !== ethers.constants.AddressZero && (

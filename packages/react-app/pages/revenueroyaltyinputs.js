@@ -35,7 +35,7 @@ function RevenueRoyaltyInputs({ web3 }) {
 
   const handleOk = async () => {
     try {
-      const txRes = await web3?.tx(
+      const tx = await web3?.tx(
         marketPlaceContract?.createMarketItem(
           formValues?.name || "Revenue Royalty",
           formValues?.feeCollectorContractAddress,
@@ -52,6 +52,8 @@ function RevenueRoyaltyInputs({ web3 }) {
           }
         },
       );
+      const txRes = await tx?.wait();
+      console.log("txRes", txRes);
     } catch (err) {
       displayError("revenueroyaltyinputs:handleOk", err);
     }

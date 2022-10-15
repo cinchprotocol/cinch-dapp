@@ -93,7 +93,7 @@ function RevenueStream({ web3, data }) {
   const handleOk = async () => {
     try {
       //TODO: add UI for duration
-      const txRes = await web3?.tx(
+      const tx = await web3?.tx(
         marketPlaceContract?.placeBid(
           data2?.id,
           utils.parseEther(formValues?.price),
@@ -111,6 +111,8 @@ function RevenueStream({ web3, data }) {
           }
         },
       );
+      const txRes = await tx?.wait();
+      console.log("txRes", txRes);
     } catch (err) {
       displayError("RevenueStream:handleOk", err);
     }

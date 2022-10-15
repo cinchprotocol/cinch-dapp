@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Table, Space } from "antd";
 import _ from "lodash";
+import { useRouter } from "next/router";
 import { Button } from "/components/Button";
 
 function RevenueStreamTable({ dataSource, mode }) {
+  const router = useRouter();
   const defaultColumns = [
     {
       title: "Name",
@@ -48,7 +50,13 @@ function RevenueStreamTable({ dataSource, mode }) {
         const targetRoute = `/revenuestreams/${id}`;
         return (
           <Space size="middle">
-            <Button href={targetRoute}>Details</Button>
+            <Button
+              onClick={() => {
+                router.push(targetRoute);
+              }}
+            >
+              Details
+            </Button>
           </Space>
         );
       },

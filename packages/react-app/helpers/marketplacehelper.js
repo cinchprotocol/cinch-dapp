@@ -52,7 +52,8 @@ export const getBidByBidderOfRevenueStream = async (web3, revenueStreamId, bidde
     bid.stream = await getOneRevenueStreamForSaleWith(web3, revenueStreamId);
     return formatBid(bid);
   } catch (err) {
-    displayError("getBidByBidderOfRevenueStream", err);
+    //displayError("getBidByBidderOfRevenueStream", err);
+    console.log("getBidByBidderOfRevenueStream", err);
     return [];
   }
 };

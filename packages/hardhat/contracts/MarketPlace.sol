@@ -41,17 +41,18 @@ contract MarketPlace is
     // #####   Listing   #####
     // ##########################
     function getMarketItem(uint256 marketItemId)
-        public
+        external
         view
         returns (MarketItem memory)
     {
         return idToMarketItem[marketItemId];
     }
 
-    function getMarketItemCount() public view returns (uint256) {
+    function getMarketItemCount() external view returns (uint256) {
         return _itemIds.current();
     }
 
+    //TODO: remove the test item functions and change createMarketItem from public to external
     function createMarketItem(
         string memory name,
         address feeCollector,
@@ -95,7 +96,7 @@ contract MarketPlace is
     }
 
     function fetchUnsoldMarketItems()
-        public
+        external
         view
         returns (MarketItem[] memory)
     {
@@ -119,7 +120,7 @@ contract MarketPlace is
     // for public view call, specific signing is not required, so msg.sender is not necessary the target seller address.
     // it make more sense to use a seller parameter as the function input, instead of using msg.sender
     // the same apply to fetchMyPurchases and fetchMyBids
-    function fetchMyListings(address seller) public view returns (MarketItem[] memory) {
+    function fetchMyListings(address seller) external view returns (MarketItem[] memory) {
         uint256 totalItemCount = _itemIds.current();
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
@@ -143,7 +144,7 @@ contract MarketPlace is
         return items;
     }
 
-    function fetchMyPurchases(address buyer) public view returns (MarketItem[] memory) {
+    function fetchMyPurchases(address buyer) external view returns (MarketItem[] memory) {
         uint256 totalItemCount = _itemIds.current();
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
@@ -167,7 +168,7 @@ contract MarketPlace is
         return items;
     }
 
-    function fetchMyBids(address sender) public view returns (Bid[] memory) {
+    function fetchMyBids(address sender) external view returns (Bid[] memory) {
         uint256 itemCount = _itemIds.current();
         uint256 currentIndex = 0;
         uint256 bidCount = 0;
@@ -238,7 +239,7 @@ contract MarketPlace is
         uint256 _price,
         address _revenueReceiver,
         uint256 _duration
-    ) public payable whenNotPaused {
+    ) external payable whenNotPaused {
         address sender = _msgSender();
 
         require(_price > 0, "Bid#_placeBid: PRICE_MUST_BE_GT_0");
@@ -314,7 +315,7 @@ contract MarketPlace is
      * @return `bool`
      */
     function acceptBid(uint256 _itemId, uint256 _bidId)
-        public
+        external
         whenNotPaused
         returns (bool)
     {
@@ -373,7 +374,7 @@ contract MarketPlace is
     function removeExpiredBids(
         uint256[] memory _itemsIds,
         address[] memory _bidders
-    ) public {
+    ) external {
         uint256 loopLength = _itemsIds.length;
 
         require(
@@ -408,7 +409,7 @@ contract MarketPlace is
      * @dev Cancel a bid for an item
      * @param _itemId - uint256 of the item id
      */
-    function cancelBid(uint256 _itemId) public whenNotPaused {
+    function cancelBid(uint256 _itemId) external whenNotPaused {
         address sender = _msgSender();
 
         // Get active bid
@@ -557,7 +558,7 @@ contract MarketPlace is
         _pause();
     }
 
-    function createTestItem1() public payable {
+    function createTestItem1() external payable {
         createMarketItem(
             "Test Item 1",
             0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,
@@ -568,7 +569,7 @@ contract MarketPlace is
         );
     }
 
-    function createTestItem2() public payable {
+    function createTestItem2() external payable {
         createMarketItem(
             "Test Item 2",
             0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,

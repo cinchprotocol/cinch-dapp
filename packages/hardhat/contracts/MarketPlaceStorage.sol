@@ -55,6 +55,8 @@ contract MarketPlaceStorage {
         uint256 expiresAt;
     }
 
+    //TODO: consider to use "@openzeppelin/contracts/utils/structs/EnumerableSet.sol"
+
     // Bid by item id => bid id => bid
     mapping(uint256 => mapping(uint256 => Bid)) internal bidsByItem;
     // Bid count by item id => bid counts

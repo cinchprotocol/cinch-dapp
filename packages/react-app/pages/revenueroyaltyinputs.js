@@ -12,6 +12,7 @@ import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
 import { insertOneWith } from "../helpers/mongodbhelper";
+import { displayError } from "../helpers/errorhelper";
 
 function RevenueRoyaltyInputs({ web3 }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -20,14 +21,12 @@ function RevenueRoyaltyInputs({ web3 }) {
   const marketPlaceContract = web3?.writeContracts["MarketPlace"];
 
   const onFormFinish = values => {
-    console.log("Success:", values);
     setFromValues(values);
-    console.log("values", values);
     showModal();
   };
 
   const onFormFinishFailed = errorInfo => {
-    console.log("Failed:", errorInfo);
+    displayError("revenueroyaltyinputs:onFormFinishFailed:" + errorInfo);
   };
 
   const showModal = () => {
@@ -36,8 +35,6 @@ function RevenueRoyaltyInputs({ web3 }) {
 
   const handleOk = async () => {
     try {
-      console.log("formValues", formValues);
-
       const txRes = await web3?.tx(
         marketPlaceContract?.createMarketItem(
           formValues?.name || "Revenue Royalty",
@@ -49,16 +46,14 @@ function RevenueRoyaltyInputs({ web3 }) {
           {},
         ),
         res => {
-          console.log("📡 Transaction createMarketItem:", res);
           if (res.status == 1) {
             setIsModalVisible(false);
             router.push("/dashboard");
           }
         },
       );
-      console.log("txRes", txRes);
     } catch (err) {
-      console.log(err);
+      displayError("revenueroyaltyinputs:handleOk", err);
     }
   };
 
@@ -234,7 +229,9 @@ function RevenueRoyaltyInputs({ web3 }) {
                         </div>
                         <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                           <dt className="text-sm font-medium text-gray-500">Expiry Amount</dt>
-                          <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.expiryAmount}</dd>
+                          <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                            {formValues?.expiryAmount}
+                          </dd>
                         </div>
                         <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                           <dt className="text-sm font-medium text-gray-500">Contact Information</dt>

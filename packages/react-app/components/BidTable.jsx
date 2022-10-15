@@ -12,7 +12,6 @@ function BidTable({ web3, dataSource, mode }) {
     if (record && record.itemId) {
       const tx = await marketPlaceContract?.cancelBid(record.itemId);
       const txRes = await tx?.wait();
-      console.log("txRes", txRes);
     }
   };
 
@@ -20,7 +19,6 @@ function BidTable({ web3, dataSource, mode }) {
     if (record && record.itemId) {
       const tx = await marketPlaceContract?.acceptBid(record.itemId, record.id);
       const txRes = await tx?.wait();
-      console.log("txRes", txRes);
 
       if (txRes?.events?.find(e => e?.event === "BidAccepted")) {
         message.success("Bid accepted");

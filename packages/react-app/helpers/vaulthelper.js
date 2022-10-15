@@ -1,7 +1,7 @@
-import { message } from "antd";
 import externalContracts from "../contracts/external_contracts";
 import { Contract } from "@ethersproject/contracts";
 const { utils } = require("ethers");
+import { displayError } from "./errorhelper";
 
 const RBFVAULTABI = externalContracts[31337]?.contracts?.RBFVAULT?.abi;
 
@@ -30,8 +30,7 @@ export const fetchVaultData = async ({ web3, address }) => {
       isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded,
     };
   } catch (err) {
-    console.log(err);
-    message.error("fetchVaultData: " + err.message, 5);
+    displayError("fetchVaultData", err);
   } finally {
     return data;
   }

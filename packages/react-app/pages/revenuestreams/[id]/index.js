@@ -20,6 +20,7 @@ import {
 } from "../../../helpers/marketplacehelper";
 import BidTable from "/components/BidTable";
 import FeeCollectorDashboard from "/components/Dune/FeeCollectorDashboard";
+import { displayError } from "/helpers/errorhelper";
 
 export async function getStaticPaths() {
   const ids = _.range(1, 1000);
@@ -69,7 +70,6 @@ function RevenueStream({ web3, data }) {
         bds = [bd];
       }
     }
-    console.log("isRevenueStreamOwner", isRevenueStreamOwner, "bds", bds);
     setBidDatas(bds?.filter(b => b.price));
   };
 
@@ -78,13 +78,12 @@ function RevenueStream({ web3, data }) {
   }, [web3, data, isRevenueStreamOwner]);
 
   const onFormFinish = values => {
-    console.log("Success:", values);
     setFromValues(values);
     showModal();
   };
 
   const onFormFinishFailed = errorInfo => {
-    console.log("Failed:", errorInfo);
+    displayError("RevenueStream:onFormFinishFailed:" + errorInfo);
   };
 
   const showModal = () => {
@@ -106,16 +105,14 @@ function RevenueStream({ web3, data }) {
           },
         ),
         res => {
-          console.log("📡 Transaction placeBid:", res);
           if (res.status == 1) {
             setIsModalVisible(false);
             router.push("/dashboard");
           }
         },
       );
-      console.log("txRes", txRes);
     } catch (err) {
-      console.log(err);
+      displayError("RevenueStream:handleOk", err);
     }
   };
 

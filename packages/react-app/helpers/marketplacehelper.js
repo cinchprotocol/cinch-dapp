@@ -1,4 +1,5 @@
 const { utils } = require("ethers");
+import { displayError } from "./errorhelper";
 
 export const getAllRevenueStreamForSale = async web3 => {
   const marketPlaceContract = web3?.readContracts["MarketPlace"];
@@ -51,7 +52,7 @@ export const getBidByBidderOfRevenueStream = async (web3, revenueStreamId, bidde
     bid.stream = await getOneRevenueStreamForSaleWith(web3, revenueStreamId);
     return formatBid(bid);
   } catch (err) {
-    console.log("getBidByBidderOfRevenueStream err", err);
+    displayError("getBidByBidderOfRevenueStream", err);
     return [];
   }
 };

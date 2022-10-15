@@ -61,7 +61,10 @@ contract MarketPlace is
         uint256 expAmount
     ) public payable nonReentrant {
         _requireGnosisSafe(multiSig);
-        require(price > 0, "Price must be at least 1 wei");
+        require(price > 0, "PRICE_MUST_BE_GT_0");
+
+        //TODO: guard against zero revenuePct ?
+        //TODO: use address sender = _msgSender(); instead of msg.sender ?
 
         _itemIds.increment();
         uint256 itemId = _itemIds.current();
@@ -113,20 +116,23 @@ contract MarketPlace is
         return items;
     }
 
-    function fetchMyListings() public view returns (MarketItem[] memory) {
+    // for public view call, specific signing is not required, so msg.sender is not necessary the target seller address.
+    // it make more sense to use a seller parameter as the function input, instead of using msg.sender
+    // the same apply to fetchMyPurchases and fetchMyBids
+    function fetchMyListings(address seller) public view returns (MarketItem[] memory) {
         uint256 totalItemCount = _itemIds.current();
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
 
         for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].seller == msg.sender) {
+            if (idToMarketItem[i + 1].seller == seller) {
                 itemCount += 1;
             }
         }
 
         MarketItem[] memory items = new MarketItem[](itemCount);
         for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].seller == msg.sender) {
+            if (idToMarketItem[i + 1].seller == seller) {
                 uint256 currentId = i + 1;
                 MarketItem storage currentItem = idToMarketItem[currentId];
                 items[currentIndex] = currentItem;
@@ -137,20 +143,20 @@ contract MarketPlace is
         return items;
     }
 
-    function fetchMyPurchases() public view returns (MarketItem[] memory) {
+    function fetchMyPurchases(address buyer) public view returns (MarketItem[] memory) {
         uint256 totalItemCount = _itemIds.current();
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
 
         for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].buyer == msg.sender) {
+            if (idToMarketItem[i + 1].buyer == buyer) {
                 itemCount += 1;
             }
         }
 
         MarketItem[] memory items = new MarketItem[](itemCount);
         for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].buyer == msg.sender) {
+            if (idToMarketItem[i + 1].buyer == buyer) {
                 uint256 currentId = i + 1;
                 MarketItem storage currentItem = idToMarketItem[currentId];
                 items[currentIndex] = currentItem;
@@ -161,11 +167,10 @@ contract MarketPlace is
         return items;
     }
 
-    function fetchMyBids() public view returns (Bid[] memory) {
+    function fetchMyBids(address sender) public view returns (Bid[] memory) {
         uint256 itemCount = _itemIds.current();
         uint256 currentIndex = 0;
         uint256 bidCount = 0;
-        address sender = _msgSender();
 
         for (uint256 i = 0; i < itemCount; i++) {
             uint256 itemId = i + 1;
@@ -271,6 +276,8 @@ contract MarketPlace is
         );
 
         require(item.seller != sender, "Bid#_placeBid: SELLER_CANT_PLACE_BID");
+
+        require(item.buyer == address(0), "Bid#placeBid: ITEM_ALREADY_SOLD");
 
         uint256 expiresAt = block.timestamp + _duration;
         uint256 bidId;
@@ -392,6 +399,8 @@ contract MarketPlace is
             "Bid#_removeExpiredBid: BID_NOT_EXPIRED"
         );
 
+        //TODO: guard against accepted bid
+
         _cancelBid(bid.id, _itemId, _bidder);
     }
 
@@ -472,7 +481,7 @@ contract MarketPlace is
         uint256 bidId = bidIdByItemAndBidder[_itemId][_bidder];
         bid = getBidByItem(_itemId, bidId);
         if (_bidder != bid.bidder) {
-            revert("Bid#getBidByBidder: BIDDER_HAS_NOT_ACTIVE_BIDS_FOR_ITEM");
+            revert("Bid#getBidByBidder: BIDDER_HAS_NO_ACTIVE_BID_FOR_ITEM");
         }
     }
 

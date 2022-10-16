@@ -22,33 +22,10 @@ import BidTable from "/components/BidTable";
 import FeeCollectorDashboard from "/components/Dune/FeeCollectorDashboard";
 import { displayError } from "/helpers/errorhelper";
 
-export async function getStaticPaths() {
-  const ids = _.range(1, 1000);
-  const paths = ids.map(id => {
-    return {
-      params: {
-        id: id.toString(),
-      },
-    };
-  });
-  return {
-    paths,
-    fallback: false,
-  };
-}
-
-export async function getStaticProps({ params }) {
-  const data = {
-    id: params.id,
-  };
-  return {
-    props: {
-      data,
-    },
-  };
-}
-
-function RevenueStream({ web3, data }) {
+function RevenueStream({ web3 }) {
+  const router = useRouter();
+  const { id } = router.query;
+  const data = { id };
   const marketPlaceContract = web3?.writeContracts["MarketPlace"];
   const [data2, setData2] = useState(data);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -122,7 +99,6 @@ function RevenueStream({ web3, data }) {
     setIsModalVisible(false);
   };
 
-  const router = useRouter();
   return (
     <>
       <div className="bg-slate-50">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Web3Consumer } from "../../helpers/Web3Context";
 import "antd/dist/antd.css";
 import { useRouter } from "next/router";
@@ -13,35 +13,25 @@ import { HeaderText01 } from "/components/HeaderText";
 //import { getAllBidIds, getBidData } from "/components/MockData";
 import { getAllBidProposalIds, getOneBidProposalWith } from "../../helpers/mongodbhelper";
 
-export async function getStaticPaths() {
-  const ids = await getAllBidProposalIds();
-  const paths = ids?.map(id => {
-    return {
-      params: {
-        id: id,
-      },
-    };
-  });
-  return {
-    paths,
-    fallback: false,
-  };
-}
-
-export async function getStaticProps({ params }) {
-  const objId = Realm.BSON.ObjectId.createFromHexString(params.id);
-  const data = _.omit(await getOneBidProposalWith({ _id: objId }), ["_id"]);
-  return {
-    props: {
-      data,
-    },
-  };
-}
-
-function BidDetail({ web3, data }) {
+function BidDetail({ web3 }) {
   const acceptBidsRoute = `/wip`;
   const denyBidsRoute = `/wip`;
   const router = useRouter();
+  const { id } = router.query;
+  const [data, setData] = useState({ id });
+
+  const reloadData = async () => {
+    const objId = Realm.BSON.ObjectId.createFromHexString(id);
+    const _data = _.omit(await getOneBidProposalWith({ _id: objId }), ["_id"]);
+    setData(_data);
+  };
+
+  useEffect(() => {
+    if (id) {
+      reloadData();
+    }
+  }, [id]);
+
   return (
     <>
       <CommonHead />

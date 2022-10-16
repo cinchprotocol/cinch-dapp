@@ -39,20 +39,17 @@ function RevenueStream({ web3 }) {
     setData2(d);
 
     let bds;
+    bds = await fetchBidsOfRevenueStream(web3, data.id);
     if (isRevenueStreamOwner) {
-      bds = await fetchBidsOfRevenueStream(web3, data.id);
+      setBidDatas(bds?.filter(b => b.price));
     } else {
-      const bd = await getBidByBidderOfRevenueStream(web3, data.id, web3?.address);
-      if (bd) {
-        bds = [bd];
-      }
+      setBidDatas(bds?.filter(b => b.price && b.bidder === web3?.address));
     }
-    setBidDatas(bds?.filter(b => b.price));
   };
 
   useEffect(() => {
     reloadData();
-  }, [web3, data, isRevenueStreamOwner]);
+  }, [web3]);
 
   const onFormFinish = values => {
     setFromValues(values);

@@ -30,7 +30,7 @@ function BidDetail({ web3 }) {
     if (id) {
       reloadData();
     }
-  }, [id]);
+  }, [web3]);
 
   return (
     <>

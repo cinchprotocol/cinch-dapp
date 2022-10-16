@@ -30,7 +30,7 @@ function Vault({ web3 }) {
     if (web3) {
       reloadData();
     }
-  }, [web3, vaultaddress]);
+  }, [web3]);
 
   let classNameIsFeeCollectorUpdated = vaultData?.isFeeCollectorUpdated ? "bg-green-500" : "bg-gray-400";
   let classNameIsMultisigGuardAdded = vaultData?.isMultisigGuardAdded ? "bg-green-500" : "bg-gray-400";

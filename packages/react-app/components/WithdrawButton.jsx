@@ -19,9 +19,10 @@ function WithdrawButton({ web3 }) {
 
   const handleClick = async () => {
     const marketPlaceContract = web3?.writeContracts["MarketPlace"];
-    const txRes = await web3?.tx(marketPlaceContract?.withdraw(), res => {
+    const tx = await web3?.tx(marketPlaceContract?.withdraw(), res => {
       console.log("📡 Transaction withdraw:", res);
     });
+    const txRes = await tx?.wait();
     console.log("txRes", txRes);
   };
 

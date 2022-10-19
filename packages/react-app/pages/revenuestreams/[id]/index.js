@@ -20,34 +20,12 @@ import {
 } from "../../../helpers/marketplacehelper";
 import BidTable from "/components/BidTable";
 import FeeCollectorDashboard from "/components/Dune/FeeCollectorDashboard";
+import { displayError } from "/helpers/errorhelper";
 
-export async function getStaticPaths() {
-  const ids = _.range(1, 1000);
-  const paths = ids.map(id => {
-    return {
-      params: {
-        id: id.toString(),
-      },
-    };
-  });
-  return {
-    paths,
-    fallback: false,
-  };
-}
-
-export async function getStaticProps({ params }) {
-  const data = {
-    id: params.id,
-  };
-  return {
-    props: {
-      data,
-    },
-  };
-}
-
-function RevenueStream({ web3, data }) {
+function RevenueStream({ web3 }) {
+  const router = useRouter();
+  const { id } = router.query;
+  const data = { id };
   const marketPlaceContract = web3?.writeContracts["MarketPlace"];
   const [data2, setData2] = useState(data);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -58,33 +36,28 @@ function RevenueStream({ web3, data }) {
 
   const reloadData = async () => {
     const d = await getOneRevenueStreamForSaleWith(web3, data.id);
-    console.log("d", d);
     setData2(d);
 
     let bds;
+    bds = await fetchBidsOfRevenueStream(web3, data.id);
     if (isRevenueStreamOwner) {
-      bds = await fetchBidsOfRevenueStream(web3, data.id);
+      setBidDatas(bds?.filter(b => b.price));
     } else {
-      const bd = await getBidByBidderOfRevenueStream(web3, data.id, web3?.address);
-      if (bd) {
-        bds = [bd];
-      }
+      setBidDatas(bds?.filter(b => b.price && b.bidder === web3?.address));
     }
-    setBidDatas(bds?.filter(b => b.price));
   };
 
   useEffect(() => {
     reloadData();
-  }, [web3, data]);
+  }, [web3]);
 
   const onFormFinish = values => {
-    console.log("Success:", values);
     setFromValues(values);
     showModal();
   };
 
   const onFormFinishFailed = errorInfo => {
-    console.log("Failed:", errorInfo);
+    displayError("RevenueStream:onFormFinishFailed:" + errorInfo);
   };
 
   const showModal = () => {
@@ -94,7 +67,7 @@ function RevenueStream({ web3, data }) {
   const handleOk = async () => {
     try {
       //TODO: add UI for duration
-      const txRes = await web3?.tx(
+      const tx = await web3?.tx(
         marketPlaceContract?.placeBid(
           data2?.id,
           utils.parseEther(formValues?.price),
@@ -106,16 +79,16 @@ function RevenueStream({ web3, data }) {
           },
         ),
         res => {
-          console.log("📡 Transaction placeBid:", res);
           if (res.status == 1) {
             setIsModalVisible(false);
             router.push("/dashboard");
           }
         },
       );
+      const txRes = await tx?.wait();
       console.log("txRes", txRes);
     } catch (err) {
-      console.log(err);
+      displayError("RevenueStream:handleOk", err);
     }
   };
 
@@ -123,41 +96,6 @@ function RevenueStream({ web3, data }) {
     setIsModalVisible(false);
   };
 
-  const bidDatasColumns = [
-    {
-      title: "Bidder",
-      dataIndex: "bidder",
-      key: "bidder",
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "Revenue Receiver",
-      dataIndex: "revenueReceiver",
-      key: "revenueReceiver",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => {
-        const { id } = record;
-        return isRevenueStreamOwner ? (
-          <Space size="middle">
-            <Button href={`/revenuestreams/${data?.id}/acceptbids/${id}`}>Accept</Button>
-          </Space>
-        ) : (
-          <Space size="middle">
-            <Button href="/wip">Cancel</Button>
-          </Space>
-        );
-      },
-    },
-  ];
-
-  const router = useRouter();
   return (
     <>
       <div className="bg-slate-50">
@@ -309,7 +247,9 @@ function RevenueStream({ web3, data }) {
                                   </dd>
                                 </div>
                                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                                  <dt className="text-sm font-medium text-gray-500">Address to receive revenue-share</dt>
+                                  <dt className="text-sm font-medium text-gray-500">
+                                    Address to receive revenue-share
+                                  </dt>
                                   <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                     {formValues?.addressToReceiveRevenueShare}
                                   </dd>
@@ -334,7 +274,6 @@ function RevenueStream({ web3, data }) {
                   <BidTable web3={web3} dataSource={bidDatas} />
                 </div>
               </div>
-
 
               {/* Revenue Analytics */}
               {data2?.feeCollector && data2?.feeCollector !== ethers.constants.AddressZero && (

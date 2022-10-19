@@ -1,6 +1,6 @@
 // deploy/00_deploy_your_contract.js
 
-//const { ethers } = require("hardhat");
+// const { ethers } = require("hardhat");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
@@ -8,12 +8,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   await deploy("MarketPlace", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: [ deployer, 20000 ],
+    args: [deployer, 20000],
     log: true,
   });
   // const marketPlaceContract = await ethers.getContract("MarketPlace", deployer);
   // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
-  
+
   /*
     // Getting a previously deployed contract
     const YourContract = await ethers.getContract("YourContract", deployer);
@@ -50,4 +50,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   });
   */
 };
-module.exports.tags = ["YourContract"];
+module.exports.tags = ["YourContract", "MarketPlace"];

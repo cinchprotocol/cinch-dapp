@@ -9,8 +9,6 @@ import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
 
 function Home({ web3 }) {
-  console.log(`🗄 web3 context:`, web3);
-
   return (
     <>
       <CommonHead />

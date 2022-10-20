@@ -20,7 +20,10 @@ import {
 } from "../../../helpers/marketplacehelper";
 import BidTable from "/components/BidTable";
 import FeeCollectorDashboard from "/components/Dune/FeeCollectorDashboard";
+import { Contract } from "@ethersproject/contracts";
+//import externalContracts from "~/Contracts/external_contracts";
 import { displayError } from "/helpers/errorhelper";
+
 
 function RevenueStream({ web3 }) {
   const router = useRouter();
@@ -34,6 +37,228 @@ function RevenueStream({ web3 }) {
 
   const isRevenueStreamOwner = data2?.seller === web3?.address;
 
+  const ERC20ABI = [
+    {
+      constant: true,
+      inputs: [],
+      name: "name",
+      outputs: [
+        {
+          name: "",
+          type: "string",
+        },
+      ],
+      payable: false,
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      constant: false,
+      inputs: [
+        {
+          name: "_spender",
+          type: "address",
+        },
+        {
+          name: "_value",
+          type: "uint256",
+        },
+      ],
+      name: "approve",
+      outputs: [
+        {
+          name: "",
+          type: "bool",
+        },
+      ],
+      payable: false,
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      constant: true,
+      inputs: [],
+      name: "totalSupply",
+      outputs: [
+        {
+          name: "",
+          type: "uint256",
+        },
+      ],
+      payable: false,
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      constant: false,
+      inputs: [
+        {
+          name: "_from",
+          type: "address",
+        },
+        {
+          name: "_to",
+          type: "address",
+        },
+        {
+          name: "_value",
+          type: "uint256",
+        },
+      ],
+      name: "transferFrom",
+      outputs: [
+        {
+          name: "",
+          type: "bool",
+        },
+      ],
+      payable: false,
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      constant: true,
+      inputs: [],
+      name: "decimals",
+      outputs: [
+        {
+          name: "",
+          type: "uint8",
+        },
+      ],
+      payable: false,
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      constant: true,
+      inputs: [
+        {
+          name: "_owner",
+          type: "address",
+        },
+      ],
+      name: "balanceOf",
+      outputs: [
+        {
+          name: "balance",
+          type: "uint256",
+        },
+      ],
+      payable: false,
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      constant: true,
+      inputs: [],
+      name: "symbol",
+      outputs: [
+        {
+          name: "",
+          type: "string",
+        },
+      ],
+      payable: false,
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      constant: false,
+      inputs: [
+        {
+          name: "_to",
+          type: "address",
+        },
+        {
+          name: "_value",
+          type: "uint256",
+        },
+      ],
+      name: "transfer",
+      outputs: [
+        {
+          name: "",
+          type: "bool",
+        },
+      ],
+      payable: false,
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      constant: true,
+      inputs: [
+        {
+          name: "_owner",
+          type: "address",
+        },
+        {
+          name: "_spender",
+          type: "address",
+        },
+      ],
+      name: "allowance",
+      outputs: [
+        {
+          name: "",
+          type: "uint256",
+        },
+      ],
+      payable: false,
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      payable: true,
+      stateMutability: "payable",
+      type: "fallback",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          name: "owner",
+          type: "address",
+        },
+        {
+          indexed: true,
+          name: "spender",
+          type: "address",
+        },
+        {
+          indexed: false,
+          name: "value",
+          type: "uint256",
+        },
+      ],
+      name: "Approval",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          name: "from",
+          type: "address",
+        },
+        {
+          indexed: true,
+          name: "to",
+          type: "address",
+        },
+        {
+          indexed: false,
+          name: "value",
+          type: "uint256",
+        },
+      ],
+      name: "Transfer",
+      type: "event",
+    },
+  ];
   const reloadData = async () => {
     const d = await getOneRevenueStreamForSaleWith(web3, data.id);
     setData2(d);
@@ -218,6 +443,28 @@ function RevenueStream({ web3 }) {
                           </Form.Item>
 
                           <Form.Item>
+
+                            <button
+                              type="button"
+                              className="bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                              onClick={async () => {
+                                //pass in the address for the vault&collection in context below
+                                // const ERC20ABI = externalContracts[1].contracts.ERC20ABI;
+                                const erc20Contract = new Contract('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', ERC20ABI, web3?.userSigner);
+                                const result = await web3?.tx(erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, 10), update => {
+                                  console.log({ update });
+                                  if (update?.status === "confirmed" || update?.status === 1) {
+                                    message.success("Approved successfully");
+                                  } else {
+                                    message.error(update?.data?.message);
+                                  }
+                                });
+                                console.log({ result });
+                              }}
+                            >
+                              Approve Cinch to use your USDC
+                            </button>
+
                             <Button className="w-full" htmlType="submit">
                               Review Bid
                             </Button>

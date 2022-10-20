@@ -37,6 +37,15 @@ function DebugPage({ web3 }) {
             blockExplorer={web3.blockExplorer}
             contractConfig={web3.contractConfig}
           />
+
+<Contract
+            name="TestToken"
+            signer={web3.userSigner}
+            provider={web3.localProvider}
+            address={web3.address}
+            blockExplorer={web3.blockExplorer}
+            contractConfig={web3.contractConfig}
+          />
         </div>
       </div>
     </>

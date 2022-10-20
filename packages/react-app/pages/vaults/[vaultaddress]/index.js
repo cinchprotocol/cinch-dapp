@@ -248,12 +248,16 @@ function Vault({ web3 }) {
                     </div>
                   </div>
                 </>
+              </div>
+              
+              {/* Transaction */}
+              <div className="mt-14">
+                <h3 className="text-2xl font-semibold text-gray-900">
+                  Transaction History
+                </h3>
 
-                {/* Transaction */}
-                <div className="mt-20 lg:col-span-4">
-                  <h3 className="text-2xl font-semibold text-gray-900">Transaction History</h3>
-
-                  <div className="text-center mt-5">{/* <BidTable web3={web3} dataSource={bidDatas} /> */}</div>
+                <div className="text-center mt-5">
+                  {/* <BidTable web3={web3} dataSource={bidDatas} /> */}
                 </div>
               </div>
             </Container>

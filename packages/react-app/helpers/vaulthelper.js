@@ -15,6 +15,7 @@ export const fetchVaultData = async ({ web3, address }) => {
   try {
     const vaultContract = getVaultContract({ web3, address });
 
+
     data = {
       name: await vaultContract?.name(),
       feeCollector: await vaultContract?.feeCollector(),

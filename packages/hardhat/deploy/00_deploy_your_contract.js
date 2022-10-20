@@ -1,6 +1,6 @@
 // deploy/00_deploy_your_contract.js
 
-//const { ethers } = require("hardhat");
+// const { ethers } = require("hardhat");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
@@ -11,9 +11,24 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     args: [ deployer, 20000 ],
     log: true,
   });
+
+  await deploy("TestToken", {
+    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+    from: deployer,
+    log: true,
+  });
   // const marketPlaceContract = await ethers.getContract("MarketPlace", deployer);
   // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
+
+  //const tokenContract = await ethers.getContract("TestToken", deployer);
+  // await tokenContract.transfer('0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F', 5000 * (10**18));
+  // await tokenContract.transfer('0xEdfdb5f2f02432F1E3271582056ECd0f884126aC', 5000 * (10**18));
   
+
+  const tokenContract = await ethers.getContractAt("TestToken", "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+  await tokenContract.transfer('0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F', 5000 );
+  await tokenContract.transfer('0xEdfdb5f2f02432F1E3271582056ECd0f884126aC', 5000);
+
   /*
     // Getting a previously deployed contract
     const YourContract = await ethers.getContract("YourContract", deployer);

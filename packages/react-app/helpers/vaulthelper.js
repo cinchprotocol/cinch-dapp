@@ -22,9 +22,9 @@ export const fetchVaultData = async ({ web3, address }) => {
     borrower: await vaultContract?.borrower(),
     lender: await vaultContract?.lender(),
     status: await vaultContract?.status(),
-    isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
-    isMultisigGuardAdded: await vaultContract?.isMultisigGuardAdded(),
-    isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded
+    // TODO - undo below commented fields when vault can actually hit the protocol functions
+    // isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
+    // isMultisigGuardAdded: await vaultContract?.isMultisigGuardAdded()   
   }
   return data;
 };

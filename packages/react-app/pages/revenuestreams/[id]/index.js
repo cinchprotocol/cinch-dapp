@@ -322,6 +322,19 @@ function RevenueStream({ web3 }) {
     setIsModalVisible(false);
   };
 
+  const handleApprove = async () => {
+    const erc20Contract = new Contract('0x36C02dA8a0983159322a80FFE9F24b1acfF8B570', ERC20ABI, web3?.userSigner);
+    const result = await web3?.tx(erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, utils.parseUnits("1500", 18)), update => {
+      console.log({ update });
+      if (update?.status === "confirmed" || update?.status === 1) {
+        message.success("Approved successfully");
+      } else {
+        message.error(update?.data?.message);
+      }
+    });
+    console.log({ result });
+  }
+
   return (
     <>
       <div className="bg-slate-50">
@@ -425,7 +438,7 @@ function RevenueStream({ web3 }) {
                               {
                                 required: true,
                                 message:
-                                  "The revenue royalty will be implemented by adding this wallet address to the fee consolidator contract",
+                                  "Enter Address to receive revenue-share",
                               },
                             ]}
                           >
@@ -449,28 +462,14 @@ function RevenueStream({ web3 }) {
                           </Form.Item>
 
                           <Form.Item>
-
-                            <button
-                              type="button"
-                              className="bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                              onClick={async () => {
-                                //pass in the address for the vault&collection in context below
-                                // const ERC20ABI = externalContracts[1].contracts.ERC20ABI;
-                                const erc20Contract = new Contract('0x36C02dA8a0983159322a80FFE9F24b1acfF8B570', ERC20ABI, web3?.userSigner);
-                                const result = await web3?.tx(erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, utils.parseUnits("1500", 18)), update => {
-                                  console.log({ update });
-                                  if (update?.status === "confirmed" || update?.status === 1) {
-                                    message.success("Approved successfully");
-                                  } else {
-                                    message.error(update?.data?.message);
-                                  }
-                                });
-                                console.log({ result });
-                              }}
+                            <Button className="w-full" htmlType="button"
+                              onClick={handleApprove}
                             >
                               Approve Cinch to use your USDC
-                            </button>
+                            </Button>
+                          </Form.Item>
 
+                          <Form.Item>
                             <Button className="w-full" htmlType="submit">
                               Review Bid
                             </Button>

@@ -91,7 +91,6 @@ function RevenueRoyaltyInputs({ web3 }) {
                     onFinishFailed={onFormFinishFailed}
                     autoComplete="off"
                     layout="verticle"
-                    size="large"
                     requiredMark="required"
                   >
                     <Form.Item

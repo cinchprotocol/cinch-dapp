@@ -71,6 +71,7 @@ export default function Account({
           ensProvider={mainnetProvider}
           blockExplorer={blockExplorer}
           fontSize={20}
+          size="short"
         />
       )}
 

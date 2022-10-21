@@ -572,7 +572,7 @@ contract MarketPlace is
 
     function createTestItem1() external payable {
         createMarketItem(
-            "Test Item 1",
+            "Test Protocol 1",
             0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,
             0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,
             50 * (10**18),
@@ -583,7 +583,7 @@ contract MarketPlace is
 
     function createTestItem2() external payable {
         createMarketItem(
-            "Test Item 2",
+            "Test Protocol 2",
             0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,
             0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,
             50 * (10**18),

@@ -26,9 +26,10 @@ export const fetchVaultData = async ({ web3, address }) => {
       borrower: await vaultContract?.borrower(),
       lender: await vaultContract?.lender(),
       status: await vaultContract?.status(),
-      isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
-      isMultisigGuardAdded: await vaultContract?.isMultisigGuardAdded(),
-      isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded,
+      // isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
+      // isMultisigGuardAdded: await vaultContract?.isMultisigGuardAdded(),
+      // isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded,
+      multisigGuard: await vaultContract?.multisigGuard(),
     };
   } catch (err) {
     displayError("fetchVaultData", err);

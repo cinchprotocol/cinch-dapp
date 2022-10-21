@@ -50,7 +50,8 @@ function Vault({ web3 }) {
                 <div className="lg:col-span-2 lg:pr-8">
                   <div className="flex justify-start">
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                      {vaultData?.name} - {vaultData?.status}
+                      {vaultData?.name} {vaultData?.status == 1 ? <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">Active</span>
+                        : <span class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-0.5 text-sm font-medium text-yellow-800">Pending</span>}
                     </h1>
                   </div>
                   <div>
@@ -71,7 +72,7 @@ function Vault({ web3 }) {
 
                       <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
                         <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Price (ETH)</dt>
+                          <dt className="text-gray-500">Price (USDC)</dt>
                           <dd className="text-gray-900"> {vaultData?.price}</dd>
                         </div>
                         <div className="py-3 flex justify-between text-sm font-medium">
@@ -87,7 +88,7 @@ function Vault({ web3 }) {
                           <dd className="text-gray-900">{vaultData?.revenuePct}%</dd>
                         </div>
                         <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Expiry amount (ETH)</dt>
+                          <dt className="text-gray-500">Expiry amount (USDC)</dt>
                           <dd className="text-gray-900">{vaultData?.expAmount}</dd>
                         </div>
 
@@ -138,7 +139,8 @@ function Vault({ web3 }) {
                                   </span>
                                 </div>
                                 <div className="min-w-0 pt-1.5">
-                                  <p className="text-sm text-gray-500">Updated the fee receiver Address.</p>
+                                  <p className="text-sm text-gray-500">Updated the fee receiver Address to </p>
+                                  <p>{vaultaddress}</p>
                                 </div>
                               </div>
                             </div>
@@ -171,7 +173,8 @@ function Vault({ web3 }) {
                                   </span>
                                 </div>
                                 <div className="min-w-0 pt-1.5">
-                                  <p className="text-sm text-gray-500">Added Cinch multi-sig guard.</p>
+                                  <p className="text-sm text-gray-500">Added Cinch multi-sig guard to the Gnosis safe (<a href="https://help.gnosis-safe.io/en/articles/5496893-add-a-transaction-guard" class="no-underline hover:underline ..." target="_blank">Instruction</a>)</p>
+                                  <p>Guard Address: {vaultData?.multisigGuard}</p>
                                 </div>
                               </div>
                             </div>
@@ -249,7 +252,7 @@ function Vault({ web3 }) {
                   </div>
                 </>
               </div>
-              
+
               {/* Transaction */}
               <div className="mt-14">
                 <h3 className="text-2xl font-semibold text-gray-900">

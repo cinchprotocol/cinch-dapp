@@ -356,11 +356,16 @@ function RevenueStream({ web3 }) {
                       {/* <h3 className="text-lg text-gray-900">COLLECTION STATS</h3> */}
                       <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
                         <div className="py-3 flex justify-between text-sm font-medium">
+                          <dt className="text-gray-500">Price (USDC)</dt>
+
+                          <dd className="text-gray-900">{data2?.priceStr}</dd>
+                        </div>
+                        <div className="py-3 flex justify-between text-sm font-medium">
                           <dt className="text-gray-500">Revenue proportion</dt>
                           <dd className="text-gray-900">{data2.revenuePctStr}%</dd>
                         </div>
                         <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Expiry amount (ETH)</dt>
+                          <dt className="text-gray-500">Expiry amount (USDC)</dt>
 
                           <dd className="text-gray-900">{data2?.expAmountStr}</dd>
                         </div>

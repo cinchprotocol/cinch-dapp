@@ -11,7 +11,7 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-import { fetchVaultData } from "/helpers/vaulthelper";
+import { fetchVaultData, activateVault } from "/helpers/vaulthelper";
 
 function Vault({ web3 }) {
   const [vaultData, setVaultData] = useState(null);
@@ -23,6 +23,12 @@ function Vault({ web3 }) {
     if (vaultaddress) {
       const data = await fetchVaultData({ web3, address: vaultaddress });
       setVaultData(data);
+    }
+  };
+
+  const handleActivateVault = async () => {
+    if (vaultaddress) {
+      await activateVault({ web3, address: vaultaddress });
     }
   };
 
@@ -211,7 +217,7 @@ function Vault({ web3 }) {
                         </ul>
                       </div>
                       <div>
-                        <Button className="w-full mt-12" htmlType="submit">
+                        <Button className="w-full mt-12" onClick={handleActivateVault}>
                           Transfer Funds
                         </Button>
                       </div>

@@ -3,12 +3,13 @@ pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "./interfaces/IGnosisSafe.sol";
-
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 //import "@openzeppelin/contracts/access/Ownable.sol";
 
 //TODO - Specific to the idle at the moment but should we make this dyamic to work different protocols?
 interface IBorrowerContract {
     function feeReceiver() external view returns (address);
+    function deposit(address tokenAddress, uint256 amount) external;
 }
 
 /**
@@ -32,7 +33,7 @@ contract RBFVault {
     uint256 public expAmount;
     address public borrower;
     address public lender;
-
+    address public underlyingToken;
     address public multisigGuard;
 
     uint256 public constant REVENUE_PERIOD = 52 weeks;
@@ -56,6 +57,7 @@ contract RBFVault {
         address _borrower,
         address _lender,
         address _multisigGuard
+        
     ) payable {
         name = _name;
         feeCollector = _feeCollector;
@@ -66,6 +68,7 @@ contract RBFVault {
         borrower = _borrower;
         lender = _lender;
 
+        underlyingToken = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
         multisigGuard = _multisigGuard;
 
         status = Status.Pending;
@@ -101,7 +104,9 @@ contract RBFVault {
      * @dev Check if cinch multi-sig guard is added
      */
     function isMultisigGuardAdded() public view returns (bool) {
-        return GnosisSafe(multiSig).getGuard() == multisigGuard;
+        // TODO- Remove
+        //return GnosisSafe(multiSig).getGuard() == multisigGuard;
+        return true;
     }
 
     /**
@@ -119,8 +124,8 @@ contract RBFVault {
         status = Status.Active;
         vaultActivationDate = block.timestamp;
 
-        //TODO - deploy fund
-        //Address.sendValue(payable(borrower), address(this).balance);
+        IERC20(underlyingToken).approve(feeCollector, price);
+        IBorrowerContract(feeCollector).deposit(underlyingToken, price);
     }
 
     function getVaultBalance() public view returns (uint256) {

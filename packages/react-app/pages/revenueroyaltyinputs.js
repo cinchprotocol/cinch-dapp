@@ -95,6 +95,20 @@ function RevenueRoyaltyInputs({ web3 }) {
                     requiredMark="required"
                   >
                     <Form.Item
+                      label="Name"
+                      name="name"
+                      extra="Enter the name of the listing"
+                      rules={[
+                        {
+                          required: true,
+                          message:
+                            "Name is required.",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
                       label="Fee collector contract address"
                       name="feeCollectorContractAddress"
                       extra="Enter the contract address that consolidates fees(The revenue royalty will be implemented by changing
@@ -103,7 +117,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                         {
                           required: true,
                           message:
-                            "Enter the contract address that consolidates fees(The revenue royalty will be implemented by changing the destination wallet address of this contract)",
+                            "Fee collector contract address is required.",
                         },
                       ]}
                     >
@@ -117,7 +131,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                       rules={[
                         {
                           required: true,
-                          message: "Contrat that controls the inputs to the fee_collector contract",
+                          message: "Multi-sig address is required.",
                         },
                       ]}
                     >
@@ -153,13 +167,13 @@ function RevenueRoyaltyInputs({ web3 }) {
                     </Form.Item>
 
                     <Form.Item
-                      label="Expiry amount (ETH)"
+                      label="Expiry amount (USDC)"
                       name="expiryAmount"
                       extra="Royalty will end after this amount of revenue"
                       rules={[
                         {
                           required: true,
-                          message: "Royalty will end after this amount of revenue",
+                          message: "Expiry amount is required.",
                         },
                       ]}
                     >
@@ -175,7 +189,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                         {
                           required: false,
                           message:
-                            "Enter your preferred contact information to receive notifications on the status of your royalty listing, its implementation, and its performance",
+                            "Enter your preferred contact information",
                         },
                       ]}
                     >

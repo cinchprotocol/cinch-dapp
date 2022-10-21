@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./MarketPlaceStorage.sol";
 import "./Withdrawable.sol";
 import "./RBFVaultFactory.sol";
@@ -22,7 +21,7 @@ contract MarketPlace is
     using Address for address;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
-    address public underlyingToken = 0x36C02dA8a0983159322a80FFE9F24b1acfF8B570;
+    address public underlyingToken = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
 
     /**
      * @dev Constructor of the contract.

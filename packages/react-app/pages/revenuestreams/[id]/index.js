@@ -451,8 +451,8 @@ function RevenueStream({ web3 }) {
                               onClick={async () => {
                                 //pass in the address for the vault&collection in context below
                                 // const ERC20ABI = externalContracts[1].contracts.ERC20ABI;
-                                const erc20Contract = new Contract('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', ERC20ABI, web3?.userSigner);
-                                const result = await web3?.tx(erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, 1500), update => {
+                                const erc20Contract = new Contract('0x36C02dA8a0983159322a80FFE9F24b1acfF8B570', ERC20ABI, web3?.userSigner);
+                                const result = await web3?.tx(erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, utils.parseUnits("1500", 18)), update => {
                                   console.log({ update });
                                   if (update?.status === "confirmed" || update?.status === 1) {
                                     message.success("Approved successfully");

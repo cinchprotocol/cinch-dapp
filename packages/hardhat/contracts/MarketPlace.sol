@@ -22,7 +22,7 @@ contract MarketPlace is
     using Address for address;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
-    address public underlyingToken = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
+    address public underlyingToken = 0x36C02dA8a0983159322a80FFE9F24b1acfF8B570;
 
     /**
      * @dev Constructor of the contract.
@@ -364,13 +364,13 @@ contract MarketPlace is
             item.feeCollector,
             item.multiSig,
             item.revenuePct,
-            item.price,
+            bid.price,
             item.expAmount,
             item.seller,
-            item.buyer
+            bid.bidder
         );
 
-        //IERC20(underlyingToken).transferFrom(bid.bidder, vault, bid.price);
+        IERC20(underlyingToken).transferFrom(bid.bidder, vault, bid.price);
 
         emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);
 

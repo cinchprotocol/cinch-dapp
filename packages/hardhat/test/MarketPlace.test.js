@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-expressions */
-const { ethers, web3 } = require("hardhat");
+const { ethers } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 
 use(solidity);
-// const provider = web3;
 
 const feesCollectorCutPerMillion = 20000;
 const sellerAccountIndex = 0;

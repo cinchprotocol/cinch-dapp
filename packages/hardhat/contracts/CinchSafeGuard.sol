@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol"; //TODO: remove as this is not used ?
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IGnosisSafe.sol";
 
@@ -34,7 +34,7 @@ contract CinchSafeGuard is IGuard, Ownable {
     /// @notice Only callable by owner.
     /// @param target Address to be blocked/disblocked.
     /// @param blocked Bool to blocked (true) or disallow (false) calls to target.
-    function setTargetBlocked(address target, bool blocked) public onlyOwner {
+    function setTargetBlocked(address target, bool blocked) external onlyOwner { 
         blockedTargets[target].blocked = blocked;
         emit SetTargetBlocked(target, blockedTargets[target].blocked);
     }
@@ -43,10 +43,12 @@ contract CinchSafeGuard is IGuard, Ownable {
     /// @notice Only callable by owner.
     /// @param target Address to be scoped/unscoped.
     /// @param scoped Bool to scope (true) or unscope (false) function calls on target.
-    function setScoped(address target, bool scoped) public onlyOwner {
+    function setScoped(address target, bool scoped) external onlyOwner {
         blockedTargets[target].scoped = scoped;
         emit SetTargetScoped(target, blockedTargets[target].scoped);
     }
+
+    //TODO: implement setDelegateCallBlocked function ?
 
     /// @dev Sets whether or not a specific function signature should be blocked on a scoped target.
     /// @notice Only callable by owner.
@@ -57,7 +59,7 @@ contract CinchSafeGuard is IGuard, Ownable {
         address target,
         bytes4 functionSig,
         bool blocked
-    ) public onlyOwner {
+    ) external onlyOwner {
         blockedTargets[target].blockedFunctions[functionSig] = blocked;
         emit SetFunctionBlockedOnTarget(
             target,
@@ -68,13 +70,13 @@ contract CinchSafeGuard is IGuard, Ownable {
 
     /// @dev Returns bool to indicate if an address is an blocked target.
     /// @param target Address to check.
-    function isBlockedTarget(address target) public view returns (bool) {
+    function isBlockedTarget(address target) external view returns (bool) {
         return (blockedTargets[target].blocked);
     }
 
     /// @dev Returns bool to indicate if an address is scoped.
     /// @param target Address to check.
-    function isScoped(address target) public view returns (bool) {
+    function isScoped(address target) external view returns (bool) {
         return (blockedTargets[target].scoped);
     }
 
@@ -82,13 +84,14 @@ contract CinchSafeGuard is IGuard, Ownable {
     /// @param target Address to check.
     /// @param functionSig Signature to check.
     function isBlockedFunction(address target, bytes4 functionSig)
-        public
+        external
         view
         returns (bool)
     {
         return (blockedTargets[target].blockedFunctions[functionSig]);
     }
 
+    //TODO: add documentation
     function setOverrideGuardChecks(bool _overrideGuardChecks)
         external
         onlyOwner
@@ -96,6 +99,7 @@ contract CinchSafeGuard is IGuard, Ownable {
         overrideGuardChecks = _overrideGuardChecks;
     }
 
+    //TODO: add documentation
     function checkTransaction(
         address to,
         uint256 value,
@@ -138,7 +142,8 @@ contract CinchSafeGuard is IGuard, Ownable {
             );
         }
 
-        //require(!blockedTargets[to].blocked, "Target address is blocked");
+        //Note: uncommented this require
+        require(!blockedTargets[to].blocked, "Target address is blocked");
     }
 
     // unused

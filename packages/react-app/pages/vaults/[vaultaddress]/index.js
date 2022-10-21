@@ -52,8 +52,8 @@ function Vault({ web3 }) {
           <div>
             <Container>
               {/* info */}
-              <div className="pt-10 pb-16 px-4 bg-white rounded-lg shadow mb-10 sm:px-6 lg:pt-10 lg:pb-24 lg:px-8 lg:grid lg:grid-cols-4 lg:grid-rows-[auto,auto,1fr]">
-                <div className="lg:col-span-2 lg:pr-8">
+              <div className="mb-10 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr]">
+                <div className="p-8 lg:mr-4 lg:col-span-2 bg-white rounded-2xl shadow">
                   <div className="flex justify-start">
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                       {vaultData?.name} {vaultData?.status == 1 ? <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">Active</span>
@@ -113,7 +113,7 @@ function Vault({ web3 }) {
 
                 {/* Actions */}
                 <>
-                  <div className="mx-5 mt-4 lg:mt-0 lg:col-span-2 shadow-2xl p-10 ">
+                  <div className="p-8 bg-white rounded-2xl shadow">
                     <div>
                       <h3 className="text-xl text-center font-semibold text-gray-900">Pending Action Items</h3>
                       <div className="flow-root mt-10">

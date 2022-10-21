@@ -348,8 +348,7 @@ function RevenueStream({ web3 }) {
                 <div className="lg:col-span-2 lg:pr-8">
                   <div className="flex justify-start">
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                      {/* {data?.name} */}
-                      Protocol Name
+                      {data2?.name}
                     </h1>
                   </div>
                   <div>

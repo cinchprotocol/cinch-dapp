@@ -34,12 +34,12 @@ contract RBFVaultFactory is Ownable {
         uint256 expAmount,
         address borrower,
         address lender
-    ) public payable {
+    ) internal returns (address) {
         // Deploy Cinch multi-sig guard
         //TODO - get function sig input during the listing of item so it can be set here in the guard
         CinchSafeGuard multiSigGuard = new CinchSafeGuard();
 
-        RBFVault vault = new RBFVault{value: price}(
+        RBFVault vault = new RBFVault(
             name,
             feeCollector,
             multiSig,
@@ -54,6 +54,7 @@ contract RBFVaultFactory is Ownable {
         lenderVault[lender].push(address(vault));
 
         emit RBFVaultCreated(lender, borrower, address(vault));
+        return address(vault);
     }
 
     function getlenderVaults(address lender)

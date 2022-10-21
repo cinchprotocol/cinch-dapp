@@ -296,11 +296,12 @@ function RevenueStream({ web3 }) {
         marketPlaceContract?.placeBid(
           data2?.id,
           utils.parseEther(formValues?.price),
+          //formValues?.price,
           formValues?.addressToReceiveRevenueShare,
           86400,
           {
             from: web3?.address,
-            value: utils.parseEther(formValues?.price),
+            //value: utils.parseEther(formValues?.price),
           },
         ),
         res => {
@@ -451,7 +452,7 @@ function RevenueStream({ web3 }) {
                                 //pass in the address for the vault&collection in context below
                                 // const ERC20ABI = externalContracts[1].contracts.ERC20ABI;
                                 const erc20Contract = new Contract('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', ERC20ABI, web3?.userSigner);
-                                const result = await web3?.tx(erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, 10), update => {
+                                const result = await web3?.tx(erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, 1500), update => {
                                   console.log({ update });
                                   if (update?.status === "confirmed" || update?.status === 1) {
                                     message.success("Approved successfully");

@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./MarketPlaceStorage.sol";
 import "./Withdrawable.sol";
 import "./RBFVaultFactory.sol";
@@ -21,6 +22,7 @@ contract MarketPlace is
     using Address for address;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
+    address public underlyingToken = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
 
     /**
      * @dev Constructor of the contract.
@@ -120,7 +122,11 @@ contract MarketPlace is
     // for public view call, specific signing is not required, so msg.sender is not necessary the target seller address.
     // it make more sense to use a seller parameter as the function input, instead of using msg.sender
     // the same apply to fetchMyPurchases and fetchMyBids
-    function fetchMyListings(address seller) external view returns (MarketItem[] memory) {
+    function fetchMyListings(address seller)
+        external
+        view
+        returns (MarketItem[] memory)
+    {
         uint256 totalItemCount = _itemIds.current();
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
@@ -144,7 +150,11 @@ contract MarketPlace is
         return items;
     }
 
-    function fetchMyPurchases(address buyer) external view returns (MarketItem[] memory) {
+    function fetchMyPurchases(address buyer)
+        external
+        view
+        returns (MarketItem[] memory)
+    {
         uint256 totalItemCount = _itemIds.current();
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
@@ -256,10 +266,10 @@ contract MarketPlace is
             "Bid#placeBid: PRICE_SHOULD_BE_GTE_ASKING_PRICE"
         );
 
-        require(
-            _price == msg.value,
-            "Bid#placeBid: TX_VALUE_SHOULD_BE_SAME_AS_PRICE"
-        );
+        // require(
+        //     _price <= IERC20(underlyingToken).allowance(sender, address(this)),
+        //     "Bid#placeBid: MUST_BE_AUTHORIZED_TO_SPEND_ENOUGH_TOKEN"
+        // );
 
         require(
             _duration >= MIN_BID_DURATION,
@@ -349,7 +359,7 @@ contract MarketPlace is
         _itemsSold.increment();
 
         // Create vault
-        createVault(
+        address vault = createVault(
             item.name,
             item.feeCollector,
             item.multiSig,
@@ -359,6 +369,8 @@ contract MarketPlace is
             item.seller,
             item.buyer
         );
+
+        //IERC20(underlyingToken).transferFrom(bid.bidder, vault, bid.price);
 
         emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);
 
@@ -563,9 +575,9 @@ contract MarketPlace is
             "Test Item 1",
             0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,
             0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,
-            50,
-            1500,
-            1500
+            50 * (10**18),
+            500 * (10**18),
+            800 * (10**18)
         );
     }
 
@@ -574,9 +586,9 @@ contract MarketPlace is
             "Test Item 2",
             0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,
             0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,
-            50,
-            1500,
-            1500
+            50 * (10**18),
+            500 * (10**18),
+            800 * (10**18)
         );
     }
 }

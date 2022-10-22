@@ -345,7 +345,7 @@ function RevenueStream({ web3 }) {
             <Container>
               {/* info */}
               <div className="mb-10 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr]">
-                <div className="p-8 lg:mr-4 lg:col-span-2 bg-white rounded-2xl shadow">
+                <div className="px-6 py-8 lg:mr-4 lg:col-span-2 bg-white rounded-2xl shadow">
                   <div className="flex justify-start">
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                       {data2?.name}
@@ -398,7 +398,7 @@ function RevenueStream({ web3 }) {
                 {/* Place BID */}
                 {data2?.buyer && data2?.buyer === ethers.constants.AddressZero && (
                   <>
-                    <div className="p-8 lg:col-span-1 bg-white rounded-2xl shadow">
+                    <div className="px-6 py-8 lg:col-span-1 bg-white rounded-2xl shadow">
                       <div>
                         <h3 className="text-xl text-center font-semibold text-gray-900">Place Bid</h3>
                         <Form

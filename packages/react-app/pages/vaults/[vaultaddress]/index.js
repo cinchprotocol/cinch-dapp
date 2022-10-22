@@ -51,63 +51,66 @@ function Vault({ web3 }) {
         <main>
           <div>
             <Container>
-              {/* info */}
-              <div className="mb-10 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr]">
-                <div className="px-6 py-8 lg:mr-4 lg:col-span-2 bg-white rounded-2xl shadow">
-                  <div className="flex justify-start">
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                      {vaultData?.name} {vaultData?.status == 1 ? <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">Active</span>
-                        : <span class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-0.5 text-sm font-medium text-yellow-800">Pending</span>}
-                    </h1>
+              <div class="md:flex md:items-center md:justify-between md:space-x-5">
+                <div class="flex items-center space-x-5">
+                  <div class="flex-shrink-0">
+                    {/* <div class="relative">
+                      <img class="h-16 w-16 rounded-full" src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80" alt=""/>
+                        <span class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></span>
+                    </div> */}
                   </div>
                   <div>
-                    {/* Description and details */}
-                    <h3 className="sr-only text-gray-900">Description</h3>
+                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                      {vaultData?.name}
+                    </h1>
+                    {/* <p class="text-sm font-medium text-gray-500">Vault created on <time datetime="2020-08-25">August 25, 2020</time></p> */}
+                  </div>
+                </div>
+                {/* <div class="justify-stretch mt-6 flex flex-col-reverse space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-y-0 sm:space-x-3 sm:space-x-reverse md:mt-0 md:flex-row md:space-x-3">
+                  <button type="button" class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100">Disqualify</button>
+                  <button type="button" class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100">Advance to offer</button>
+                </div> */}
+              </div>
 
-                    <div className="space-y-6">
-                      <p className="text-base text-gray-600">
-                        {/* {data?.description} */}
-                        placeholder for the protocol description
-                      </p>
-                    </div>
+              {/* info */}
+              <div className="mb-10 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr]">
+                <div className="p-6 lg:mr-4 lg:col-span-2 bg-white rounded-2xl shadow">
+                  <div className="">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">Listing Information</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Protocol details and terms.</p>
                   </div>
 
-                  <div className="mt-10 mb-10">
-                    <div>
-                      {/* <h3 className="text-lg text-gray-900">COLLECTION STATS</h3> */}
-
-                      <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Price (USDC)</dt>
-                          <dd className="text-gray-900"> {vaultData?.price}</dd>
-                        </div>
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Borrower</dt>
-                          <dd className="text-gray-900"> {vaultData?.borrower}</dd>
-                        </div>
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Lender</dt>
-                          <dd className="text-gray-900"> {vaultData?.lender}</dd>
-                        </div>
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Revenue proportion</dt>
-                          <dd className="text-gray-900">{vaultData?.revenuePct}%</dd>
-                        </div>
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Expiry amount (USDC)</dt>
-                          <dd className="text-gray-900">{vaultData?.expAmount}</dd>
-                        </div>
-
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Fee collector address</dt>
-                          <dd className="text-gray-900">{vaultData?.feeCollector}</dd>
-                        </div>
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Multi-sig address</dt>
-                          <dd className="text-gray-900">{vaultData?.multiSig}</dd>
-                        </div>
-                      </dl>
-                    </div>
+                  <div className="mb-10 border-t border-gray-200">
+                    <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Price (USDC)</dt>
+                        <dd class="mt-1 text-sm text-gray-900">${vaultData?.price}</dd>
+                      </div>
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Revenue proportion</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.revenuePct}%</dd>
+                      </div>
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Expiry amount (USDC)</dt>
+                        <dd class="mt-1 text-sm text-gray-900">${vaultData?.expAmount}</dd>
+                      </div>
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Fee collector address</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.feeCollector.substr(0, 6) + "..." + vaultData?.feeCollector.substr(-4)}</dd>
+                      </div>
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Multi-sig address</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.multiSig.substr(0, 6) + "..." + vaultData?.multiSig.substr(-4)}</dd>
+                      </div>
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Borrower</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.borrower.substr(0, 6) + "..." + vaultData?.borrower.substr(-4)}</dd>
+                      </div>
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Lender</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.lender.substr(0, 6) + "..." + vaultData?.lender.substr(-4)}</dd>
+                      </div>
+                    </dl>
                   </div>
                 </div>
 

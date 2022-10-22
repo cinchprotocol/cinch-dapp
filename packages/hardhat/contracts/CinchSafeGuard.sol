@@ -39,6 +39,7 @@ contract CinchSafeGuard is IGuard, Ownable {
         emit SetTargetBlocked(target, blockedTargets[target].blocked);
     }
 
+    //NOTE: with the current implemnentation, "scoped" only matters when both "scoped" and "fallbackBlocked" are true. Is this the expected behavior ? If that the case, should be consolidate the two flags into one ?
     /// @dev Sets whether or not calls to an address should be scoped to specific function signatures.
     /// @notice Only callable by owner.
     /// @param target Address to be scoped/unscoped.
@@ -49,6 +50,7 @@ contract CinchSafeGuard is IGuard, Ownable {
     }
 
     //TODO: implement setDelegateCallBlocked function ?
+    //TODO: implement setFallbackBlocked ?
 
     /// @dev Sets whether or not a specific function signature should be blocked on a scoped target.
     /// @notice Only callable by owner.
@@ -80,6 +82,7 @@ contract CinchSafeGuard is IGuard, Ownable {
         return (blockedTargets[target].scoped);
     }
 
+    //NOTE: with the current implementation, function need to be blocked per target address. Does it make sense to implement a func block that covers all targets ?
     /// @dev Returns bool to indicate if a function signature is blocked for a target address.
     /// @param target Address to check.
     /// @param functionSig Signature to check.
@@ -97,6 +100,7 @@ contract CinchSafeGuard is IGuard, Ownable {
         onlyOwner
     {
         overrideGuardChecks = _overrideGuardChecks;
+        //TODO: emit event upon stage change
     }
 
     //TODO: add documentation

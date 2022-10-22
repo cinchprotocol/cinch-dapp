@@ -91,7 +91,7 @@ describe("CinchSafeGuard", function () {
           [],
           accounts[nonOwnerIndex].address
         );
-      // known ethers issue: https://github.com/ethers-io/ethers.js/discussions/2849
+      // Note: known ethers issue: https://github.com/ethers-io/ethers.js/discussions/2849
       // hardhat 2.9.3 and ethers 5.6.1 required
       await expect(tx2).to.be.revertedWith("Target address is blocked");
     });
@@ -117,6 +117,145 @@ describe("CinchSafeGuard", function () {
           accounts[nonOwnerIndex].address
         );
       await expect(tx2).not.to.be.revertedWith("Target address is blocked");
+    });
+  });
+
+  // TODO: uncomment the following test when the implementation is ready
+  /*
+  describe("setScoped", function () {
+    it("should block target as expected", async () => {
+      const txA = cinchSafeGuard
+        .connect(accounts[ownerIndex])
+        .setScoped(blockedTarget, true);
+      await expect(txA).to.emit(cinchSafeGuard, "SetTargetScoped");
+
+      const txB = cinchSafeGuard
+        .connect(accounts[ownerIndex])
+        .setFallbackBlocked(blockedTarget, true);
+      await expect(txB).to.emit(cinchSafeGuard, "SetFallbackBlockedOnTarget");
+
+      const tx2 = cinchSafeGuard
+        .connect(accounts[nonOwnerIndex])
+        .checkTransaction(
+          blockedTarget,
+          0,
+          [],
+          0,
+          0,
+          0,
+          0,
+          blockedTarget,
+          blockedTarget,
+          [],
+          accounts[nonOwnerIndex].address
+        );
+      await expect(tx2).to.be.revertedWith(
+        "Fallback is blocked for this address"
+      );
+    });
+  });
+  */
+
+  describe("setBlockedFunction", function () {
+    it("should block function as expected", async () => {
+      const tx = cinchSafeGuard
+        .connect(accounts[ownerIndex])
+        .setBlockedFunction(blockedTarget, functionSig, true);
+      await expect(tx).to.emit(cinchSafeGuard, "SetFunctionBlockedOnTarget");
+
+      const tx2 = cinchSafeGuard
+        .connect(accounts[nonOwnerIndex])
+        .checkTransaction(
+          blockedTarget,
+          0,
+          functionSig,
+          0,
+          0,
+          0,
+          0,
+          blockedTarget,
+          blockedTarget,
+          [],
+          accounts[nonOwnerIndex].address
+        );
+      await expect(tx2).to.be.revertedWith("Target function is blocked");
+    });
+    it("should unblock target as expected", async () => {
+      const tx = cinchSafeGuard
+        .connect(accounts[ownerIndex])
+        .setBlockedFunction(blockedTarget, functionSig, false);
+      await expect(tx).to.emit(cinchSafeGuard, "SetFunctionBlockedOnTarget");
+
+      const tx2 = cinchSafeGuard
+        .connect(accounts[nonOwnerIndex])
+        .checkTransaction(
+          blockedTarget,
+          0,
+          functionSig,
+          0,
+          0,
+          0,
+          0,
+          blockedTarget,
+          blockedTarget,
+          [],
+          accounts[nonOwnerIndex].address
+        );
+      await expect(tx2).not.to.be.revertedWith("Target function is blocked");
+    });
+  });
+
+  describe("setOverrideGuardChecks", function () {
+    it("should unblock as expected", async () => {
+      const txA = cinchSafeGuard
+        .connect(accounts[ownerIndex])
+        .setOverrideGuardChecks(true);
+      await expect(txA).not.to.be.revertedWith("");
+
+      const txB = cinchSafeGuard
+        .connect(accounts[ownerIndex])
+        .setBlockedFunction(blockedTarget, functionSig, true);
+      await expect(txB).to.emit(cinchSafeGuard, "SetFunctionBlockedOnTarget");
+
+      const tx2 = cinchSafeGuard
+        .connect(accounts[nonOwnerIndex])
+        .checkTransaction(
+          blockedTarget,
+          0,
+          functionSig,
+          0,
+          0,
+          0,
+          0,
+          blockedTarget,
+          blockedTarget,
+          [],
+          accounts[nonOwnerIndex].address
+        );
+      await expect(tx2).not.to.be.revertedWith("Target function is blocked");
+    });
+    it("should block target as expected", async () => {
+      const txA = cinchSafeGuard
+        .connect(accounts[ownerIndex])
+        .setOverrideGuardChecks(false);
+      await expect(txA).not.to.be.revertedWith("");
+
+      const tx2 = cinchSafeGuard
+        .connect(accounts[nonOwnerIndex])
+        .checkTransaction(
+          blockedTarget,
+          0,
+          functionSig,
+          0,
+          0,
+          0,
+          0,
+          blockedTarget,
+          blockedTarget,
+          [],
+          accounts[nonOwnerIndex].address
+        );
+      await expect(tx2).to.be.revertedWith("Target function is blocked");
     });
   });
 });

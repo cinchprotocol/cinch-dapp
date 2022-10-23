@@ -18,6 +18,8 @@ interface IBorrowerContract {
  * @dev Should be deployed per revenue stream.
  */
 contract RBFVault {
+    event RBFVaultActivated();
+
     enum Status {
         Pending,
         Active,
@@ -58,7 +60,7 @@ contract RBFVault {
         address _lender,
         address _multisigGuard
     ) payable {
-        //TODO: Add guards for invalid inputs
+        //TODO: Add require statements for invalid inputs
 
         name = _name;
         feeCollector = _feeCollector;
@@ -89,7 +91,7 @@ contract RBFVault {
      * @dev Check if the vault is ready to be activated
      */
     function isReadyToActivate() public view returns (bool) {
-        require(isFeeCollectorUpdated(), "FEE_COLLECTOR_NOT_IN_PLACE");
+        require(isFeeCollectorUpdated(), "FEE_COLLECTOR_RECEIVER_NOT_UPDATED"); 
 
         require(isMultisigGuardAdded(), "MULTISIG_GUARD_NOT_IN_PLACE");
 
@@ -129,7 +131,7 @@ contract RBFVault {
         //TODO - deploy fund
         //Address.sendValue(payable(borrower), address(this).balance);
 
-        //TODO: emit RBFVaultActivated event ?
+        emit RBFVaultActivated();
     }
 
     function getVaultBalance() external view returns (uint256) {
@@ -150,7 +152,7 @@ contract RBFVault {
     function refundTheLender() external {
         require(
             !isTermsSatisfied(),
-            "Vault: Collection already owned by the vault"
+            "Vault: Collection already owned by the vault" //TODO: clarify revert reason
         );
 
         require(

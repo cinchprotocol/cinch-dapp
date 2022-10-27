@@ -35,6 +35,13 @@ describe("MarketPlace tests", function () {
       console.log("marketPlace.address: ", marketPlace.address);
     });
 
+    describe("fetchVaultAddressOfItem", function () {
+      it("Should return 0 before item was sold", async function () {
+        const res = await marketPlace.fetchVaultAddressOfItem(1);
+        expect(res).equal(ethers.constants.AddressZero);
+      });
+    });
+
     describe("createMarketItem", function () {
       it("Should not be able to createMarketItem with 0 price", async function () {
         const tx = marketPlace.createMarketItem(

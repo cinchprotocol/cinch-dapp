@@ -21,6 +21,7 @@ export const getOneRevenueStreamForSaleWith = async (web3, id) => {
     return {};
   }
   const item = await marketPlaceContract?.getMarketItem(id);
+  const vaultAddress = await marketPlaceContract?.fetchVaultAddressOfItem(id);
   const doc = {
     ...item,
     id,
@@ -30,6 +31,7 @@ export const getOneRevenueStreamForSaleWith = async (web3, id) => {
     revenuePctStr: _.toNumber(utils.formatEther(item?.revenuePct)).toFixed(0),
     expAmountStr: utils.formatEther(item?.expAmount),
     isActive: true,
+    vaultAddress,
   };
   return doc;
 };

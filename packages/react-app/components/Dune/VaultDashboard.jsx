@@ -4,11 +4,11 @@ import { Row, Col, Typography, DatePicker, Button } from "antd";
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
 
-export default function FeeCollectorDashboard({ feeCollectorAddress, title = "Revenue analytic" }) {
-  const _feeCollectorAddress = feeCollectorAddress?.replace("0x", "");
+export default function VaultDashboard({ targetAddress, title = "Revenue received" }) {
+  const _targetAddress = targetAddress?.replace("0x", "");
   const [dateRange, setDateRange] = useState(["2020-01-01 00:00:00", "2030-01-01 00:00:00"]);
 
-  if (!_feeCollectorAddress) {
+  if (!_targetAddress) {
     return null;
   } else {
     return (
@@ -34,27 +34,35 @@ export default function FeeCollectorDashboard({ feeCollectorAddress, title = "Re
           </Row>
           <Row align="middle">
             <iframe
-              src={`https://dune.com/embeds/1379159/2365292/e8a8a878-0626-429e-a3f4-0a1328356949?fee_collector_address=${_feeCollectorAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
+              src={`https://dune.com/embeds/1379159/2365292/e8a8a878-0626-429e-a3f4-0a1328356949?fee_collector_address=${_targetAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
               height="512"
-              width="342"
+              width="512"
               title="chart total"
             />
             <iframe
-              src={`https://dune.com/embeds/1419944/2409172/ba3d3b76-2301-4477-ac62-0222772b483b?fee_collector_address=${_feeCollectorAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
+              src={`https://dune.com/embeds/1482835/2504437/2386da9c-9877-4bac-8bf7-a3fe1322b094?fee_collector_address=${_targetAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
               height="512"
-              width="342"
+              width="512"
+              title="chart xirr"
+            />
+          </Row>
+          <Row align="middle">
+            <iframe
+              src={`https://dune.com/embeds/1419944/2409172/ba3d3b76-2301-4477-ac62-0222772b483b?fee_collector_address=${_targetAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
+              height="512"
+              width="512"
               title="chart avg per month"
             />
             <iframe
-              src={`https://dune.com/embeds/1419964/2409200/c05d9546-c770-48ee-88cf-6ab0e0d1e9db?fee_collector_address=${_feeCollectorAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
+              src={`https://dune.com/embeds/1419964/2409200/c05d9546-c770-48ee-88cf-6ab0e0d1e9db?fee_collector_address=${_targetAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
               height="512"
-              width="342"
+              width="512"
               title="chart avg per day"
             />
           </Row>
           <Row>
             <iframe
-              src={`https://dune.com/embeds/1378473/2409566/b3c9f7ca-3520-42dd-a9ad-1f3b9426dcb6?fee_collector_address=${_feeCollectorAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
+              src={`https://dune.com/embeds/1378473/2409566/b3c9f7ca-3520-42dd-a9ad-1f3b9426dcb6?fee_collector_address=${_targetAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
               height="512"
               width="1024"
               title="chart weekly bar"
@@ -62,7 +70,7 @@ export default function FeeCollectorDashboard({ feeCollectorAddress, title = "Re
           </Row>
           <Row>
             <iframe
-              src={`https://dune.com/embeds/1379162/2346105/fe6a2928-8375-40ac-90ef-5575ec9e7c92?fee_collector_address=${_feeCollectorAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
+              src={`https://dune.com/embeds/1379162/2346105/fe6a2928-8375-40ac-90ef-5575ec9e7c92?fee_collector_address=${_targetAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
               height="512"
               width="1024"
               title="chart Cumulative"

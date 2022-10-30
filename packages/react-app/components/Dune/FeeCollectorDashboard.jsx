@@ -37,19 +37,19 @@ export default function FeeCollectorDashboard({ feeCollectorAddress, title = "Re
               src={`https://dune.com/embeds/1379159/2365292/e8a8a878-0626-429e-a3f4-0a1328356949?fee_collector_address=${_feeCollectorAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
               height="512"
               width="342"
-              title="chart total"
+              title="stat total"
             />
             <iframe
               src={`https://dune.com/embeds/1419944/2409172/ba3d3b76-2301-4477-ac62-0222772b483b?fee_collector_address=${_feeCollectorAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
               height="512"
               width="342"
-              title="chart avg per month"
+              title="stat avg per month"
             />
             <iframe
               src={`https://dune.com/embeds/1419964/2409200/c05d9546-c770-48ee-88cf-6ab0e0d1e9db?fee_collector_address=${_feeCollectorAddress}&start_datetime=${dateRange[0]}&end_datetime=${dateRange[1]}`}
               height="512"
               width="342"
-              title="chart avg per day"
+              title="stat avg per day"
             />
           </Row>
           <Row>

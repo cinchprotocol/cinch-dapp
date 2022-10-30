@@ -14,16 +14,27 @@ let accounts;
 let feeCollectorAddress;
 let multiSigAddress;
 let marketPlace;
+let mockFeeCollector;
 
 before(async function () {
   // get accounts from hardhat
   accounts = await ethers.getSigners();
-  feeCollectorAddress = accounts[0].address;
   multiSigAddress = accounts[0].address;
 });
 
 describe("MarketPlace tests", function () {
   describe("MarketPlace", function () {
+    it("Should deploy MockFeeCollector", async function () {
+      const MockFeeCollector = await ethers.getContractFactory(
+        "MockFeeCollector"
+      );
+
+      mockFeeCollector = await MockFeeCollector.deploy();
+      expect(mockFeeCollector.address).to.not.be.undefined;
+      feeCollectorAddress = mockFeeCollector.address;
+      console.log("mockFeeCollector.address: ", mockFeeCollector.address);
+    });
+
     it("Should deploy MarketPlace", async function () {
       const MarketPlace = await ethers.getContractFactory("MarketPlace");
 

@@ -61,7 +61,8 @@ function Vault({ web3 }) {
                   </div>
                   <div>
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                      {vaultData?.name}
+                      {vaultData?.name} {vaultData?.status == 1 ? <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">Active</span>
+                        : <span class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-0.5 text-sm font-medium text-yellow-800">Pending</span>}
                     </h1>
                     {/* <p class="text-sm font-medium text-gray-500">Vault created on <time datetime="2020-08-25">August 25, 2020</time></p> */}
                   </div>

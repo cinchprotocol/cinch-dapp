@@ -80,6 +80,7 @@ contract MarketPlace is
             payable(msg.sender),
             payable(address(0)),
             price,
+            0,
             expAmount
         );
 
@@ -355,23 +356,19 @@ contract MarketPlace is
         delete bidCounterByItem[_itemId];
 
         idToMarketItem[_itemId].buyer = payable(bid.bidder);
+        idToMarketItem[_itemId].soldPrice = bid.price;
         _itemsSold.increment();
 
         // Create vault
         address vault = createVault(
-            item.name,
-            item.feeCollector,
-            item.multiSig,
-            item.revenuePct,
-            bid.price,
-            item.expAmount,
-            item.seller,
-            bid.bidder
+            item,
+            underlyingToken
         );
 
-        IERC20(underlyingToken).transferFrom(bid.bidder, vault, bid.price);
+        uint256 amount = bid.price / 10**12;
+        IERC20(underlyingToken).transferFrom(bid.bidder, vault, amount);
 
-        emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);
+        emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, amount);
 
         // TODO check scenarios where it will be false
         return true;

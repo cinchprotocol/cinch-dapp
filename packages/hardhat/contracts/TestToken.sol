@@ -10,4 +10,9 @@ contract TestToken is ERC20 {
     function faucet(address to, uint256 amount) external {
         _mint(to, amount);
     }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 6;
+    }
+
 }

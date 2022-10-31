@@ -15,6 +15,7 @@ contract MarketPlaceStorage {
         address payable seller;
         address payable buyer;
         uint256 price;
+        uint256 soldPrice;
         uint256 expAmount;
     }
 

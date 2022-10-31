@@ -4,11 +4,14 @@ pragma solidity ^0.8.6;
 import "@openzeppelin/contracts/utils/Address.sol";
 import "./interfaces/IGnosisSafe.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./MarketPlaceStorage.sol";
+
 //import "@openzeppelin/contracts/access/Ownable.sol";
 
 //TODO - Specific to the idle at the moment but should we make this dyamic to work different protocols?
 interface IBorrowerContract {
     function feeReceiver() external view returns (address);
+
     function deposit(address tokenAddress, uint256 amount) external;
 }
 
@@ -48,27 +51,20 @@ contract RBFVault {
      *
      */
     constructor(
-        string memory _name,
-        address _feeCollector,
-        address _multiSig,
-        uint256 _revenuePct,
-        uint256 _price,
-        uint256 _expAmount,
-        address _borrower,
-        address _lender,
-        address _multisigGuard
-        
+        MarketPlaceStorage.MarketItem memory item,
+        address _multisigGuard,
+        address _underlyingToken
     ) payable {
-        name = _name;
-        feeCollector = _feeCollector;
-        multiSig = _multiSig;
-        revenuePct = _revenuePct;
-        price = _price;
-        expAmount = _expAmount;
-        borrower = _borrower;
-        lender = _lender;
+        name = item.name;
+        feeCollector = item.feeCollector;
+        multiSig = item.multiSig;
+        revenuePct = item.revenuePct;
+        price = item.price;
+        expAmount = item.expAmount;
+        borrower = item.seller;
+        lender = item.buyer;
 
-        underlyingToken = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
+        underlyingToken = _underlyingToken;
         multisigGuard = _multisigGuard;
 
         status = Status.Pending;
@@ -123,9 +119,9 @@ contract RBFVault {
 
         status = Status.Active;
         vaultActivationDate = block.timestamp;
-
-        IERC20(underlyingToken).approve(feeCollector, price);
-        IBorrowerContract(feeCollector).deposit(underlyingToken, price);
+        uint256 amount = price / 10**12;
+        IERC20(underlyingToken).approve(feeCollector, amount);
+        IBorrowerContract(feeCollector).deposit(underlyingToken, amount);
     }
 
     function getVaultBalance() public view returns (uint256) {

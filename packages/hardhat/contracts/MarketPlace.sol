@@ -232,6 +232,19 @@ contract MarketPlace is
         // "MarketPlace#_requireGnosisSafe: INVALID_MULTISIG"
     }
 
+    /**
+     * @dev fetch the Vault address as the feeCollector.feeReceiver after the item was sold, otherwise return address(0)
+     * @param itemId - id of the market item
+     */
+    function fetchVaultAddressOfItem(uint256 itemId) external view returns (address) {
+        MarketItem memory item = idToMarketItem[itemId];
+        if (item.buyer == address(0)) {
+            return address(0);
+        } else {
+            return IBorrowerContract(item.feeCollector).feeReceiver();
+        }
+    }
+
     // ##########################
     // #####   Bid   #####
     // ##########################

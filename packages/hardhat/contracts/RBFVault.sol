@@ -15,12 +15,15 @@ interface IBorrowerContract {
     function deposit(address tokenAddress, uint256 amount) external;
 }
 
+//TODO: Update the lender and borrower terms/concept used in this contract. In the Idle case, it would be staking and unstaking. In general, it would be buying and selling. In either case, we should clarify the docs.
 /**
  * @title RBFVault
  * @notice Contract allowing Lender to secure royalty revenue streams
  * @dev Should be deployed per revenue stream.
  */
 contract RBFVault {
+    event RBFVaultActivated();
+
     enum Status {
         Pending,
         Active,
@@ -39,7 +42,7 @@ contract RBFVault {
     address public underlyingToken;
     address public multisigGuard;
 
-    uint256 public constant REVENUE_PERIOD = 52 weeks;
+    uint256 public constant REVENUE_PERIOD = 52 weeks; //TODO: remove if it is not being used
     uint256 public constant TIMEOUT_PERIOD = 1 weeks;
     Status public status;
     uint256 public vaultActivationDate;
@@ -55,6 +58,7 @@ contract RBFVault {
         address _multisigGuard,
         address _underlyingToken
     ) payable {
+        //TODO: Add require statements for invalid inputs
         name = item.name;
         feeCollector = item.feeCollector;
         multiSig = item.multiSig;
@@ -69,6 +73,8 @@ contract RBFVault {
 
         status = Status.Pending;
         vaultDeployDate = block.timestamp;
+
+        //TODO: emit RBFVaultCreated event ?
     }
 
     /**
@@ -78,11 +84,12 @@ contract RBFVault {
         // Todo - check fee collector and multi-sig
     }
 
+    //TODO: Verify the association of the Multi-sig and the feeCollector ?
     /**
      * @dev Check if the vault is ready to be activated
      */
     function isReadyToActivate() public view returns (bool) {
-        require(isFeeCollectorUpdated(), "FEE_COLLECTOR_NOT_IN_PLACE");
+        require(isFeeCollectorUpdated(), "FEE_COLLECTOR_RECEIVER_NOT_UPDATED"); 
 
         require(isMultisigGuardAdded(), "MULTISIG_GUARD_NOT_IN_PLACE");
 
@@ -105,6 +112,7 @@ contract RBFVault {
         return true;
     }
 
+    //TODO: should this function be bounded to be called by the borrower only?
     /**
      * @dev Activates the vault after the onwership has been transferred to this vault. Also sends the agreed payment to the collection owner.
      After this any royalty recieved by this collection will be shared between both the party according to agreement
@@ -119,29 +127,32 @@ contract RBFVault {
 
         status = Status.Active;
         vaultActivationDate = block.timestamp;
+
         uint256 amount = price / 10**12;
         IERC20(underlyingToken).approve(feeCollector, amount);
         IBorrowerContract(feeCollector).deposit(underlyingToken, amount);
+        emit RBFVaultActivated();
     }
 
-    function getVaultBalance() public view returns (uint256) {
+    function getVaultBalance() external view returns (uint256) {
         return address(this).balance;
     }
 
     /**
      * @return The current state of the vault.
      */
-    function vaultStatus() public view returns (Status) {
+    function vaultStatus() external view returns (Status) {
         return status;
     }
 
+    //TODO: should this function be bounded to be called by the lender only ?
     /**
      * @dev Allows the lender to withdrawn deposited money if vault doesn't get activated on agreed upon time
      */
     function refundTheLender() external {
         require(
             !isTermsSatisfied(),
-            "Vault: Collection already owned by the vault"
+            "Vault: Collection already owned by the vault" //TODO: clarify revert reason
         );
 
         require(
@@ -156,5 +167,7 @@ contract RBFVault {
 
         status = Status.Canceled;
         Address.sendValue(payable(lender), address(this).balance);
+
+        //TODO: emit Refunded event
     }
 }

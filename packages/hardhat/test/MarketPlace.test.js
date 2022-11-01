@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-expressions */
-const { ethers, web3 } = require("hardhat");
+const { ethers } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 
 use(solidity);
-// const provider = web3;
 
 const feesCollectorCutPerMillion = 20000;
 const sellerAccountIndex = 0;
@@ -14,16 +13,27 @@ let accounts;
 let feeCollectorAddress;
 let multiSigAddress;
 let marketPlace;
+let mockFeeCollector;
 
 before(async function () {
   // get accounts from hardhat
   accounts = await ethers.getSigners();
-  feeCollectorAddress = accounts[0].address;
   multiSigAddress = accounts[0].address;
 });
 
 describe("MarketPlace tests", function () {
   describe("MarketPlace", function () {
+    it("Should deploy MockFeeCollector", async function () {
+      const MockFeeCollector = await ethers.getContractFactory(
+        "MockFeeCollector"
+      );
+
+      mockFeeCollector = await MockFeeCollector.deploy();
+      expect(mockFeeCollector.address).to.not.be.undefined;
+      feeCollectorAddress = mockFeeCollector.address;
+      console.log("mockFeeCollector.address: ", mockFeeCollector.address);
+    });
+
     it("Should deploy MarketPlace", async function () {
       const MarketPlace = await ethers.getContractFactory("MarketPlace");
 
@@ -33,6 +43,13 @@ describe("MarketPlace tests", function () {
       );
       expect(marketPlace.address).to.not.be.undefined;
       console.log("marketPlace.address: ", marketPlace.address);
+    });
+
+    describe("fetchVaultAddressOfItem", function () {
+      it("Should return 0 before item was sold", async function () {
+        const res = await marketPlace.fetchVaultAddressOfItem(1);
+        expect(res).equal(ethers.constants.AddressZero);
+      });
     });
 
     describe("createMarketItem", function () {

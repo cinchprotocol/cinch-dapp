@@ -25,7 +25,6 @@ import { Contract } from "@ethersproject/contracts";
 //import externalContracts from "~/Contracts/external_contracts";
 import { displayError } from "/helpers/errorhelper";
 
-
 function RevenueStream({ web3 }) {
   const router = useRouter();
   const { id } = router.query;

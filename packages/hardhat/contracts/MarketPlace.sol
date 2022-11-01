@@ -21,21 +21,25 @@ contract MarketPlace is
     using Address for address;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
-    address public underlyingToken = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
+    address public underlyingToken;
 
     /**
      * @dev Constructor of the contract.
      * @param _feesCollector - fees collector
      * @param _feesCollectorCutPerMillion - fees collector cut per million
      */
-    constructor(address _feesCollector, uint256 _feesCollectorCutPerMillion)
-        Pausable()
-    {
+    constructor(
+        address _feesCollector,
+        uint256 _feesCollectorCutPerMillion,
+        address usdc
+    ) Pausable() {
         // Address init
         setFeesCollector(_feesCollector);
 
         // Fee init
         setFeesCollectorCutPerMillion(_feesCollectorCutPerMillion);
+
+        setUSDCAddress(usdc);
     }
 
     // ##########################
@@ -333,7 +337,7 @@ contract MarketPlace is
         address sender = _msgSender();
 
         // Check if the item belongs to the current user
-        MarketItem memory item = idToMarketItem[_itemId];
+        MarketItem storage item = idToMarketItem[_itemId];
         require(item.seller == sender, "Bid#acceptBid: ONLY_SELLER_CAN_ACCEPT");
 
         // Check if the bid is valid.
@@ -355,15 +359,13 @@ contract MarketPlace is
         // Reset bid counter to invalidate other bids placed for the item
         delete bidCounterByItem[_itemId];
 
-        idToMarketItem[_itemId].buyer = payable(bid.bidder);
-        idToMarketItem[_itemId].soldPrice = bid.price;
+        item.buyer = payable(bid.bidder);
+        item.soldPrice = bid.price;
+
         _itemsSold.increment();
 
         // Create vault
-        address vault = createVault(
-            item,
-            underlyingToken
-        );
+        address vault = createVault(item, underlyingToken);
 
         uint256 amount = bid.price / 10**12;
         IERC20(underlyingToken).transferFrom(bid.bidder, vault, amount);
@@ -557,6 +559,20 @@ contract MarketPlace is
 
         emit FeesCollectorSet(feesCollector, _newFeesCollector);
         feesCollector = _newFeesCollector;
+    }
+
+    /**
+     * @dev Sets the address for the usdc ERC20
+     * @param usdcAddress - address of the USDC ERC20 contract
+     */
+    function setUSDCAddress(address usdcAddress) public onlyOwner {
+        require(
+            usdcAddress != address(0),
+            "setUSDCAddress: CANNOT_BE_ZERO_ADDRESS"
+        );
+
+        emit ChangedUSDCAddress(usdcAddress);
+        underlyingToken = usdcAddress;
     }
 
     /**

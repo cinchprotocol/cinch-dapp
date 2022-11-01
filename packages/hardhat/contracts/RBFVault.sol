@@ -59,7 +59,7 @@ contract RBFVault {
         feeCollector = item.feeCollector;
         multiSig = item.multiSig;
         revenuePct = item.revenuePct;
-        price = item.price;
+        price = item.soldPrice;
         expAmount = item.expAmount;
         borrower = item.seller;
         lender = item.buyer;

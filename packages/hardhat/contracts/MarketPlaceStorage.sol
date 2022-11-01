@@ -100,4 +100,7 @@ contract MarketPlaceStorage {
         address indexed _oldFeesCollector,
         address indexed _newFeesCollector
     );
+     event ChangedUSDCAddress(
+        address indexed _usdcAddress
+    );
 }

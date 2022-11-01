@@ -81,7 +81,7 @@ function MobileNavigation() {
 
 export function DAppHeader(props) {
   return (
-    <header className="py-10 bg-slate-50">
+    <header className="py-4 bg-white shadow-sm border-b mb-12">
       <Container>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">

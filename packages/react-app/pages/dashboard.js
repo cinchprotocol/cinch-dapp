@@ -62,7 +62,7 @@ function Dashboard({ web3 }) {
           <main>
             <div className="mt-10 h-screen">
               <HeaderText01>Dashboard</HeaderText01>
-              <div className="bg-white rounded-lg p-10 min-h-[50%]">
+              <div className="bg-white rounded-2xl shadow p-10 min-h-[50%]">
                 {address ? (
                   <div>
                     <Tabs defaultActiveKey="1" onChange={callback}>

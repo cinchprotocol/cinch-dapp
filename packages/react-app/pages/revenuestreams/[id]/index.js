@@ -296,11 +296,12 @@ function RevenueStream({ web3 }) {
         marketPlaceContract?.placeBid(
           data2?.id,
           utils.parseEther(formValues?.price),
+          //formValues?.price,
           formValues?.addressToReceiveRevenueShare,
           86400,
           {
             from: web3?.address,
-            value: utils.parseEther(formValues?.price),
+            //value: utils.parseEther(formValues?.price),
           },
         ),
         res => {
@@ -321,6 +322,19 @@ function RevenueStream({ web3 }) {
     setIsModalVisible(false);
   };
 
+  const handleApprove = async () => {
+    const erc20Contract = new Contract('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', ERC20ABI, web3?.userSigner);
+    const result = await web3?.tx(erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, utils.parseUnits("1500", 6)), update => {
+      console.log({ update });
+      if (update?.status === "confirmed" || update?.status === 1) {
+        message.success("Approved successfully");
+      } else {
+        message.error(update?.data?.message);
+      }
+    });
+    console.log({ result });
+  }
+
   return (
     <>
       <div className="bg-slate-50">
@@ -329,188 +343,176 @@ function RevenueStream({ web3 }) {
         <main>
           <div>
             <Container>
-              {/* info */}
-              <div className="pt-10 pb-16 px-4 bg-white rounded-lg shadow mb-10 sm:px-6 lg:pt-10 lg:pb-24 lg:px-8 lg:grid lg:grid-cols-4 lg:grid-rows-[auto,auto,1fr]">
-                <div className="lg:col-span-2 lg:pr-8">
-                  <div className="flex justify-start">
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                      {/* {data?.name} */}
-                      Protocol Name
-                    </h1>
+              <div class="md:flex md:items-center md:justify-between md:space-x-5">
+                <div class="flex items-center space-x-5">
+                  <div class="flex-shrink-0">
+                    {/* <div class="relative">
+                      <img class="h-16 w-16 rounded-full" src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80" alt=""/>
+                        <span class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></span>
+                    </div> */}
                   </div>
                   <div>
-                    {/* Description and details */}
-                    <h3 className="sr-only text-gray-900">Description</h3>
+                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                      {data2?.name}
+                    </h1>
+                    {/* <p class="text-sm font-medium text-gray-500">Vault created on <time datetime="2020-08-25">August 25, 2020</time></p> */}
+                  </div>
+                </div>
+                {/* <div class="justify-stretch mt-6 flex flex-col-reverse space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-y-0 sm:space-x-3 sm:space-x-reverse md:mt-0 md:flex-row md:space-x-3">
+                  <button type="button" class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100">Disqualify</button>
+                  <button type="button" class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100">Advance to offer</button>
+                </div> */}
+              </div>
 
-                    <div className="space-y-6">
-                      <p className="text-base text-gray-600">
-                        {/* {data?.description} */}
-                        placeholder for the protocol description
-                      </p>
-                    </div>
+              {/* info */}
+              <div className="mb-10 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr]">
+                <div className="p-6 lg:mr-4 lg:col-span-2 bg-white rounded-2xl shadow">
+                  <div className="">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">Listing Information</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Protocol details and terms.</p>
                   </div>
 
-                  <div className="mt-10 mb-10">
-                    <div>
-                      {/* <h3 className="text-lg text-gray-900">COLLECTION STATS</h3> */}
-                      <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Revenue proportion</dt>
-                          <dd className="text-gray-900">{data2.revenuePctStr}%</dd>
-                        </div>
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Expiry amount (ETH)</dt>
-
-                          <dd className="text-gray-900">{data2?.expAmountStr}</dd>
-                        </div>
-
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Fee collector address</dt>
-                          <dd className="text-gray-900">{data2?.feeCollector}</dd>
-                        </div>
-                        <div className="py-3 flex justify-between text-sm font-medium">
-                          <dt className="text-gray-500">Multi-sig address</dt>
-                          <dd className="text-gray-900">{data2?.multiSig}</dd>
-                        </div>
-                      </dl>
-                    </div>
+                  <div className="mb-10 border-t border-gray-200">
+                    <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Price (USDC)</dt>
+                        <dd class="mt-1 text-sm text-gray-900">${data2?.priceStr}</dd>
+                      </div>
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Revenue proportion</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{data2.revenuePctStr}%</dd>
+                      </div>
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Expiry amount (USDC)</dt>
+                        <dd class="mt-1 text-sm text-gray-900">${data2?.expAmountStr}</dd>
+                      </div>
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Fee collector address</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{data2?.feeCollector?.substr(0, 6) + "..." + data2?.feeCollector?.substr(-4)}</dd>
+                      </div>
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Multi-sig address</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{data2?.multiSig?.substr(0, 6) + "..." + data2?.multiSig?.substr(-4)}</dd>
+                      </div>
+                    </dl>
                   </div>
                 </div>
 
                 {/* Place BID */}
                 {data2?.buyer && data2?.buyer === ethers.constants.AddressZero && (
                   <>
-                    <div className="mx-5 mt-4 lg:mt-0 lg:col-span-2 shadow-2xl p-10 ">
+                    <div className="px-6 py-8 lg:col-span-1 bg-white rounded-2xl shadow">
                       <div>
                         <h3 className="text-xl text-center font-semibold text-gray-900">Place Bid</h3>
-                        <Form
-                          name="basic"
-                          wrapperCol={{
-                            span: 24,
-                          }}
-                          initialValues={{
-                            remember: true,
-                          }}
-                          onFinish={onFormFinish}
-                          onFinishFailed={onFormFinishFailed}
-                          autoComplete="off"
-                          labelWrap
-                          layout="verticle"
-                          requiredMark="required"
-                          size="large"
-                        >
-                          <Form.Item
-                            label="Price"
-                            name="price"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please input the price",
-                              },
-                            ]}
+                        <div>
+                          <Form
+                            name="basic"
+                            wrapperCol={{
+                              span: 24,
+                            }}
+                            initialValues={{
+                              remember: true,
+                            }}
+                            onFinish={onFormFinish}
+                            onFinishFailed={onFormFinishFailed}
+                            autoComplete="off"
+                            labelWrap
+                            layout="verticle"
+                            requiredMark="required"
                           >
-                            <Input />
-                          </Form.Item>
-                          <Form.Item
-                            label="Address to receive revenue-share"
-                            name="addressToReceiveRevenueShare"
-                            extra="Fee consolidator contract will forward revenue to this address"
-                            rules={[
-                              {
-                                required: true,
-                                message:
-                                  "The revenue royalty will be implemented by adding this wallet address to the fee consolidator contract",
-                              },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-
-                          <Form.Item
-                            label="Contact information (optional)"
-                            name="contact"
-                            extra=" Receive notifications on the status of your royalty listing,
-                      its implementation, and its performance"
-                            rules={[
-                              {
-                                required: false,
-                                message:
-                                  "Enter your preferred contact information to receive notifications on the status of your royalty listing, its implementation, and its performance",
-                              },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-
-                          <Form.Item>
-                            <button
-                              type="button"
-                              className="bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                              onClick={async () => {
-                                //pass in the address for the vault&collection in context below
-                                // const ERC20ABI = externalContracts[1].contracts.ERC20ABI;
-                                const erc20Contract = new Contract(
-                                  "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-                                  ERC20ABI,
-                                  web3?.userSigner,
-                                );
-                                const result = await web3?.tx(
-                                  erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, 10),
-                                  update => {
-                                    console.log({ update });
-                                    if (update?.status === "confirmed" || update?.status === 1) {
-                                      message.success("Approved successfully");
-                                    } else {
-                                      message.error(update?.data?.message);
-                                    }
-                                  },
-                                );
-                                console.log({ result });
-                              }}
+                            <Form.Item
+                              label="Price"
+                              name="price"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Please input the price",
+                                },
+                              ]}
                             >
-                              Approve Cinch to use your USDC
-                            </button>
+                              <Input />
+                            </Form.Item>
+                            <Form.Item
+                              label="Address to receive revenue-share"
+                              name="addressToReceiveRevenueShare"
+                              extra="Fee consolidator contract will forward revenue to this address"
+                              rules={[
+                                {
+                                  required: true,
+                                  message:
+                                    "Enter Address to receive revenue-share",
+                                },
+                              ]}
+                            >
+                              <Input />
+                            </Form.Item>
 
-                            <Button className="w-full" htmlType="submit">
-                              Review Bid
-                            </Button>
-                          </Form.Item>
-                        </Form>
-                        <Modal
-                          title=""
-                          visible={isModalVisible}
-                          onOk={handleOk}
-                          onCancel={handleCancel}
-                          okText="Confirm Bid"
-                          width={650}
-                        >
-                          <div>
-                            <div className="px-4 py-5 sm:px-6">
-                              <h3 className="text-xl font-medium leading-6 text-gray-900">Review Bid Information</h3>
-                              <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                                Please verify details, this helps avoiding any delay.{" "}
-                              </p>
+                            <Form.Item
+                              label="Contact information (optional)"
+                              name="contact"
+                              extra=" Receive notifications on the status of your royalty listing,
+                      its implementation, and its performance"
+                              rules={[
+                                {
+                                  required: false,
+                                  message:
+                                    "Enter your preferred contact information to receive notifications on the status of your royalty listing, its implementation, and its performance",
+                                },
+                              ]}
+                            >
+                              <Input />
+                            </Form.Item>
+
+                            <Form.Item>
+                              <Button className="w-full" htmlType="button"
+                                onClick={handleApprove}
+                              >
+                                Approve Cinch to use your USDC
+                              </Button>
+                            </Form.Item>
+
+                            <Form.Item>
+                              <Button className="w-full" htmlType="submit">
+                                Review Bid
+                              </Button>
+                            </Form.Item>
+                          </Form>
+                          <Modal
+                            title=""
+                            visible={isModalVisible}
+                            onOk={handleOk}
+                            onCancel={handleCancel}
+                            okText="Confirm Bid"
+                            width={650}
+                          >
+                            <div>
+                              <div className="px-4 py-5 sm:px-6">
+                                <h3 className="text-xl font-medium leading-6 text-gray-900">Review Bid Information</h3>
+                                <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                                  Please verify details, this helps avoiding any delay.{" "}
+                                </p>
+                              </div>
+                              <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                                <dl className="sm:divide-y sm:divide-gray-200">
+                                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                                    <dt className="text-sm font-medium text-gray-500">Price</dt>
+                                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                      {formValues?.price}
+                                    </dd>
+                                  </div>
+                                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                                    <dt className="text-sm font-medium text-gray-500">
+                                      Address to receive revenue-share
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                      {formValues?.addressToReceiveRevenueShare}
+                                    </dd>
+                                  </div>
+                                </dl>
+                              </div>
                             </div>
-                            <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-                              <dl className="sm:divide-y sm:divide-gray-200">
-                                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                                  <dt className="text-sm font-medium text-gray-500">Price</dt>
-                                  <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                                    {formValues?.price}
-                                  </dd>
-                                </div>
-                                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                                  <dt className="text-sm font-medium text-gray-500">
-                                    Address to receive revenue-share
-                                  </dt>
-                                  <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                                    {formValues?.addressToReceiveRevenueShare}
-                                  </dd>
-                                </div>
-                              </dl>
-                            </div>
-                          </div>
-                        </Modal>
+                          </Modal>
+                        </div>
                       </div>
                     </div>
                   </>

@@ -6,7 +6,7 @@ import { displayError } from "./errorhelper";
 const RBFVAULTABI = externalContracts[31337]?.contracts?.RBFVAULT?.abi;
 
 export const getVaultContract = ({ web3, address }) => {
-  const vaultContract = new Contract(address, RBFVAULTABI, web3?.localProvider);
+  const vaultContract = new Contract(address, RBFVAULTABI, web3?.userSigner);
   return vaultContract;
 };
 
@@ -28,11 +28,36 @@ export const fetchVaultData = async ({ web3, address }) => {
       status: await vaultContract?.status(),
       isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
       isMultisigGuardAdded: await vaultContract?.isMultisigGuardAdded(),
-      isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded,
+      // isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded,
+      multisigGuard: await vaultContract?.multisigGuard(),
     };
   } catch (err) {
     displayError("fetchVaultData", err);
   } finally {
     return data;
+  }
+};
+
+export const activateVault = async ({ web3, address }) => {
+  
+  const vaultContract = getVaultContract({ web3, address });
+
+
+  try {
+    const tx = await web3?.tx(
+      vaultContract?.activate({
+        from: web3?.address        
+      }),
+      res => {
+        if (res.status == 1) {
+
+        }
+      },
+    );
+    const txRes = await tx?.wait();
+    console.log("txRes", txRes);
+  }
+  catch (err) {
+    displayError("Vault:Activate", err);
   }
 };

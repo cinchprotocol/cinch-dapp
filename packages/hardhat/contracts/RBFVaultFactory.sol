@@ -4,6 +4,7 @@ pragma solidity ^0.8.6;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RBFVault.sol";
 import "./CinchSafeGuard.sol";
+import "./MarketPlaceStorage.sol";
 
 /**
  * @title RBFVaultFactory
@@ -26,34 +27,23 @@ contract RBFVaultFactory is Ownable {
      *
      */
     function createVault(
-        string memory name,
-        address feeCollector,
-        address multiSig,
-        uint256 revenuePct,
-        uint256 price,
-        uint256 expAmount,
-        address borrower,
-        address lender
-    ) public payable {
+        MarketPlaceStorage.MarketItem memory item,
+        address underlyingToken
+    ) internal returns (address) {
         // Deploy Cinch multi-sig guard
         //TODO - get function sig input during the listing of item so it can be set here in the guard
         CinchSafeGuard multiSigGuard = new CinchSafeGuard();
 
-        RBFVault vault = new RBFVault{value: price}(
-            name,
-            feeCollector,
-            multiSig,
-            revenuePct,
-            price,
-            expAmount,
-            borrower,
-            lender,
-            address(multiSigGuard)
+        RBFVault vault = new RBFVault(
+            item,
+            address(multiSigGuard),
+            underlyingToken
         );
-        borrowerVault[borrower].push(address(vault));
-        lenderVault[lender].push(address(vault));
+        borrowerVault[item.seller].push(address(vault));
+        lenderVault[item.buyer].push(address(vault));
 
-        emit RBFVaultCreated(lender, borrower, address(vault));
+        emit RBFVaultCreated(item.buyer, item.seller, address(vault));
+        return address(vault);
     }
 
     function getlenderVaults(address lender)

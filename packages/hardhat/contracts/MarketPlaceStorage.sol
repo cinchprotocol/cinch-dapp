@@ -15,6 +15,7 @@ contract MarketPlaceStorage {
         address payable seller;
         address payable buyer;
         uint256 price;
+        uint256 soldPrice;
         uint256 expAmount;
     }
 
@@ -98,5 +99,8 @@ contract MarketPlaceStorage {
     event FeesCollectorSet(
         address indexed _oldFeesCollector,
         address indexed _newFeesCollector
+    );
+     event ChangedUSDCAddress(
+        address indexed _usdcAddress
     );
 }

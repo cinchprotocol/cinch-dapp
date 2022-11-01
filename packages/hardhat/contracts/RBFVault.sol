@@ -3,12 +3,16 @@ pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "./interfaces/IGnosisSafe.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./MarketPlaceStorage.sol";
 
 //import "@openzeppelin/contracts/access/Ownable.sol";
 
 //TODO - Specific to the idle at the moment but should we make this dyamic to work different protocols?
 interface IBorrowerContract {
     function feeReceiver() external view returns (address);
+
+    function deposit(address tokenAddress, uint256 amount) external;
 }
 
 //TODO: Update the lender and borrower terms/concept used in this contract. In the Idle case, it would be staking and unstaking. In general, it would be buying and selling. In either case, we should clarify the docs.
@@ -35,7 +39,7 @@ contract RBFVault {
     uint256 public expAmount;
     address public borrower;
     address public lender;
-
+    address public underlyingToken;
     address public multisigGuard;
 
     uint256 public constant REVENUE_PERIOD = 52 weeks; //TODO: remove if it is not being used
@@ -50,27 +54,21 @@ contract RBFVault {
      *
      */
     constructor(
-        string memory _name,
-        address _feeCollector,
-        address _multiSig,
-        uint256 _revenuePct,
-        uint256 _price,
-        uint256 _expAmount,
-        address _borrower,
-        address _lender,
-        address _multisigGuard
+        MarketPlaceStorage.MarketItem memory item,
+        address _multisigGuard,
+        address _underlyingToken
     ) payable {
         //TODO: Add require statements for invalid inputs
+        name = item.name;
+        feeCollector = item.feeCollector;
+        multiSig = item.multiSig;
+        revenuePct = item.revenuePct;
+        price = item.soldPrice;
+        expAmount = item.expAmount;
+        borrower = item.seller;
+        lender = item.buyer;
 
-        name = _name;
-        feeCollector = _feeCollector;
-        multiSig = _multiSig;
-        revenuePct = _revenuePct;
-        price = _price;
-        expAmount = _expAmount;
-        borrower = _borrower;
-        lender = _lender;
-
+        underlyingToken = _underlyingToken;
         multisigGuard = _multisigGuard;
 
         status = Status.Pending;
@@ -109,7 +107,9 @@ contract RBFVault {
      * @dev Check if cinch multi-sig guard is added
      */
     function isMultisigGuardAdded() public view returns (bool) {
-        return GnosisSafe(multiSig).getGuard() == multisigGuard;
+        // TODO- Remove
+        //return GnosisSafe(multiSig).getGuard() == multisigGuard;
+        return true;
     }
 
     //TODO: should this function be bounded to be called by the borrower only?
@@ -128,9 +128,9 @@ contract RBFVault {
         status = Status.Active;
         vaultActivationDate = block.timestamp;
 
-        //TODO - deploy fund
-        //Address.sendValue(payable(borrower), address(this).balance);
-
+        uint256 amount = price / 10**12;
+        IERC20(underlyingToken).approve(feeCollector, amount);
+        IBorrowerContract(feeCollector).deposit(underlyingToken, amount);
         emit RBFVaultActivated();
     }
 

@@ -21,20 +21,25 @@ contract MarketPlace is
     using Address for address;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
+    address public underlyingToken;
 
     /**
      * @dev Constructor of the contract.
      * @param _feesCollector - fees collector
      * @param _feesCollectorCutPerMillion - fees collector cut per million
      */
-    constructor(address _feesCollector, uint256 _feesCollectorCutPerMillion)
-        Pausable()
-    {
+    constructor(
+        address _feesCollector,
+        uint256 _feesCollectorCutPerMillion,
+        address usdc
+    ) Pausable() {
         // Address init
         setFeesCollector(_feesCollector);
 
         // Fee init
         setFeesCollectorCutPerMillion(_feesCollectorCutPerMillion);
+
+        setUSDCAddress(usdc);
     }
 
     // ##########################
@@ -79,6 +84,7 @@ contract MarketPlace is
             payable(msg.sender),
             payable(address(0)),
             price,
+            0,
             expAmount
         );
 
@@ -120,7 +126,11 @@ contract MarketPlace is
     // for public view call, specific signing is not required, so msg.sender is not necessary the target seller address.
     // it make more sense to use a seller parameter as the function input, instead of using msg.sender
     // the same apply to fetchMyPurchases and fetchMyBids
-    function fetchMyListings(address seller) external view returns (MarketItem[] memory) {
+    function fetchMyListings(address seller)
+        external
+        view
+        returns (MarketItem[] memory)
+    {
         uint256 totalItemCount = _itemIds.current();
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
@@ -144,7 +154,11 @@ contract MarketPlace is
         return items;
     }
 
-    function fetchMyPurchases(address buyer) external view returns (MarketItem[] memory) {
+    function fetchMyPurchases(address buyer)
+        external
+        view
+        returns (MarketItem[] memory)
+    {
         uint256 totalItemCount = _itemIds.current();
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
@@ -269,10 +283,10 @@ contract MarketPlace is
             "Bid#placeBid: PRICE_SHOULD_BE_GTE_ASKING_PRICE"
         );
 
-        require(
-            _price == msg.value,
-            "Bid#placeBid: TX_VALUE_SHOULD_BE_SAME_AS_PRICE"
-        );
+        // require(
+        //     _price <= IERC20(underlyingToken).allowance(sender, address(this)),
+        //     "Bid#placeBid: MUST_BE_AUTHORIZED_TO_SPEND_ENOUGH_TOKEN"
+        // );
 
         require(
             _duration >= MIN_BID_DURATION,
@@ -336,7 +350,7 @@ contract MarketPlace is
         address sender = _msgSender();
 
         // Check if the item belongs to the current user
-        MarketItem memory item = idToMarketItem[_itemId];
+        MarketItem storage item = idToMarketItem[_itemId];
         require(item.seller == sender, "Bid#acceptBid: ONLY_SELLER_CAN_ACCEPT");
 
         // Check if the bid is valid.
@@ -358,22 +372,18 @@ contract MarketPlace is
         // Reset bid counter to invalidate other bids placed for the item
         delete bidCounterByItem[_itemId];
 
-        idToMarketItem[_itemId].buyer = payable(bid.bidder);
+        item.buyer = payable(bid.bidder);
+        item.soldPrice = bid.price;
+
         _itemsSold.increment();
 
         // Create vault
-        createVault(
-            item.name,
-            item.feeCollector,
-            item.multiSig,
-            item.revenuePct,
-            item.price,
-            item.expAmount,
-            item.seller,
-            item.buyer
-        );
+        address vault = createVault(item, underlyingToken);
 
-        emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);
+        uint256 amount = bid.price / 10**12;
+        IERC20(underlyingToken).transferFrom(bid.bidder, vault, amount);
+
+        emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, amount);
 
         // TODO check scenarios where it will be false
         return true;
@@ -565,6 +575,20 @@ contract MarketPlace is
     }
 
     /**
+     * @dev Sets the address for the usdc ERC20
+     * @param usdcAddress - address of the USDC ERC20 contract
+     */
+    function setUSDCAddress(address usdcAddress) public onlyOwner {
+        require(
+            usdcAddress != address(0),
+            "setUSDCAddress: CANNOT_BE_ZERO_ADDRESS"
+        );
+
+        emit ChangedUSDCAddress(usdcAddress);
+        underlyingToken = usdcAddress;
+    }
+
+    /**
      * @dev Pause the contract
      */
     function pause() external onlyOwner {
@@ -573,23 +597,23 @@ contract MarketPlace is
 
     function createTestItem1() external payable {
         createMarketItem(
-            "Test Item 1",
+            "Test Protocol 1",
             0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,
             0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,
-            50,
-            1500,
-            1500
+            50 * (10**18),
+            500 * (10**18),
+            800 * (10**18)
         );
     }
 
     function createTestItem2() external payable {
         createMarketItem(
-            "Test Item 2",
+            "Test Protocol 2",
             0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,
             0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,
-            50,
-            1500,
-            1500
+            50 * (10**18),
+            500 * (10**18),
+            800 * (10**18)
         );
     }
 }

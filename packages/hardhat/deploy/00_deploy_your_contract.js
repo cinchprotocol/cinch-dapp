@@ -18,7 +18,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   await deploy("MarketPlace", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: [deployer, 20000, '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'],
+    args: [deployer, 20000, '0x5FbDB2315678afecb367f032d93F642f64180aa3'],
     log: true,
   });
 
@@ -46,18 +46,18 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   // await tokenContract.faucet('0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F', 5000 * 10**18);
   // await tokenContract.faucet('0xEdfdb5f2f02432F1E3271582056ECd0f884126aC', 5000 * 10**18);
 
-  const tokenContract = await ethers.getContractAt(
-    "TestToken",
-    "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-  );
-  await tokenContract.transfer(
-    "0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F",
-    5000
-  );
-  await tokenContract.transfer(
-    "0xEdfdb5f2f02432F1E3271582056ECd0f884126aC",
-    5000
-  );
+  // const tokenContract = await ethers.getContractAt(
+  //   "TestToken",
+  //   "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+  // );
+  // await tokenContract.transfer(
+  //   "0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F",
+  //   5000
+  // );
+  // await tokenContract.transfer(
+  //   "0xEdfdb5f2f02432F1E3271582056ECd0f884126aC",
+  //   5000
+  // );
 
   /*
     // Getting a previously deployed contract

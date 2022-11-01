@@ -5,7 +5,7 @@ import { Container } from "/components/Container";
 import { useRouter } from "next/router";
 import * as Realm from "realm-web";
 import _ from "lodash";
-import { Select, Modal, Form, Input, message, Space, Table } from "antd";
+import { Select, Modal, Form, Input, message, Space, Table, Tabs } from "antd";
 const { ethers, utils } = require("ethers");
 
 import { CommonHead } from "/components/CommonHead";
@@ -20,10 +20,10 @@ import {
 } from "../../../helpers/marketplacehelper";
 import BidTable from "/components/BidTable";
 import FeeCollectorDashboard from "/components/Dune/FeeCollectorDashboard";
+import VaultDashboard from "/components/Dune/VaultDashboard";
 import { Contract } from "@ethersproject/contracts";
 //import externalContracts from "~/Contracts/external_contracts";
 import { displayError } from "/helpers/errorhelper";
-
 
 function RevenueStream({ web3 }) {
   const router = useRouter();
@@ -443,22 +443,28 @@ function RevenueStream({ web3 }) {
                           </Form.Item>
 
                           <Form.Item>
-
                             <button
                               type="button"
                               className="bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                               onClick={async () => {
                                 //pass in the address for the vault&collection in context below
                                 // const ERC20ABI = externalContracts[1].contracts.ERC20ABI;
-                                const erc20Contract = new Contract('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', ERC20ABI, web3?.userSigner);
-                                const result = await web3?.tx(erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, 10), update => {
-                                  console.log({ update });
-                                  if (update?.status === "confirmed" || update?.status === 1) {
-                                    message.success("Approved successfully");
-                                  } else {
-                                    message.error(update?.data?.message);
-                                  }
-                                });
+                                const erc20Contract = new Contract(
+                                  "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+                                  ERC20ABI,
+                                  web3?.userSigner,
+                                );
+                                const result = await web3?.tx(
+                                  erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, 10),
+                                  update => {
+                                    console.log({ update });
+                                    if (update?.status === "confirmed" || update?.status === 1) {
+                                      message.success("Approved successfully");
+                                    } else {
+                                      message.error(update?.data?.message);
+                                    }
+                                  },
+                                );
                                 console.log({ result });
                               }}
                             >
@@ -523,11 +529,25 @@ function RevenueStream({ web3 }) {
               </div>
 
               {/* Revenue Analytics */}
-              {data2?.feeCollector && data2?.feeCollector !== ethers.constants.AddressZero && (
-                <div className="mt-14 bg-white shadow rounded-lg">
-                  <FeeCollectorDashboard feeCollectorAddress={data2?.feeCollector} />
-                </div>
-              )}
+              <Tabs defaultActiveKey="1">
+                <Tabs.TabPane tab="Fee collector" key="1">
+                  {data2?.feeCollector && data2?.feeCollector !== ethers.constants.AddressZero && (
+                    <div className="mt-14 bg-white shadow rounded-lg">
+                      <FeeCollectorDashboard
+                        feeCollectorAddress={data2?.feeCollector}
+                        title={"Protocol revenue stream"}
+                      />
+                    </div>
+                  )}
+                </Tabs.TabPane>
+                {data2?.vaultAddress && data2?.vaultAddress !== ethers.constants.AddressZero && (
+                  <Tabs.TabPane tab="Received by vault" key="2">
+                    <div className="mt-14 bg-white shadow rounded-lg">
+                      <VaultDashboard targetAddress={data2?.vaultAddress} title={"Revenue received"} />
+                    </div>
+                  </Tabs.TabPane>
+                )}
+              </Tabs>
             </Container>
           </div>
         </main>

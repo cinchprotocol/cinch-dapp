@@ -85,15 +85,15 @@ function Vault({ web3 }) {
                     <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
                       <div class="sm:col-span-1">
                         <dt class="text-sm font-medium text-gray-500">Price (USDC)</dt>
-                        <dd class="mt-1 text-sm text-gray-900">${vaultData?.price}</dd>
+                        <dd class="mt-1 text-2xl text-gray-900">${vaultData?.price}</dd>
                       </div>
                       <div class="sm:col-span-1">
                         <dt class="text-sm font-medium text-gray-500">Revenue proportion</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.revenuePct}%</dd>
+                        <dd class="mt-1 text-2xl text-gray-900">{vaultData?.revenuePct}%</dd>
                       </div>
                       <div class="sm:col-span-1">
                         <dt class="text-sm font-medium text-gray-500">Expiry amount (USDC)</dt>
-                        <dd class="mt-1 text-sm text-gray-900">${vaultData?.expAmount}</dd>
+                        <dd class="mt-1 text-2xl text-gray-900">${vaultData?.expAmount}</dd>
                       </div>
                       <div class="sm:col-span-1">
                         <dt class="text-sm font-medium text-gray-500">Fee collector address</dt>

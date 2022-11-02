@@ -2,6 +2,7 @@ import externalContracts from "../contracts/external_contracts";
 import { Contract } from "@ethersproject/contracts";
 const { utils } = require("ethers");
 import { displayError } from "./errorhelper";
+import { message } from "antd";
 
 const RBFVAULTABI = externalContracts[31337]?.contracts?.RBFVAULT?.abi;
 
@@ -26,7 +27,7 @@ export const fetchVaultData = async ({ web3, address }) => {
       borrower: await vaultContract?.borrower(),
       lender: await vaultContract?.lender(),
       status: await vaultContract?.status(),
-      isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
+      //isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
       isMultisigGuardAdded: await vaultContract?.isMultisigGuardAdded(),
       // isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded,
       multisigGuard: await vaultContract?.multisigGuard(),
@@ -39,14 +40,14 @@ export const fetchVaultData = async ({ web3, address }) => {
 };
 
 export const activateVault = async ({ web3, address }) => {
-  
+
   const vaultContract = getVaultContract({ web3, address });
 
 
   try {
     const tx = await web3?.tx(
       vaultContract?.activate({
-        from: web3?.address        
+        from: web3?.address
       }),
       res => {
         if (res.status == 1) {
@@ -59,5 +60,26 @@ export const activateVault = async ({ web3, address }) => {
   }
   catch (err) {
     displayError("Vault:Activate", err);
+  }
+};
+
+export const withdraw = async ({ web3, address }) => {
+
+  const vaultContract = getVaultContract({ web3, address });
+
+  try {
+    const tx = await web3?.tx(
+      vaultContract?.withdraw({
+        from: web3?.address
+      }));
+    const txRes = await tx?.wait();
+    console.log("txRes", txRes);
+
+    if (txRes?.events?.find(e => e?.event === "BalanceWithdrawn")) {
+      message.success("Withdraw successful");
+    }
+  }
+  catch (err) {
+    message.error(err);
   }
 };

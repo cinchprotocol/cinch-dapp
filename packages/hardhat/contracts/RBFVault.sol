@@ -13,6 +13,8 @@ interface IBorrowerContract {
     function feeReceiver() external view returns (address);
 
     function deposit(address tokenAddress, uint256 amount) external;
+
+    function withdraw(address tokenAddress, uint256 amount) external;
 }
 
 //TODO: Update the lender and borrower terms/concept used in this contract. In the Idle case, it would be staking and unstaking. In general, it would be buying and selling. In either case, we should clarify the docs.
@@ -23,6 +25,7 @@ interface IBorrowerContract {
  */
 contract RBFVault {
     event RBFVaultActivated();
+    event BalanceWithdrawn();
 
     enum Status {
         Pending,
@@ -89,7 +92,7 @@ contract RBFVault {
      * @dev Check if the vault is ready to be activated
      */
     function isReadyToActivate() public view returns (bool) {
-        require(isFeeCollectorUpdated(), "FEE_COLLECTOR_RECEIVER_NOT_UPDATED"); 
+        require(isFeeCollectorUpdated(), "FEE_COLLECTOR_RECEIVER_NOT_UPDATED");
 
         require(isMultisigGuardAdded(), "MULTISIG_GUARD_NOT_IN_PLACE");
 
@@ -128,10 +131,22 @@ contract RBFVault {
         status = Status.Active;
         vaultActivationDate = block.timestamp;
 
+        deposit();
+
+        emit RBFVaultActivated();
+    }
+
+    function deposit() private {
         uint256 amount = price / 10**12;
         IERC20(underlyingToken).approve(feeCollector, amount);
         IBorrowerContract(feeCollector).deposit(underlyingToken, amount);
-        emit RBFVaultActivated();
+    }
+
+    function withdraw() public {
+        uint256 amount = price / 10**12;
+        IBorrowerContract(feeCollector).withdraw(underlyingToken, amount);
+        IERC20(underlyingToken).transfer(lender, amount);
+        emit BalanceWithdrawn();
     }
 
     function getVaultBalance() external view returns (uint256) {

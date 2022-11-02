@@ -14,6 +14,7 @@ let feeCollectorAddress;
 let multiSigAddress;
 let marketPlace;
 let mockFeeCollector;
+let mockERC20;
 
 before(async function () {
   // get accounts from hardhat
@@ -23,11 +24,16 @@ before(async function () {
 
 describe("MarketPlace tests", function () {
   describe("MarketPlace", function () {
+    it("Should deploy MockERC20", async function () {
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
+      mockERC20 = await MockERC20.deploy();
+      expect(mockERC20.address).to.not.be.undefined;
+    });
+
     it("Should deploy MockFeeCollector", async function () {
       const MockFeeCollector = await ethers.getContractFactory(
         "MockFeeCollector"
       );
-
       mockFeeCollector = await MockFeeCollector.deploy();
       expect(mockFeeCollector.address).to.not.be.undefined;
       feeCollectorAddress = mockFeeCollector.address;
@@ -36,10 +42,10 @@ describe("MarketPlace tests", function () {
 
     it("Should deploy MarketPlace", async function () {
       const MarketPlace = await ethers.getContractFactory("MarketPlace");
-
       marketPlace = await MarketPlace.deploy(
         feeCollectorAddress,
-        feesCollectorCutPerMillion
+        feesCollectorCutPerMillion,
+        mockERC20.address
       );
       expect(marketPlace.address).to.not.be.undefined;
       console.log("marketPlace.address: ", marketPlace.address);

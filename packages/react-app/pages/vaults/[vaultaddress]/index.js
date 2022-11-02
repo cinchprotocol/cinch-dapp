@@ -11,7 +11,7 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
-import { fetchVaultData, activateVault } from "/helpers/vaulthelper";
+import { fetchVaultData, activateVault, withdraw } from "/helpers/vaulthelper";
 
 function Vault({ web3 }) {
   const [vaultData, setVaultData] = useState(null);
@@ -31,6 +31,13 @@ function Vault({ web3 }) {
       await activateVault({ web3, address: vaultaddress });
     }
   };
+
+  const handleWithdraw = async () => {
+    if (vaultaddress) {
+      await withdraw({ web3, address: vaultaddress });
+    }
+  };
+
 
   useEffect(() => {
     if (web3) {
@@ -118,7 +125,7 @@ function Vault({ web3 }) {
                 {/* Actions */}
                 <>
                   <div className="px-6 py-8 bg-white rounded-2xl shadow">
-                    <div>
+                    {vaultData?.status == 0 ? <div>
                       <h3 className="text-xl text-center font-semibold text-gray-900">Pending Action Items</h3>
                       <div className="flow-root mt-10">
                         <ul role="list" className="-mb-8">
@@ -225,40 +232,21 @@ function Vault({ web3 }) {
                           Transfer Funds
                         </Button>
                       </div>
-                      {/* <Modal
-                        title=""
-                        visible={isModalVisible}
-                        onOk={handleOk}
-                        onCancel={handleCancel}
-                        okText="Confirm Bid"
-                        width={650}
-                      >
-                        <div>
-                          <div className="px-4 py-5 sm:px-6">
-                            <h3 className="text-xl font-medium leading-6 text-gray-900">Review Bid Information</h3>
-                            <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                              Please verify details, this helps avoiding any delay.{" "}
-                            </p>
-                          </div>
-                          <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-                            <dl className="sm:divide-y sm:divide-gray-200">
-                              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                                <dt className="text-sm font-medium text-gray-500">Price</dt>
-                                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                                  {formValues?.price}
-                                </dd>
-                              </div>
-                              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                                <dt className="text-sm font-medium text-gray-500">Address to receive revenue-share</dt>
-                                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                                  {formValues?.addressToReceiveRevenueShare}
-                                </dd>
-                              </div>
-                            </dl>
-                          </div>
-                        </div>
-                      </Modal> */}
                     </div>
+
+                      :
+
+                      <div>
+                        <h3 className="text-xl text-center font-semibold text-gray-900">Action Items</h3>
+                        <div>
+                          <Button className="w-full mt-12" onClick={handleWithdraw}>
+                            Withdraw
+                          </Button>
+                        </div>
+                      </div>
+                    }
+
+
                   </div>
                 </>
               </div>

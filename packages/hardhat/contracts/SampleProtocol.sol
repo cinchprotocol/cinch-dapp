@@ -44,4 +44,12 @@ contract SampleProtocol is Ownable {
     function deposit(address tokenAddress, uint256 _amount) external {
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), _amount);
     }
+
+     /**
+     * @notice withdraw tokens
+     * @param _amount of the underlying token to deposit
+     */
+    function withdraw(address tokenAddress, uint256 _amount) external {
+        IERC20(tokenAddress).transfer(msg.sender, _amount);
+    }
 }

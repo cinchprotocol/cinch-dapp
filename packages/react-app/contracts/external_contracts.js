@@ -784,57 +784,91 @@ const DAIABI = [
   },
 ];
 
-const RBFVAULTABI =  [
+const RBFVAULTABI = [
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "_feeCollector",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_multiSig",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_revenuePct",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_price",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_expAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_borrower",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_lender",
-        "type": "address"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "itemId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "feeCollector",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "multiSig",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "revenuePct",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address payable",
+            "name": "seller",
+            "type": "address"
+          },
+          {
+            "internalType": "address payable",
+            "name": "buyer",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "soldPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expAmount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct MarketPlaceStorage.MarketItem",
+        "name": "item",
+        "type": "tuple"
       },
       {
         "internalType": "address",
         "name": "_multisigGuard",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_underlyingToken",
+        "type": "address"
       }
     ],
     "stateMutability": "payable",
     "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "BalanceWithdrawn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "RBFVaultActivated",
+    "type": "event"
   },
   {
     "inputs": [],
@@ -1073,6 +1107,19 @@ const RBFVAULTABI =  [
   },
   {
     "inputs": [],
+    "name": "underlyingToken",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "vaultActivationDate",
     "outputs": [
       {
@@ -1108,6 +1155,13 @@ const RBFVAULTABI =  [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ];

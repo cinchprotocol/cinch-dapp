@@ -99,16 +99,6 @@ describe("MarketPlace tests", function () {
       });
     });
 
-    describe("fetchMyListings", function () {
-      it("Should be able to fetchMyListings", async function () {
-        const res = await marketPlace.fetchMyListings(
-          accounts[sellerAccountIndex].address
-        );
-        expect(res).to.not.be.undefined;
-        expect(res.length).equal(1);
-      });
-    });
-
     describe("placeBid", function () {
       it("Should not be able to placeBid with 0 price", async function () {
         const tx = marketPlace
@@ -120,6 +110,7 @@ describe("MarketPlace tests", function () {
           "Bid#_placeBid: PRICE_MUST_BE_GT_0"
         );
       });
+      /*
       it("Should not be able to placeBid with incorrect tx value", async function () {
         const tx = marketPlace
           .connect(accounts[buyerAccountIndex])
@@ -130,6 +121,7 @@ describe("MarketPlace tests", function () {
           "Bid#placeBid: TX_VALUE_SHOULD_BE_SAME_AS_PRICE"
         );
       });
+      */
       it("Seller should not be able to placeBid", async function () {
         const tx = marketPlace
           .connect(accounts[sellerAccountIndex])
@@ -159,21 +151,6 @@ describe("MarketPlace tests", function () {
         expect(res[0].bidder).equal(accounts[buyerAccountIndex].address);
       });
     });
-
-    /*
-      // TOFIX: fetchMyBids seem not working yet
-    describe("fetchMyBids", function () {
-      it("Should be able to fetchMyBids", async function () {
-        const res = await marketPlace.fetchMyBids(
-          accounts[buyerAccountIndex].address
-        );
-        expect(res).to.not.be.undefined;
-        expect(res.length).equal(1);
-        // expect(res[0].bidder).equal(accounts[buyerAccountIndex].address);
-        console.log("res: ", res);
-      });
-    });
-    */
 
     describe("cancelBid", function () {
       it("ONLY_BIDDER_CAN_CANCEL", async function () {

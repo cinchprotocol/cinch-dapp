@@ -6,9 +6,6 @@ import "./interfaces/IGnosisSafe.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./MarketPlaceStorage.sol";
 
-//import "@openzeppelin/contracts/access/Ownable.sol";
-
-//TODO - Specific to the idle at the moment but should we make this dyamic to work different protocols?
 interface IBorrowerContract {
     function feeReceiver() external view returns (address);
 
@@ -110,7 +107,7 @@ contract RBFVault {
      * @dev Check if cinch multi-sig guard is added
      */
     function isMultisigGuardAdded() public view returns (bool) {
-        // TODO- Remove
+        // TODO- Uncomment the line below ?
         //return GnosisSafe(multiSig).getGuard() == multisigGuard;
         return true;
     }
@@ -126,7 +123,7 @@ contract RBFVault {
             "Vault: Only vault with'Pending' can be activated"
         );
 
-        require(isReadyToActivate());
+        require(isReadyToActivate(), "Vault not ready");
 
         status = Status.Active;
         vaultActivationDate = block.timestamp;
@@ -136,21 +133,32 @@ contract RBFVault {
         emit RBFVaultActivated();
     }
 
+    /**
+     * @dev Deposit the agreed amount to the feeCollector
+     */
     function deposit() private {
-        uint256 amount = price / 10**12;
+        uint256 amount = price / 10**12; //TODO: review this line as it seem incorrect
         IERC20(underlyingToken).approve(feeCollector, amount);
         IBorrowerContract(feeCollector).deposit(underlyingToken, amount);
     }
 
-    function withdraw() public {
-        uint256 amount = price / 10**12;
+    //TODO: bound this function to be called by the lender only?
+    //TODO: add condition to block un-authorized withdraws
+    /**
+     * @dev Withdraw the agreed amount from the feeCollector
+     */
+    function withdraw() external {
+        uint256 amount = price / 10**12; //TODO: review this line as it seem incorrect
         IBorrowerContract(feeCollector).withdraw(underlyingToken, amount);
         IERC20(underlyingToken).transfer(lender, amount);
         emit BalanceWithdrawn();
     }
 
+    /**
+     * @dev getVaultBalance
+     */
     function getVaultBalance() external view returns (uint256) {
-        return address(this).balance;
+        return address(this).balance; //TODO: it should be the underlying token balance instead ?
     }
 
     /**

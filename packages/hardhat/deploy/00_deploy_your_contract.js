@@ -18,7 +18,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   await deploy("MarketPlace", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: [deployer, 20000, '0x5FbDB2315678afecb367f032d93F642f64180aa3'],
+    args: [deployer, 20000, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'],
     log: true,
   });
 

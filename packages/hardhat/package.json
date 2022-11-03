@@ -21,7 +21,7 @@
     "dotenv": "^8.2.0",
     "ethereum-waffle": "^3.1.1",
     "ethers": "^5.6.1",
-    "hardhat": "2.9.3",
+    "hardhat": "2.12.2",
     "hardhat-deploy": "^0.9.0",
     "node-watch": "^0.7.0",
     "qrcode-terminal": "^0.12.0",
@@ -29,7 +29,7 @@
   },
   "scripts": {
     "chain": "hardhat node --network hardhat --no-deploy",
-    "fork": "hardhat node --no-deploy --network hardhat --fork https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad",
+    "fork": "hardhat node --no-deploy --network hardhat --fork https://eth-mainnet.alchemyapi.io/v2/Lh4j9Z38tPpJVyLsZw53RWjZDipZwccI",
     "test": "hardhat test --network hardhat",
     "compile": "hardhat compile",
     "deploy": "hardhat deploy --export-all ../react-app/contracts/hardhat_contracts.json",

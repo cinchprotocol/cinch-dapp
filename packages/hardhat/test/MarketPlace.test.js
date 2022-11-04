@@ -32,7 +32,7 @@ describe("MarketPlace tests", function () {
 
     it("Should deploy MockFeeCollector", async function () {
       const MockFeeCollector = await ethers.getContractFactory(
-        "MockFeeCollector"
+        "SampleProtocol"
       );
       mockFeeCollector = await MockFeeCollector.deploy();
       expect(mockFeeCollector.address).to.not.be.undefined;

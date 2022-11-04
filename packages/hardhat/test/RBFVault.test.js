@@ -24,7 +24,7 @@ describe("RBFVault tests", function () {
   describe("Deploy", function () {
     it("Should deploy MockFeeCollector", async function () {
       const MockFeeCollector = await ethers.getContractFactory(
-        "MockFeeCollector"
+        "SampleProtocol"
       );
 
       mockFeeCollector = await MockFeeCollector.deploy();
@@ -100,13 +100,8 @@ describe("RBFVault tests", function () {
     it("should be activated", async function () {
       const tx01 = mockERC20
         .connect(accounts[0])
-        .approve(rbfVault.address, 1000 * 10 ** 14);
+        .faucet(rbfVault.address, 1000 * 10 ** 12);
       await expect(tx01).not.to.be.revertedWith();
-      const tx02 = mockERC20
-        .connect(accounts[0])
-        .transfer(rbfVault.address, 1000 * 10 ** 14);
-      await expect(tx02).not.to.be.revertedWith();
-
       const tx03 = await rbfVault.activate();
       expect(tx03).to.emit(rbfVault, "RBFVaultActivated");
     });

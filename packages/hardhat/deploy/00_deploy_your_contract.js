@@ -2,33 +2,26 @@
 
 const { ethers } = require("hardhat");
 
-
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-
 
   await deploy("TestToken", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     log: true,
   });
-  //const tokenContract = await ethers.getContract("TestToken", deployer);
+  // const tokenContract = await ethers.getContract("TestToken", deployer);
 
   await deploy("MarketPlace", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: [deployer, 20000, '0x5FbDB2315678afecb367f032d93F642f64180aa3'],
+    args: [deployer, 20000, "0x5FbDB2315678afecb367f032d93F642f64180aa3"],
     log: true,
   });
 
   await deploy("SampleProtocol", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-    log: true,
-  });
-
- await deploy("MockFeeCollector", {
     from: deployer,
     log: true,
   });
@@ -39,8 +32,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   // const tokenContract = await ethers.getContract("TestToken", deployer);
   // await tokenContract.transfer('0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F', 5000 * (10**18));
   // await tokenContract.transfer('0xEdfdb5f2f02432F1E3271582056ECd0f884126aC', 5000 * (10**18));
-
-  
 
   // const tokenContract = await ethers.getContractAt("TestToken", "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570");
   // await tokenContract.faucet('0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F', 5000 * 10**18);

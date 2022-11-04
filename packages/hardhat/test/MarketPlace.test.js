@@ -91,14 +91,6 @@ describe("MarketPlace tests", function () {
       });
     });
 
-    describe("fetchUnsoldMarketItems", function () {
-      it("Should be able to fetchUnsoldMarketItems", async function () {
-        const res = await marketPlace.fetchUnsoldMarketItems();
-        expect(res).to.not.be.undefined;
-        expect(res.length).equal(1);
-      });
-    });
-
     describe("placeBid", function () {
       it("Should not be able to placeBid with 0 price", async function () {
         const tx = marketPlace
@@ -195,9 +187,6 @@ describe("MarketPlace tests", function () {
           .connect(accounts[sellerAccountIndex])
           .acceptBid(1, 0);
         expect(tx).to.emit(marketPlace, "BidAccepted");
-        const res = await marketPlace.fetchUnsoldMarketItems();
-        expect(res).to.not.be.undefined;
-        expect(res.length).equal(0);
       });
       it("Should not be able to placeBid on sold item", async function () {
         const tx = marketPlace

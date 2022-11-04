@@ -5,6 +5,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract SampleProtocol is Ownable {
+    event FeeReceiverUpdated(address indexed feeReceiver);
+    event Deposited(address indexed token, uint256 amount);
+    event Withdrawn(address indexed token, uint256 amount);
+
     address public feeReceiver;
     uint256 public fee;
 
@@ -35,6 +39,7 @@ contract SampleProtocol is Ownable {
         );
 
         feeReceiver = _newFeeReceiver;
+        emit FeeReceiverUpdated(_newFeeReceiver);
     }
 
     /**
@@ -43,6 +48,7 @@ contract SampleProtocol is Ownable {
      */
     function deposit(address tokenAddress, uint256 _amount) external {
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), _amount);
+        emit Deposited(tokenAddress, _amount);
     }
 
      /**
@@ -51,5 +57,6 @@ contract SampleProtocol is Ownable {
      */
     function withdraw(address tokenAddress, uint256 _amount) external {
         IERC20(tokenAddress).transfer(msg.sender, _amount);
+        emit Withdrawn(tokenAddress, _amount);
     }
 }

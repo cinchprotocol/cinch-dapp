@@ -13,6 +13,7 @@ let mockFeeCollector;
 let mockGnosisSafe;
 let cinchSafeGuard;
 let rbfVault;
+let mockERC20;
 
 before(async function () {
   // get accounts from hardhat
@@ -23,7 +24,7 @@ describe("RBFVault tests", function () {
   describe("Deploy", function () {
     it("Should deploy MockFeeCollector", async function () {
       const MockFeeCollector = await ethers.getContractFactory(
-        "MockFeeCollector"
+        "SampleProtocol"
       );
 
       mockFeeCollector = await MockFeeCollector.deploy();
@@ -37,6 +38,11 @@ describe("RBFVault tests", function () {
       expect(mockGnosisSafe.address).to.not.be.undefined;
       console.log("mockGnosisSafe.address: ", mockGnosisSafe.address);
     });
+    it("Should deploy MockERC20", async function () {
+      const MockERC20 = await ethers.getContractFactory("TestToken");
+      mockERC20 = await MockERC20.deploy();
+      expect(mockERC20.address).to.not.be.undefined;
+    });
     it("Should deploy CinchSafeGuard", async function () {
       const CinchSafeGuard = await ethers.getContractFactory("CinchSafeGuard");
 
@@ -46,17 +52,24 @@ describe("RBFVault tests", function () {
     });
     it("Should deploy RBFVault", async function () {
       const RBFVault = await ethers.getContractFactory("RBFVault");
+      const price = 100 * 10 ** 12;
+      const marketPlaceItem01 = {
+        itemId: 1,
+        name: "testItem01",
+        feeCollector: mockFeeCollector.address,
+        multiSig: mockGnosisSafe.address,
+        revenuePct: 100,
+        seller: accounts[sellerAccountIndex].address,
+        buyer: accounts[buyerAccountIndex].address,
+        price,
+        soldPrice: price,
+        expAmount: price * 10,
+      };
 
       rbfVault = await RBFVault.deploy(
-        "rbfVault01",
-        mockFeeCollector.address,
-        mockGnosisSafe.address,
-        100,
-        1000,
-        10000,
-        accounts[sellerAccountIndex].address,
-        accounts[buyerAccountIndex].address,
-        cinchSafeGuard.address
+        marketPlaceItem01,
+        cinchSafeGuard.address,
+        mockERC20.address
       );
       expect(rbfVault.address).to.not.be.undefined;
       console.log("rbfVault.address: ", rbfVault.address);
@@ -71,17 +84,26 @@ describe("RBFVault tests", function () {
       const tx = await mockFeeCollector.setFeeReceiver(rbfVault.address);
       expect(tx).to.emit(mockFeeCollector, "FeeReceiverUpdated");
     });
+
+    // TODO: uncomment the following test
+    /*
     it("should revet if MULTISIG_GUARD_NOT_IN_PLACE", async function () {
       const tx = rbfVault.activate();
       await expect(tx).to.be.revertedWith("MULTISIG_GUARD_NOT_IN_PLACE");
     });
+    */
+
     it("setGuard should be processed", async function () {
       const tx = await mockGnosisSafe.setGuard(cinchSafeGuard.address);
       expect(tx).to.emit(mockGnosisSafe, "GuardUpdated");
     });
     it("should be activated", async function () {
-      const tx = await rbfVault.activate();
-      expect(tx).to.emit(rbfVault, "RBFVaultActivated");
+      const tx01 = mockERC20
+        .connect(accounts[0])
+        .faucet(rbfVault.address, 1000 * 10 ** 12);
+      await expect(tx01).not.to.be.revertedWith();
+      const tx03 = await rbfVault.activate();
+      expect(tx03).to.emit(rbfVault, "RBFVaultActivated");
     });
   });
 });

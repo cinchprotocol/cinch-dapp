@@ -10,6 +10,7 @@ import "./MarketPlaceStorage.sol";
 import "./Withdrawable.sol";
 import "./RBFVaultFactory.sol";
 
+//TODO: add docs/comments for each function
 contract MarketPlace is
     MarketPlaceStorage,
     Withdrawable,
@@ -101,116 +102,6 @@ contract MarketPlace is
         );
     }
 
-    function fetchUnsoldMarketItems()
-        external
-        view
-        returns (MarketItem[] memory)
-    {
-        uint256 itemCount = _itemIds.current();
-        uint256 unsoldItemCount = _itemIds.current() - _itemsSold.current();
-        uint256 currentIndex = 0;
-
-        MarketItem[] memory items = new MarketItem[](unsoldItemCount);
-        for (uint256 i = 0; i < itemCount; i++) {
-            if (idToMarketItem[i + 1].buyer == address(0)) {
-                uint256 currentId = i + 1;
-                MarketItem storage currentItem = idToMarketItem[currentId];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-        }
-
-        return items;
-    }
-
-    // for public view call, specific signing is not required, so msg.sender is not necessary the target seller address.
-    // it make more sense to use a seller parameter as the function input, instead of using msg.sender
-    // the same apply to fetchMyPurchases and fetchMyBids
-    function fetchMyListings(address seller)
-        external
-        view
-        returns (MarketItem[] memory)
-    {
-        uint256 totalItemCount = _itemIds.current();
-        uint256 itemCount = 0;
-        uint256 currentIndex = 0;
-
-        for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].seller == seller) {
-                itemCount += 1;
-            }
-        }
-
-        MarketItem[] memory items = new MarketItem[](itemCount);
-        for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].seller == seller) {
-                uint256 currentId = i + 1;
-                MarketItem storage currentItem = idToMarketItem[currentId];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-        }
-
-        return items;
-    }
-
-    function fetchMyPurchases(address buyer)
-        external
-        view
-        returns (MarketItem[] memory)
-    {
-        uint256 totalItemCount = _itemIds.current();
-        uint256 itemCount = 0;
-        uint256 currentIndex = 0;
-
-        for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].buyer == buyer) {
-                itemCount += 1;
-            }
-        }
-
-        MarketItem[] memory items = new MarketItem[](itemCount);
-        for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].buyer == buyer) {
-                uint256 currentId = i + 1;
-                MarketItem storage currentItem = idToMarketItem[currentId];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-        }
-
-        return items;
-    }
-
-    function fetchMyBids(address sender) external view returns (Bid[] memory) {
-        uint256 itemCount = _itemIds.current();
-        uint256 currentIndex = 0;
-        uint256 bidCount = 0;
-
-        for (uint256 i = 0; i < itemCount; i++) {
-            uint256 itemId = i + 1;
-            if (
-                idToMarketItem[itemId].buyer == address(0) &&
-                _bidderHasABid(itemId, sender)
-            ) {
-                bidCount++;
-            }
-        }
-        Bid[] memory bids = new Bid[](bidCount);
-        for (uint256 i = 0; i < itemCount; i++) {
-            uint256 itemId = i + 1;
-            if (
-                idToMarketItem[itemId].buyer == address(0) &&
-                _bidderHasABid(itemId, sender)
-            ) {
-                bids[currentIndex] = getBidByBidder(itemId, sender);
-                currentIndex += 1;
-            }
-        }
-
-        return bids;
-    }
-
     function fetchBidsOfItem(uint256 itemId)
         public
         view
@@ -224,6 +115,7 @@ contract MarketPlace is
         return bids;
     }
 
+    //TODO: fix implementation
     /**
      * @dev Check if the multi-sig is the Gnosis safe
      * @param _multiSig - address of the multi-sig
@@ -283,6 +175,7 @@ contract MarketPlace is
             "Bid#placeBid: PRICE_SHOULD_BE_GTE_ASKING_PRICE"
         );
 
+        //TODO: Are we still securing the fund upon placeBid ? Should we uncomment the following ?
         // require(
         //     _price <= IERC20(underlyingToken).allowance(sender, address(this)),
         //     "Bid#placeBid: MUST_BE_AUTHORIZED_TO_SPEND_ENOUGH_TOKEN"

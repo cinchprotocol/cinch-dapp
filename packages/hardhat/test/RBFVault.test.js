@@ -39,7 +39,7 @@ describe("RBFVault tests", function () {
       console.log("mockGnosisSafe.address: ", mockGnosisSafe.address);
     });
     it("Should deploy MockERC20", async function () {
-      const MockERC20 = await ethers.getContractFactory("MockERC20");
+      const MockERC20 = await ethers.getContractFactory("TestToken");
       mockERC20 = await MockERC20.deploy();
       expect(mockERC20.address).to.not.be.undefined;
     });

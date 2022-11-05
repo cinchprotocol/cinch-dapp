@@ -12,6 +12,8 @@ interface IBorrowerContract {
     function deposit(address tokenAddress, uint256 amount) external;
 
     function withdraw(address tokenAddress, uint256 amount) external;
+
+    function owner() external view returns (address);
 }
 
 //TODO: Update the lender and borrower terms/concept used in this contract. In the Idle case, it would be staking and unstaking. In general, it would be buying and selling. In either case, we should clarify the docs.
@@ -23,6 +25,7 @@ interface IBorrowerContract {
 contract RBFVault {
     event RBFVaultActivated();
     event BalanceWithdrawn();
+    event RBFVaultRefundInitiated();
 
     enum Status {
         Pending,
@@ -42,8 +45,9 @@ contract RBFVault {
     address public underlyingToken;
     address public multisigGuard;
 
-    uint256 public constant REVENUE_PERIOD = 52 weeks; //TODO: remove if it is not being used
+    // If vault is not active after this timeout period then lender can withdraw the fund
     uint256 public constant TIMEOUT_PERIOD = 1 weeks;
+
     Status public status;
     uint256 public vaultActivationDate;
     uint256 public vaultDeployDate;
@@ -73,8 +77,6 @@ contract RBFVault {
 
         status = Status.Pending;
         vaultDeployDate = block.timestamp;
-
-        //TODO: emit RBFVaultCreated event ?
     }
 
     /**
@@ -84,7 +86,6 @@ contract RBFVault {
         // Todo - check fee collector and multi-sig
     }
 
-    //TODO: Verify the association of the Multi-sig and the feeCollector ?
     /**
      * @dev Check if the vault is ready to be activated
      */
@@ -92,6 +93,11 @@ contract RBFVault {
         require(isFeeCollectorUpdated(), "FEE_COLLECTOR_RECEIVER_NOT_UPDATED");
 
         require(isMultisigGuardAdded(), "MULTISIG_GUARD_NOT_IN_PLACE");
+
+        require(
+            isMultisigOwnsTheRevenueContract(),
+            "REVENUE_CONTRACT_NOT_OWNED_BY_PROVIDED_MULTISIG"
+        );
 
         return true;
     }
@@ -101,6 +107,13 @@ contract RBFVault {
      */
     function isFeeCollectorUpdated() public view returns (bool) {
         return IBorrowerContract(feeCollector).feeReceiver() == address(this);
+    }
+
+    /**
+     * @dev Check if the provided multi-sig address is the revenue contract owner
+     */
+    function isMultisigOwnsTheRevenueContract() public view returns (bool) {
+        return IBorrowerContract(feeCollector).owner() == multiSig;
     }
 
     /**
@@ -114,16 +127,12 @@ contract RBFVault {
 
     //TODO: should this function be bounded to be called by the borrower only?
     /**
-     * @dev Activates the vault after the onwership has been transferred to this vault. Also sends the agreed payment to the collection owner.
-     After this any royalty recieved by this collection will be shared between both the party according to agreement
+     * @dev Activates the vault after the required condition has been met and transfer funds to the borrower.
      */
     function activate() external {
-        require(
-            status == Status.Pending,
-            "Vault: Only vault with'Pending' can be activated"
-        );
+        require(status == Status.Pending, "VAULT_STATUS_NEED_TO_BE_'PENDING'");
 
-        require(isReadyToActivate(), "Vault not ready");
+        require(isReadyToActivate(), "VAULT_ACTIVATION_TERMS_NOT_MET");
 
         status = Status.Active;
         vaultActivationDate = block.timestamp;
@@ -158,7 +167,7 @@ contract RBFVault {
      * @dev getVaultBalance
      */
     function getVaultBalance() external view returns (uint256) {
-        return address(this).balance; //TODO: it should be the underlying token balance instead ?
+        return IERC20(underlyingToken).balanceOf(address(this));
     }
 
     /**
@@ -174,23 +183,19 @@ contract RBFVault {
      */
     function refundTheLender() external {
         require(
-            !isTermsSatisfied(),
-            "Vault: Collection already owned by the vault" //TODO: clarify revert reason
-        );
-
-        require(
             status == Status.Pending,
-            "Refund only available when vault is in 'Pending' status"
+            "CAN_REFUND_ONLY_WHEN_STATUS_IS_'PENDING'"
         );
 
         require(
             block.timestamp > (vaultDeployDate + TIMEOUT_PERIOD),
-            "Refund only available after the timeout period"
+            "TIMEOUT_PERIOD_NOT_REACHED"
         );
 
         status = Status.Canceled;
-        Address.sendValue(payable(lender), address(this).balance);
+        uint256 amount = price / 10**12;
+        IERC20(underlyingToken).transfer(lender, amount);
 
-        //TODO: emit Refunded event
+        emit RBFVaultRefundInitiated();
     }
 }

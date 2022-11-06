@@ -27,9 +27,9 @@ export const getOneRevenueStreamForSaleWith = async (web3, id) => {
     id,
     key: id,
     name: item?.name,
-    priceStr: utils.formatEther(item?.price),
+    priceStr: utils.formatUnits(item?.price, process.env.PRICE_DECIMALS),
     revenuePctStr: _.toNumber(utils.formatEther(item?.revenuePct)).toFixed(0),
-    expAmountStr: utils.formatEther(item?.expAmount),
+    expAmountStr: utils.formatUnits(item?.expAmount, process.env.PRICE_DECIMALS),
     isActive: true,
     vaultAddress,
   };
@@ -40,7 +40,7 @@ export const formatBid = bid => {
   return {
     ...bid,
     itemIdStr: utils.formatUnits(bid?.itemId, 0),
-    priceStr: utils.formatEther(bid?.price),
+    priceStr: utils.formatUnits(bid?.price, process.env.PRICE_DECIMALS),
   };
 };
 

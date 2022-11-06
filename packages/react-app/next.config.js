@@ -9,6 +9,10 @@ module.exports = {
     USDC_ADDRESS: process.env.USDC_ADDRESS,
     PRICE_DECIMALS: process.env.PRICE_DECIMALS || 6,
   },
+  images: {
+    loader: "akamai",
+    path: "",
+  },
   async redirects() {
     return [
       {

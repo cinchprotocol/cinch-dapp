@@ -124,4 +124,25 @@ describe("RBFVault tests", function () {
       await expect(tx).to.be.revertedWith("VAULT_STATUS_NEED_TO_BE_'PENDING'");
     });
   });
+
+  describe("refundTheLender", function () {
+    // TODO: add test for refundTheLender with pending vault
+    // TODO: only lender can call refundTheLender
+
+    it("refundTheLender should not work after vault is activated", async function () {
+      const tx = rbfVault.refundTheLender();
+      await expect(tx).to.be.revertedWith(
+        "CAN_REFUND_ONLY_WHEN_STATUS_IS_'PENDING'"
+      );
+    });
+  });
+
+  describe("withdraw", function () {
+    // TODO: only lander can withdraw
+
+    it("withdraw should work correctly", async function () {
+      const tx01 = await rbfVault.connect(accounts[1]).withdraw();
+      expect(tx01).to.emit(rbfVault, "BalanceWithdrawn");
+    });
+  });
 });

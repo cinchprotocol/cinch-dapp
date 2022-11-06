@@ -153,6 +153,7 @@ contract RBFVault {
 
     //TODO: bound this function to be called by the lender only?
     //TODO: add condition to block un-authorized withdraws
+    //TODO: is withdraw expected to be a one time function ?
     /**
      * @dev Withdraw the agreed amount from the feeCollector
      */

@@ -39,7 +39,9 @@ contract RBFVault {
     address public multiSig;
     uint256 public revenuePct;
     uint256 public price;
-    uint256 public expAmount;
+    //TODO: If feeCollector is responsible for the revenue share, should it be responsible for tracking the total amount of revenue shared as well ? How buyer fetch the amount of revenue share received ?
+    //TODO: If feeCollector is responsible for the revenue share, it should be notified with expAmount such that it can stop the revenue share upon expAmount.
+    uint256 public expAmount; 
     address public borrower;
     address public lender;
     address public underlyingToken;
@@ -154,6 +156,7 @@ contract RBFVault {
     //TODO: add condition to block un-authorized withdraws
     //TODO: is withdraw expected to be a one time function ?
     //TODO: how about withdrawing the revenue share ?
+    //TODO: how about expAmount ?
     /**
      * @dev Withdraw the agreed amount from the feeCollector
      */

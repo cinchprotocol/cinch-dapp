@@ -126,6 +126,12 @@ describe("MarketPlace tests", function () {
       });
 
       it("Should be able to placeBid", async function () {
+        await mockERC20
+          .connect(accounts[sellerAccountIndex])
+          .faucet(accounts[buyerAccountIndex].address, 1000000);
+        await mockERC20
+          .connect(accounts[buyerAccountIndex])
+          .approve(marketPlace.address, 1000);
         const tx = await marketPlace
           .connect(accounts[buyerAccountIndex])
           .placeBid(1, 1000, accounts[buyerAccountIndex].address, 1000000, {

@@ -146,21 +146,20 @@ contract RBFVault {
      * @dev Deposit the agreed amount to the feeCollector
      */
     function deposit() private {
-        uint256 amount = price / 10**12; //NOTE: price is stored in 18 decimals, so we need to divide by 10^12 to get the correct amount
-        IERC20(underlyingToken).approve(feeCollector, amount);
-        IBorrowerContract(feeCollector).deposit(underlyingToken, amount);
+        IERC20(underlyingToken).approve(feeCollector, price);
+        IBorrowerContract(feeCollector).deposit(underlyingToken, price);
     }
 
     //TODO: bound this function to be called by the lender only?
     //TODO: add condition to block un-authorized withdraws
     //TODO: is withdraw expected to be a one time function ?
+    //TODO: how about withdrawing the revenue share ?
     /**
      * @dev Withdraw the agreed amount from the feeCollector
      */
     function withdraw() external {
-        uint256 amount = price / 10**12; //TODO: review this line as it seem incorrect
-        IBorrowerContract(feeCollector).withdraw(underlyingToken, amount);
-        IERC20(underlyingToken).transfer(lender, amount);
+        IBorrowerContract(feeCollector).withdraw(underlyingToken, price);
+        IERC20(underlyingToken).transfer(lender, price);
         emit BalanceWithdrawn();
     }
 
@@ -194,8 +193,7 @@ contract RBFVault {
         );
 
         status = Status.Canceled;
-        uint256 amount = price / 10**12;
-        IERC20(underlyingToken).transfer(lender, amount);
+        IERC20(underlyingToken).transfer(lender, price);
 
         emit RBFVaultRefundInitiated();
     }

@@ -32,7 +32,7 @@ function RevenueStream({ web3 }) {
   const marketPlaceContract = web3?.writeContracts["MarketPlace"];
   const [data2, setData2] = useState(data);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [formValues, setFromValues] = useState(null);
+  const [formValues, setFormValues] = useState(null);
   const [bidDatas, setBidDatas] = useState([]);
 
   const isRevenueStreamOwner = data2?.seller === web3?.address;
@@ -277,7 +277,7 @@ function RevenueStream({ web3 }) {
   }, [web3]);
 
   const onFormFinish = values => {
-    setFromValues(values);
+    setFormValues(values);
     showModal();
   };
 
@@ -295,13 +295,12 @@ function RevenueStream({ web3 }) {
       const tx = await web3?.tx(
         marketPlaceContract?.placeBid(
           data2?.id,
-          utils.parseEther(formValues?.price),
-          //formValues?.price,
+          utils.parseUnits(formValues?.price, process.env.PRICE_DECIMALS),
           formValues?.addressToReceiveRevenueShare,
           86400,
           {
             from: web3?.address,
-            //value: utils.parseEther(formValues?.price),
+            //value: utils.parseUnits(formValues?.price, process.env.PRICE_DECIMALS),
           },
         ),
         res => {
@@ -323,17 +322,27 @@ function RevenueStream({ web3 }) {
   };
 
   const handleApprove = async () => {
-    const erc20Contract = new Contract(process.env.USDC_ADDRESS, ERC20ABI, web3?.userSigner);
-    const result = await web3?.tx(erc20Contract.approve(web3?.writeContracts["MarketPlace"].address, utils.parseUnits("1500", 6)), update => {
-      console.log({ update });
-      if (update?.status === "confirmed" || update?.status === 1) {
-        message.success("Approved successfully");
-      } else {
-        message.error(update?.data?.message);
-      }
-    });
-    console.log({ result });
-  }
+    try {
+      const erc20Contract = new Contract(process.env.USDC_ADDRESS, ERC20ABI, web3?.userSigner);
+      const result = await web3?.tx(
+        erc20Contract.approve(
+          web3?.writeContracts["MarketPlace"].address,
+          utils.parseUnits(formValues?.price, process.env.PRICE_DECIMALS),
+        ),
+        update => {
+          console.log({ update });
+          if (update?.status === "confirmed" || update?.status === 1) {
+            message.success("Approved successfully");
+          } else {
+            message.error(update?.data?.message);
+          }
+        },
+      );
+      console.log({ result });
+    } catch (err) {
+      displayError("RevenueStream:handleApprove", err);
+    }
+  };
 
   return (
     <>
@@ -343,18 +352,16 @@ function RevenueStream({ web3 }) {
         <main>
           <div>
             <Container>
-              <div class="md:flex md:items-center md:justify-between md:space-x-5">
-                <div class="flex items-center space-x-5">
-                  <div class="flex-shrink-0">
+              <div className="md:flex md:items-center md:justify-between md:space-x-5">
+                <div className="flex items-center space-x-5">
+                  <div className="flex-shrink-0">
                     {/* <div class="relative">
                       <img class="h-16 w-16 rounded-full" src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80" alt=""/>
                         <span class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></span>
                     </div> */}
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                      {data2?.name}
-                    </h1>
+                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{data2?.name}</h1>
                     {/* <p class="text-sm font-medium text-gray-500">Vault created on <time datetime="2020-08-25">August 25, 2020</time></p> */}
                   </div>
                 </div>
@@ -368,31 +375,35 @@ function RevenueStream({ web3 }) {
               <div className="mb-10 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr]">
                 <div className="p-6 lg:mr-4 lg:col-span-2 bg-white rounded-2xl shadow">
                   <div className="">
-                    <h3 class="text-lg font-medium leading-6 text-gray-900">Listing Information</h3>
-                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Protocol details and terms.</p>
+                    <h3 className="text-lg font-medium leading-6 text-gray-900">Listing Information</h3>
+                    <p className="mt-1 max-w-2xl text-sm text-gray-500">Protocol details and terms.</p>
                   </div>
 
                   <div className="mb-10 border-t border-gray-200">
-                    <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Price (USDC)</dt>
-                        <dd class="mt-1 text-2xl text-gray-900">${data2?.priceStr}</dd>
+                    <dl className="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Price (USDC)</dt>
+                        <dd className="mt-1 text-2xl text-gray-900">${data2?.priceStr}</dd>
                       </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Revenue proportion</dt>
-                        <dd class="mt-1 text-2xl text-gray-900">{data2.revenuePctStr}%</dd>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Revenue proportion</dt>
+                        <dd className="mt-1 text-2xl text-gray-900">{data2.revenuePctStr}%</dd>
                       </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Expiry amount (USDC)</dt>
-                        <dd class="mt-1 text-2xl text-gray-900">${data2?.expAmountStr}</dd>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Expiry amount (USDC)</dt>
+                        <dd className="mt-1 text-2xl text-gray-900">${data2?.expAmountStr}</dd>
                       </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Fee collector address</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{data2?.feeCollector?.substr(0, 6) + "..." + data2?.feeCollector?.substr(-4)}</dd>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Fee collector address</dt>
+                        <dd className="mt-1 text-sm text-gray-900">
+                          {data2?.feeCollector?.substr(0, 6) + "..." + data2?.feeCollector?.substr(-4)}
+                        </dd>
                       </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Multi-sig address</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{data2?.multiSig?.substr(0, 6) + "..." + data2?.multiSig?.substr(-4)}</dd>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Multi-sig address</dt>
+                        <dd className="mt-1 text-sm text-gray-900">
+                          {data2?.multiSig?.substr(0, 6) + "..." + data2?.multiSig?.substr(-4)}
+                        </dd>
                       </div>
                     </dl>
                   </div>
@@ -439,8 +450,7 @@ function RevenueStream({ web3 }) {
                               rules={[
                                 {
                                   required: true,
-                                  message:
-                                    "Enter Address to receive revenue-share",
+                                  message: "Enter Address to receive revenue-share",
                                 },
                               ]}
                             >
@@ -461,14 +471,6 @@ function RevenueStream({ web3 }) {
                               ]}
                             >
                               <Input />
-                            </Form.Item>
-
-                            <Form.Item>
-                              <Button className="w-full" htmlType="button"
-                                onClick={handleApprove}
-                              >
-                                Approve Cinch to use your USDC
-                              </Button>
                             </Form.Item>
 
                             <Form.Item>
@@ -510,6 +512,9 @@ function RevenueStream({ web3 }) {
                                   </div>
                                 </dl>
                               </div>
+                              <Button className="w-full" htmlType="button" onClick={handleApprove}>
+                                Approve Cinch to use your USDC
+                              </Button>
                             </div>
                           </Modal>
                         </div>

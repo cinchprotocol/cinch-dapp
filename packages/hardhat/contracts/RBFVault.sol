@@ -146,7 +146,7 @@ contract RBFVault {
      * @dev Deposit the agreed amount to the feeCollector
      */
     function deposit() private {
-        uint256 amount = price / 10**12; //TODO: review this line as it seem incorrect
+        uint256 amount = price / 10**12; //NOTE: price is stored in 18 decimals, so we need to divide by 10^12 to get the correct amount
         IERC20(underlyingToken).approve(feeCollector, amount);
         IBorrowerContract(feeCollector).deposit(underlyingToken, amount);
     }

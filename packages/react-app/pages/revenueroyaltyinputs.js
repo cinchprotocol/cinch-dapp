@@ -41,8 +41,8 @@ function RevenueRoyaltyInputs({ web3 }) {
           formValues?.feeCollectorContractAddress,
           formValues?.multiSigAddress,
           utils.parseEther(formValues?.revenueProportion),
-          utils.parseEther(formValues?.price),
-          utils.parseEther(formValues?.expiryAmount),
+          utils.parseUnits(formValues?.price, process.env.PRICE_DECIMALS),
+          utils.parseUnits(formValues?.expiryAmount, process.env.PRICE_DECIMALS),
           {},
         ),
         res => {
@@ -100,8 +100,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                       rules={[
                         {
                           required: true,
-                          message:
-                            "Name is required.",
+                          message: "Name is required.",
                         },
                       ]}
                     >
@@ -115,8 +114,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                       rules={[
                         {
                           required: true,
-                          message:
-                            "Fee collector contract address is required.",
+                          message: "Fee collector contract address is required.",
                         },
                       ]}
                     >
@@ -187,8 +185,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                       rules={[
                         {
                           required: false,
-                          message:
-                            "Enter your preferred contact information",
+                          message: "Enter your preferred contact information",
                         },
                       ]}
                     >

@@ -39,7 +39,9 @@ contract RBFVault {
     address public multiSig;
     uint256 public revenuePct;
     uint256 public price;
-    uint256 public expAmount;
+    //TODO: If feeCollector is responsible for the revenue share, should it be responsible for tracking the total amount of revenue shared as well ? How buyer fetch the amount of revenue share received ?
+    //TODO: If feeCollector is responsible for the revenue share, it should be notified with expAmount such that it can stop the revenue share upon expAmount.
+    uint256 public expAmount; 
     address public borrower;
     address public lender;
     address public underlyingToken;
@@ -146,20 +148,21 @@ contract RBFVault {
      * @dev Deposit the agreed amount to the feeCollector
      */
     function deposit() private {
-        uint256 amount = price / 10**12; //TODO: review this line as it seem incorrect
-        IERC20(underlyingToken).approve(feeCollector, amount);
-        IBorrowerContract(feeCollector).deposit(underlyingToken, amount);
+        IERC20(underlyingToken).approve(feeCollector, price);
+        IBorrowerContract(feeCollector).deposit(underlyingToken, price);
     }
 
     //TODO: bound this function to be called by the lender only?
     //TODO: add condition to block un-authorized withdraws
+    //TODO: is withdraw expected to be a one time function ?
+    //TODO: how about withdrawing the revenue share ?
+    //TODO: how about expAmount ?
     /**
      * @dev Withdraw the agreed amount from the feeCollector
      */
     function withdraw() external {
-        uint256 amount = price / 10**12; //TODO: review this line as it seem incorrect
-        IBorrowerContract(feeCollector).withdraw(underlyingToken, amount);
-        IERC20(underlyingToken).transfer(lender, amount);
+        IBorrowerContract(feeCollector).withdraw(underlyingToken, price);
+        IERC20(underlyingToken).transfer(lender, price);
         emit BalanceWithdrawn();
     }
 
@@ -193,8 +196,7 @@ contract RBFVault {
         );
 
         status = Status.Canceled;
-        uint256 amount = price / 10**12;
-        IERC20(underlyingToken).transfer(lender, amount);
+        IERC20(underlyingToken).transfer(lender, price);
 
         emit RBFVaultRefundInitiated();
     }

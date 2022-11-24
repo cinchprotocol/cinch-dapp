@@ -97,7 +97,7 @@ function RevenueStreamTable({ dataSource, mode }) {
       },
     },
     {
-      title: "Expire Amount",
+      title: "Expiry Amount",
       dataIndex: "expAmountStr",
       key: "expAmountStr",
     },

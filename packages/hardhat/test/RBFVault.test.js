@@ -92,11 +92,24 @@ describe("RBFVault tests", function () {
       await expect(tx).to.be.revertedWith("MULTISIG_GUARD_NOT_IN_PLACE");
     });
     */
-
     it("setGuard should be processed", async function () {
       const tx = await mockGnosisSafe.setGuard(cinchSafeGuard.address);
       expect(tx).to.emit(mockGnosisSafe, "GuardUpdated");
     });
+
+    it("should revet if REVENUE_CONTRACT_NOT_OWNED_BY_PROVIDED_MULTISIG", async function () {
+      const tx = rbfVault.activate();
+      await expect(tx).to.be.revertedWith(
+        "REVENUE_CONTRACT_NOT_OWNED_BY_PROVIDED_MULTISIG"
+      );
+    });
+    it("transferOwnership should work", async function () {
+      const tx = await mockFeeCollector
+        .connect(accounts[0])
+        .transferOwnership(mockGnosisSafe.address);
+      expect(tx).to.emit(mockFeeCollector, "OwnershipTransferred");
+    });
+
     it("should be activated", async function () {
       const tx01 = mockERC20
         .connect(accounts[0])
@@ -104,6 +117,32 @@ describe("RBFVault tests", function () {
       await expect(tx01).not.to.be.revertedWith();
       const tx03 = await rbfVault.activate();
       expect(tx03).to.emit(rbfVault, "RBFVaultActivated");
+    });
+
+    it("should not be activated twice", async function () {
+      const tx = rbfVault.activate();
+      await expect(tx).to.be.revertedWith("VAULT_STATUS_NEED_TO_BE_'PENDING'");
+    });
+  });
+
+  describe("refundTheLender", function () {
+    // TODO: add test for refundTheLender with pending vault
+    // TODO: only lender can call refundTheLender
+
+    it("refundTheLender should not work after vault is activated", async function () {
+      const tx = rbfVault.refundTheLender();
+      await expect(tx).to.be.revertedWith(
+        "CAN_REFUND_ONLY_WHEN_STATUS_IS_'PENDING'"
+      );
+    });
+  });
+
+  describe("withdraw", function () {
+    // TODO: only lander can withdraw
+
+    it("withdraw should work correctly", async function () {
+      const tx01 = await rbfVault.connect(accounts[1]).withdraw();
+      expect(tx01).to.emit(rbfVault, "BalanceWithdrawn");
     });
   });
 });

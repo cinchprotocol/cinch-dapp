@@ -273,10 +273,9 @@ contract MarketPlace is
         // Create vault
         address vault = createVault(item, underlyingToken);
 
-        uint256 amount = bid.price / 10**12;
-        IERC20(underlyingToken).transferFrom(bid.bidder, vault, amount);
+        IERC20(underlyingToken).transferFrom(bid.bidder, vault, bid.price);
 
-        emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, amount);
+        emit BidAccepted(_bidId, _itemId, bid.bidder, msg.sender, bid.price);
 
         // TODO check scenarios where it will be false
         return true;

@@ -7,11 +7,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-//import "@openzeppelin/contracts/utils/Address.sol";
 
 import "./FeeSplitterStorage.sol";
+import "./interfaces/ISampleProtocol.sol";
+import "./interfaces/ICinchPx.sol";
 
 /**
  * @title FeeSplitter
@@ -31,26 +31,15 @@ import "./FeeSplitterStorage.sol";
  * tokens that apply fees during transfers, are likely to not be supported as expected.
  */
 contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, ReentrancyGuard {
-
-    event PayeeAdded(address account);
-
-    event PaymentReleased(address to, uint256 amount);
-    event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
-    event PaymentReceived(address from, uint256 amount);
-
-    uint256 private _totalShares;
-    uint256 private _totalReleased;
-
-    mapping(address => uint256) private _shares;
-    mapping(address => uint256) private _released;
-    
-    mapping(IERC20 => uint256) private _erc20TotalReleased;
-    mapping(IERC20 => mapping(address => uint256)) private _erc20Released;
-
-
-    //======
-
     using EnumerableSet for EnumerableSet.AddressSet;
+
+    event SupportedERC20Added(address tokenAddress);
+    event CinchPxPayeeAdded(address cinchPxPayee);
+    event InternalBalanceUpdated(IERC20 indexed token, address payee, uint256 balance);
+    event TotalProcessedUpdated(IERC20 indexed token, uint256 totalProcessed);
+    event FeeSplitProcessed(uint256 protocolTVL);
+    event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
+    event ETHPaymentReceived(address from, uint256 amount);
 
     /**
      * @dev Creates an instance of `FeeSplitter` where each account in `payees` is assigned the number of shares at
@@ -102,15 +91,6 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
 
         _lastCinchPxTVL[cinchPxPayee] = _getCinchPxTVL(cinchPxPayee);
 
-        /*
-        //fill the lastERC20Balance mapping
-        address[] memory supportedERC20Addresses = _supportedERC20Set.values();
-        for (uint256 i = 0; i < supportedERC20Addresses.length; i++) {
-            IERC20 token = IERC20(supportedERC20Addresses[i]);
-            _lastInternalBalance[token][cinchPxPayee] = 0;
-        }
-        */
-
         emit CinchPxPayeeAdded(cinchPxPayee);
     }
 
@@ -124,9 +104,9 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
     /**
      * @dev Getter for the supportedERC20Set.
      */
-    function getSupportedERC20Set() external view returns (address[] memory erc20s)
+    function getSupportedERC20Set() external view returns (address[] memory tokenAddresses)
     {
-        erc20s = _supportedERC20Set.values();
+        tokenAddresses = _supportedERC20Set.values();
     }
 
     /**
@@ -138,23 +118,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
     }
 
     /**
-     * @dev Pause the contract from updating rev-share and withdrawing.
-     * onlyOwner
-     */
-    function pause() external onlyOwner {
-        _pause();
-    }
-
-    /**
-     * @dev Unpause the contract.
-     * onlyOwner
-     */
-    function unpause() external onlyOwner {
-        _unpause();
-    }
-
-    /**
-     * @dev The Ether received will be logged with {PaymentReceived} events. Note that these events are not fully
+     * @dev The Ether received will be logged with {ETHPaymentReceived} events. Note that these events are not fully
      * reliable: it's possible for a contract to receive Ether without triggering this function. This only affects the
      * reliability of the events, and not the actual splitting of Ether.
      *
@@ -163,7 +127,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
      * functions].
      */
     receive() external payable virtual {
-        emit PaymentReceived(_msgSender(), msg.value);
+        emit ETHPaymentReceived(_msgSender(), msg.value);
     }
 
     function _processFeeSplitOfERC20(IERC20 token, uint256 lastProtocolTVL, uint256 protocolTVL) private whenNotPaused {
@@ -184,33 +148,30 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
                 uint256 cinchPxTVL = _getCinchPxTVL(payee);
                 _lastCinchPxTVL[payee] = cinchPxTVL; //update the _lastCinchPxTVL ASAP to prevent reentrancy
 
-                //uint256 lastInternalBalance = _lastInternalBalance[token][payee];
                 uint256 balanceToAdd = (unProcessedBalance * lastCinchPxTVL / (lastProtocolTVL + lastProtocolTVL)) + (unProcessedBalance * cinchPxTVL / (protocolTVL + protocolTVL));
-                _lastInternalBalance[token][payee] = _lastInternalBalance[token][payee] + balanceToAdd;
+                _internalBalance[token][payee] = _internalBalance[token][payee] + balanceToAdd;
                 totalCinchPxBalanceAdded += balanceToAdd;
 
-                emit InternalBalanceUpdated(payee, address(token), _lastInternalBalance[token][payee]);
+                emit InternalBalanceUpdated(token, payee, _internalBalance[token][payee]);
             }
 
             //update the internal balance of the protocolPayee
             uint256 protocolBalanceToAdd = unProcessedBalance - totalCinchPxBalanceAdded;
-            _lastInternalBalance[token][_protocolPayee] = _lastInternalBalance[token][_protocolPayee] + protocolBalanceToAdd;
-            emit InternalBalanceUpdated(_protocolPayee, address(token), _lastInternalBalance[token][_protocolPayee]);
+            _internalBalance[token][_protocolPayee] = _internalBalance[token][_protocolPayee] + protocolBalanceToAdd;
+            emit InternalBalanceUpdated(token, _protocolPayee, _internalBalance[token][_protocolPayee]);
 
-            //update totalProcessed
-            totalProcessed[token] += unProcessedBalance;
-            emit TotalProcessedUpdated(address(token), totalProcessed[token]);
+            //update _totalProcessed
+            _totalProcessed[token] += unProcessedBalance;
+            emit TotalProcessedUpdated(token, _totalProcessed[token]);
         }
     }
 
     function _getProtocolTVL() private view returns (uint256) {
-        //return IProtocol(_protocolAddress).getTotalValueLocked();
-        return 0;
+        return ISampleProtocol(_protocolAddress).getTotalValueLocked();
     }
 
     function _getCinchPxTVL(address cinchPxPayee) private view returns (uint256) {
-        //return ICinchPx(_cinchPxAddress).getTotalValueLocked();
-        return 0;
+        return ICinchPx(_cinchPxAddress).getTotalValueLocked(cinchPxPayee);
     }
 
     function processFeeSplit() public whenNotPaused nonReentrant {
@@ -232,129 +193,68 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
         emit FeeSplitProcessed(protocolTVL);
     }
 
-    //======
-
-
-
-
     /**
-     * @dev Getter for the total shares held by payees.
+     * @dev Getter for the internalBalance of token available to a payee. 
+     * @param tokenAddress ERC20 token address.
+     * @param payee The address of the payee.
      */
-    function totalShares() public view returns (uint256) {
-        return _totalShares;
+    function getInternalBalance(address tokenAddress, address payee) external view returns (uint256) {
+        return _internalBalance[IERC20(tokenAddress)][payee];
     }
 
     /**
-     * @dev Getter for the total amount of Ether already released.
+     * @dev Getter for the totalProcessed. 
+     * @param tokenAddress ERC20 token address.
      */
-    function totalReleased() public view returns (uint256) {
-        return _totalReleased;
+    function getTotalProcessed(address tokenAddress) external view returns (uint256) {
+        return _totalProcessed[IERC20(tokenAddress)];
     }
 
     /**
-     * @dev Getter for the total amount of `token` already released. `token` should be the address of an IERC20
-     * contract.
+     * @dev Getter for the totalReleased. 
+     * @param tokenAddress ERC20 token address.
      */
-    function totalReleased(IERC20 token) public view returns (uint256) {
-        return _erc20TotalReleased[token];
+    function getTotalReleased(address tokenAddress) external view returns (uint256) {
+        return _totalReleased[IERC20(tokenAddress)];
     }
-
-    /**
-     * @dev Getter for the amount of shares held by an account.
-     */
-    function shares(address account) public view returns (uint256) {
-        return _shares[account];
-    }
-
-    /**
-     * @dev Getter for the amount of Ether already released to a payee.
-     */
-    function released(address account) public view returns (uint256) {
-        return _released[account];
-    }
-
-    /**
-     * @dev Getter for the amount of `token` tokens already released to a payee. `token` should be the address of an
-     * IERC20 contract.
-     */
-    function released(IERC20 token, address account) public view returns (uint256) {
-        return _erc20Released[token][account];
-    }
-
-    /**
-     * @dev Getter for the amount of payee's releasable Ether.
-     */
-    function releasable(address account) public view returns (uint256) {
-        uint256 totalReceived = address(this).balance + totalReleased();
-        return _pendingPayment(account, totalReceived, released(account));
-    }
-
-    /**
-     * @dev Getter for the amount of payee's releasable `token` tokens. `token` should be the address of an
-     * IERC20 contract.
-     */
-    function releasable(IERC20 token, address account) public view returns (uint256) {
-        uint256 totalReceived = token.balanceOf(address(this)) + totalReleased(token);
-        return _pendingPayment(account, totalReceived, released(token, account));
-    }
-
-    /**
-     * @dev Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the
-     * total shares and their previous withdrawals.
-     */
-    /*
-    function release(address payable account) public virtual {
-        require(_shares[account] > 0, "FeeSplitter: account has no shares");
-
-        uint256 payment = releasable(account);
-
-        require(payment != 0, "FeeSplitter: account is not due payment");
-
-        // _totalReleased is the sum of all values in _released.
-        // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
-        _totalReleased += payment;
-        unchecked {
-            _released[account] += payment;
-        }
-
-        Address.sendValue(account, payment);
-        emit PaymentReleased(account, payment);
-    }
-    */
 
     /**
      * @dev Triggers a transfer to `account` of the amount of `token` tokens they are owed, according to their
      * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
      * contract.
      */
-    function release(IERC20 token, address account) public virtual {
-        require(_shares[account] > 0, "FeeSplitter: account has no shares");
+    function release(IERC20 token, address payee) external whenNotPaused nonReentrant {
+        require(address(token) != address(0), "token is zero address");
+        require(payee != address(0), "payee is zero address");
+        require(_supportedERC20Set.contains(address(token)), "token is not supported");
+        require((_protocolPayee == payee) || _cinchPxPayeeSet.contains(payee), "invalid payee");
 
-        uint256 payment = releasable(token, account);
+        processFeeSplit();
 
-        require(payment != 0, "FeeSplitter: account is not due payment");
+        uint256 payment = _internalBalance[token][payee];
+        require(payment > 0, "internalBalance is zero");
+        _internalBalance[token][payee] = 0;
+        SafeERC20.safeTransfer(token, payee, payment);
 
-        // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
-        // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment"
-        // cannot overflow.
-        _erc20TotalReleased[token] += payment;
-        unchecked {
-            _erc20Released[token][account] += payment;
-        }
+        _totalReleased[token] += payment;
 
-        SafeERC20.safeTransfer(token, account, payment);
-        emit ERC20PaymentReleased(token, account, payment);
+        emit ERC20PaymentReleased(token, payee, payment);
     }
 
     /**
-     * @dev internal logic for computing the pending payment of an `account` given the token historical balances and
-     * already released amounts.
+     * @dev Pause the contract.
+     * onlyOwner
      */
-    function _pendingPayment(
-        address account,
-        uint256 totalReceived,
-        uint256 alreadyReleased
-    ) private view returns (uint256) {
-        return (totalReceived * _shares[account]) / _totalShares - alreadyReleased;
+    function pause() external onlyOwner {
+        _pause();
     }
+
+    /**
+     * @dev Unpause the contract.
+     * onlyOwner
+     */
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
 }

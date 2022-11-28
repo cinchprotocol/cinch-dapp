@@ -15,13 +15,14 @@ import "./interfaces/ICinchPx.sol";
 
 /**
  * @title FeeSplitter
- * @dev This contract allows to split ERC20 payments among a group of accounts. The sender does not need to be aware
- * that the tokens will be split in this way, since it is handled transparently by the contract.
+ * @dev This contract allows to split ERC20 payments among a group of payees, according to their corresponding TVL.
+ * The sender does not need to be aware that the tokens will be split in this way, since it is handled transparently by the contract.
  *
- * The split can be in equal parts or in any other arbitrary proportion. The way this is specified is by assigning each
- * account to a number of shares. Of all the Ether that this contract receives, each account will then be able to claim
- * an amount proportional to the percentage of total shares they were assigned. The distribution of shares is set when 
- * the updateShares function is being called, which is expected periodically on a daily basis.
+ * Upon calling processFeeSplit, updated TVL values are fetched from CinchPx and SampleProtocol.
+ * Then the internal balances of each payee are updated and the funds are pending to be claimed.
+ * This fee splitter is not tracking the changes in TVL in real time.
+ * It simply takes the average value between the TVL in previous processFeeSplit call, and the current TVL.
+ * Where processFeeSplit is expected to be executed daily.
  *
  * `FeeSplitter` follows a _pull payment_ model. This means that payments are not automatically forwarded to the
  * accounts but kept in this contract, and the actual transfer is triggered as a separate step by calling the {release}
@@ -42,11 +43,12 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
     event ETHPaymentReceived(address from, uint256 amount);
 
     /**
-     * @dev Creates an instance of `FeeSplitter` where each account in `payees` is assigned the number of shares at
-     * the matching position in the `shares` array.
-     *
-     * All addresses in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
-     * duplicates in `payees`.
+     * @dev Creates an instance of `FeeSplitter`
+     * @param cinchPxAddress The address of the target CinchPx contract.
+     * @param protocolAddress The address of the target protocol contract.
+     * @param supportedERC20Addresses Array of ERC20 token address to be supported.
+     * @param protocolPayee The wallet address of the target protocol where funds will be splitted to.
+     * @param cinchPxPayees Array of wallet addresses of the target payee (besides protocolPayee) where funds will be splitted to. Can be updated with addCinchPxPayee by contract owner.
      */
     constructor(address cinchPxAddress, address protocolAddress, address[] memory supportedERC20Addresses, address protocolPayee, address[] memory cinchPxPayees) payable {
         require(cinchPxAddress != address(0), "cinchPxAddress is zero");
@@ -84,6 +86,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
     /**
      * @dev Add a new cinchPxPayee to the contract.
      * @param cinchPxPayee The address of the cinchPxPayee to add.
+     * onlyOwner
      */
     function addCinchPxPayee(address cinchPxPayee) public onlyOwner whenNotPaused {
         require(cinchPxPayee != address(0), "cinchPxPayee is zero");
@@ -117,6 +120,13 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
         payees = _cinchPxPayeeSet.values();
     }
 
+    /**
+     * @dev Private function for processing the fee split on the target token.
+     * @param token The address of the target ERC20 token.
+     * @param lastProtocolTVL last protocol TVL from previous processFeeSplit call.
+     * @param protocolTVL current protocol TVL.
+     * This constract is simply taking the average of the TVL between the last processFeeSplit call and the current processFeeSplit call.
+     */
     function _processFeeSplitOfERC20(IERC20 token, uint256 lastProtocolTVL, uint256 protocolTVL) private whenNotPaused {
         //calculate the unprocessed balance of the target token
         uint256 currentBalance = token.balanceOf(address(this));
@@ -153,15 +163,28 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
         }
     }
 
+    /**
+     * @dev Get the updated protocol TVL from the target protocol contract address.
+     */
     function _getProtocolTVL() private view returns (uint256) {
         return ISampleProtocol(_protocolAddress).getTotalValueLocked();
     }
 
+    /**
+     * @dev Get the updated CinchPx TVL from the target CinchPx contract address.
+     * @param cinchPxPayee The address of the CinchPx payee.
+     * For now, this contract is using the cinchPxPayee address as the hash key to get the TVL from CinchPx. 
+     */
     function _getCinchPxTVL(address cinchPxPayee) private view returns (uint256) {
         return ICinchPx(_cinchPxAddress).getTotalValueLocked(cinchPxPayee);
     }
 
-    function processFeeSplit() public whenNotPaused {
+    /**
+     * @dev The major function for processing the split of any unprocessed funds since last call.
+     * Expected to be executed daily.
+     * It will also be executed upon any release call (funds withdrawal).
+     */
+    function processFeeSplit() public whenNotPaused nonReentrant {
         //get the updated protocolTVL
         uint256 protocolTVL = _getProtocolTVL();
         require(protocolTVL > 0, "protocolTVL is zero");
@@ -206,11 +229,12 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
     }
 
     /**
-     * @dev Triggers a transfer to `account` of the amount of `token` tokens they are owed, according to their
-     * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
-     * contract.
+     * @dev Process the fee split, then triggers a transfer of the target balance of tokenAddress 
+     * from this FeeSplitter contract to the target payee.
+     * @param tokenAddress target ERC20 token address.
+     * @param payee target payee.
      */
-    function release(address tokenAddress, address payee) external whenNotPaused nonReentrant {
+    function release(address tokenAddress, address payee) external whenNotPaused {
         require(tokenAddress != address(0), "tokenAddress is zero address");
         IERC20 token = IERC20(tokenAddress);
         require(payee != address(0), "payee is zero address");
@@ -238,6 +262,8 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
      * To learn more about this see the Solidity documentation for
      * https://solidity.readthedocs.io/en/latest/contracts.html#fallback-function[fallback
      * functions].
+     *
+     * For now, this contract does not support splitting and releaseing ETH.
      */
     receive() external payable virtual {
         emit ETHPaymentReceived(_msgSender(), msg.value);
@@ -258,5 +284,4 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
     function unpause() external onlyOwner {
         _unpause();
     }
-
 }

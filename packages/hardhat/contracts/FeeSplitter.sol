@@ -167,7 +167,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
      * @dev Get the updated protocol TVL from the target protocol contract address.
      */
     function _getProtocolTVL() private view returns (uint256) {
-        return ISampleProtocol(_protocolAddress).getTotalValueLocked();
+        return ISampleProtocol(_protocolAddress).getContractValue();
     }
 
     /**

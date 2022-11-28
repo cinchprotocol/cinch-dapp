@@ -11,6 +11,7 @@ contract SampleProtocol is Ownable {
 
     address public feeReceiver;
     uint256 public fee;
+    uint256 internal _totalValueLocked;
 
     /**
      * @dev Constructor of the contract.
@@ -58,5 +59,19 @@ contract SampleProtocol is Ownable {
     function withdraw(address tokenAddress, uint256 _amount) external {
         IERC20(tokenAddress).transfer(msg.sender, _amount);
         emit Withdrawn(tokenAddress, _amount);
+    }
+
+    /**
+     * @dev Getter of _totalValueLocked
+     */
+    function getTotalValueLocked() external view returns (uint256) {
+        return _totalValueLocked;
+    }
+
+    /**
+     * @dev Setter of _totalValueLocked
+     */
+    function setTotalValueLocked(uint256 tvl) external onlyOwner {
+        _totalValueLocked = tvl;
     }
 }

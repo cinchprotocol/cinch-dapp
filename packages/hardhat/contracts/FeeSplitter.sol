@@ -117,19 +117,6 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
         payees = _cinchPxPayeeSet.values();
     }
 
-    /**
-     * @dev The Ether received will be logged with {ETHPaymentReceived} events. Note that these events are not fully
-     * reliable: it's possible for a contract to receive Ether without triggering this function. This only affects the
-     * reliability of the events, and not the actual splitting of Ether.
-     *
-     * To learn more about this see the Solidity documentation for
-     * https://solidity.readthedocs.io/en/latest/contracts.html#fallback-function[fallback
-     * functions].
-     */
-    receive() external payable virtual {
-        emit ETHPaymentReceived(_msgSender(), msg.value);
-    }
-
     function _processFeeSplitOfERC20(IERC20 token, uint256 lastProtocolTVL, uint256 protocolTVL) private whenNotPaused {
         //calculate the unprocessed balance of the target token
         uint256 currentBalance = token.balanceOf(address(this));
@@ -152,7 +139,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
                 _internalBalance[token][payee] = _internalBalance[token][payee] + balanceToAdd;
                 totalCinchPxBalanceAdded += balanceToAdd;
 
-                emit InternalBalanceUpdated(token, payee, _internalBalance[token][payee]);
+                //emit InternalBalanceUpdated(token, payee, _internalBalance[token][payee]);
             }
 
             //update the internal balance of the protocolPayee
@@ -174,7 +161,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
         return ICinchPx(_cinchPxAddress).getTotalValueLocked(cinchPxPayee);
     }
 
-    function processFeeSplit() public whenNotPaused nonReentrant {
+    function processFeeSplit() public whenNotPaused {
         //get the updated protocolTVL
         uint256 protocolTVL = _getProtocolTVL();
         require(protocolTVL > 0, "protocolTVL is zero");
@@ -223,8 +210,9 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
      * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
      * contract.
      */
-    function release(IERC20 token, address payee) external whenNotPaused nonReentrant {
-        require(address(token) != address(0), "token is zero address");
+    function release(address tokenAddress, address payee) external whenNotPaused nonReentrant {
+        require(tokenAddress != address(0), "tokenAddress is zero address");
+        IERC20 token = IERC20(tokenAddress);
         require(payee != address(0), "payee is zero address");
         require(_supportedERC20Set.contains(address(token)), "token is not supported");
         require((_protocolPayee == payee) || _cinchPxPayeeSet.contains(payee), "invalid payee");
@@ -234,11 +222,25 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
         uint256 payment = _internalBalance[token][payee];
         require(payment > 0, "internalBalance is zero");
         _internalBalance[token][payee] = 0;
+        _lastFeeSplitterBalance[token] = _lastFeeSplitterBalance[token] - payment;
         SafeERC20.safeTransfer(token, payee, payment);
 
         _totalReleased[token] += payment;
 
         emit ERC20PaymentReleased(token, payee, payment);
+    }
+
+    /**
+     * @dev The Ether received will be logged with {ETHPaymentReceived} events. Note that these events are not fully
+     * reliable: it's possible for a contract to receive Ether without triggering this function. This only affects the
+     * reliability of the events, and not the actual splitting of Ether.
+     *
+     * To learn more about this see the Solidity documentation for
+     * https://solidity.readthedocs.io/en/latest/contracts.html#fallback-function[fallback
+     * functions].
+     */
+    receive() external payable virtual {
+        emit ETHPaymentReceived(_msgSender(), msg.value);
     }
 
     /**

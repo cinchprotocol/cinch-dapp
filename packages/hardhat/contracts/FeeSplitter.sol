@@ -2,12 +2,19 @@
 
 pragma solidity ^0.8.6;
 
-import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+
+//import "@openzeppelin/contracts/utils/Context.sol";
+//import "@openzeppelin/contracts/access/Ownable.sol";
+//import "@openzeppelin/contracts/security/Pausable.sol";
+//import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+//import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+//import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "./FeeSplitterStorage.sol";
 import "./interfaces/ISampleProtocol.sol";
@@ -31,15 +38,15 @@ import "./interfaces/ICinchPx.sol";
  * NOTE: This contract assumes that ERC20 tokens will behave similarly to native tokens (Ether). Rebasing tokens, and
  * tokens that apply fees during transfers, are likely to not be supported as expected.
  */
-contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, ReentrancyGuard {
-    using EnumerableSet for EnumerableSet.AddressSet;
+contract FeeSplitter is FeeSplitterStorage, ContextUpgradeable, OwnableUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
+    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
 
     event SupportedERC20Added(address tokenAddress);
     event CinchPxPayeeAdded(address cinchPxPayee);
-    event InternalBalanceUpdated(IERC20 indexed token, address payee, uint256 balance);
-    event TotalProcessedUpdated(IERC20 indexed token, uint256 totalProcessed);
+    event InternalBalanceUpdated(IERC20Upgradeable indexed token, address payee, uint256 balance);
+    event TotalProcessedUpdated(IERC20Upgradeable indexed token, uint256 totalProcessed);
     event FeeSplitProcessed(uint256 protocolTVL);
-    event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
+    event ERC20PaymentReleased(IERC20Upgradeable indexed token, address to, uint256 amount);
     event ETHPaymentReceived(address from, uint256 amount);
 
     /**
@@ -77,7 +84,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
         require(tokenAddress != address(0), "tokenAddress is zero");
         require(_supportedERC20Set.add(tokenAddress), "tokenAddress already exists");
 
-        IERC20 token = IERC20(tokenAddress);
+        IERC20Upgradeable token = IERC20Upgradeable(tokenAddress);
         _lastFeeSplitterBalance[token] = token.balanceOf(address(this));
 
         emit SupportedERC20Added(tokenAddress);
@@ -88,7 +95,8 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
      * @param cinchPxPayee The address of the cinchPxPayee to add.
      * onlyOwner
      */
-    function addCinchPxPayee(address cinchPxPayee) public onlyOwner whenNotPaused {
+     //!!! onlyOwner
+    function addCinchPxPayee(address cinchPxPayee) public whenNotPaused {
         require(cinchPxPayee != address(0), "cinchPxPayee is zero");
         require(_cinchPxPayeeSet.add(cinchPxPayee), "cinchPxPayee already exists");
 
@@ -127,7 +135,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
      * @param protocolTVL current protocol TVL.
      * This constract is simply taking the average of the TVL between the last processFeeSplit call and the current processFeeSplit call.
      */
-    function _processFeeSplitOfERC20(IERC20 token, uint256 lastProtocolTVL, uint256 protocolTVL) private whenNotPaused {
+    function _processFeeSplitOfERC20(IERC20Upgradeable token, uint256 lastProtocolTVL, uint256 protocolTVL) private whenNotPaused {
         //calculate the unprocessed balance of the target token
         uint256 currentBalance = token.balanceOf(address(this));
         bool shouldProcess = (currentBalance > _lastFeeSplitterBalance[token]);
@@ -197,7 +205,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
         //For each supported ERC20, process the fee split
         address[] memory supportedERC20s = _supportedERC20Set.values();
         for (uint256 i = 0; i < supportedERC20s.length; i++) {
-            _processFeeSplitOfERC20(IERC20(supportedERC20s[i]), lastProtocolTVL, protocolTVL);
+            _processFeeSplitOfERC20(IERC20Upgradeable(supportedERC20s[i]), lastProtocolTVL, protocolTVL);
         }
 
         emit FeeSplitProcessed(protocolTVL);
@@ -209,7 +217,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
      * @param payee The address of the payee.
      */
     function getInternalBalance(address tokenAddress, address payee) external view returns (uint256) {
-        return _internalBalance[IERC20(tokenAddress)][payee];
+        return _internalBalance[IERC20Upgradeable(tokenAddress)][payee];
     }
 
     /**
@@ -217,7 +225,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
      * @param tokenAddress ERC20 token address.
      */
     function getTotalProcessed(address tokenAddress) external view returns (uint256) {
-        return _totalProcessed[IERC20(tokenAddress)];
+        return _totalProcessed[IERC20Upgradeable(tokenAddress)];
     }
 
     /**
@@ -225,7 +233,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
      * @param tokenAddress ERC20 token address.
      */
     function getTotalReleased(address tokenAddress) external view returns (uint256) {
-        return _totalReleased[IERC20(tokenAddress)];
+        return _totalReleased[IERC20Upgradeable(tokenAddress)];
     }
 
     /**
@@ -236,7 +244,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
      */
     function release(address tokenAddress, address payee) external whenNotPaused {
         require(tokenAddress != address(0), "tokenAddress is zero address");
-        IERC20 token = IERC20(tokenAddress);
+        IERC20Upgradeable token = IERC20Upgradeable(tokenAddress);
         require(payee != address(0), "payee is zero address");
         require(_supportedERC20Set.contains(address(token)), "token is not supported");
         require((_protocolPayee == payee) || _cinchPxPayeeSet.contains(payee), "invalid payee");
@@ -247,7 +255,7 @@ contract FeeSplitter is FeeSplitterStorage, Context, Ownable, Pausable, Reentran
         require(payment > 0, "internalBalance is zero");
         _internalBalance[token][payee] = 0;
         _lastFeeSplitterBalance[token] = _lastFeeSplitterBalance[token] - payment;
-        SafeERC20.safeTransfer(token, payee, payment);
+        SafeERC20Upgradeable.safeTransfer(token, payee, payment);
 
         _totalReleased[token] += payment;
 

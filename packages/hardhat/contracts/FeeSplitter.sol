@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.6;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -38,7 +39,7 @@ import "./interfaces/ICinchPx.sol";
  * NOTE: This contract assumes that ERC20 tokens will behave similarly to native tokens (Ether). Rebasing tokens, and
  * tokens that apply fees during transfers, are likely to not be supported as expected.
  */
-contract FeeSplitter is FeeSplitterStorage, ContextUpgradeable, OwnableUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
+contract FeeSplitter is FeeSplitterStorage, Initializable, ContextUpgradeable, OwnableUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
 
     event SupportedERC20Added(address tokenAddress);
@@ -50,14 +51,26 @@ contract FeeSplitter is FeeSplitterStorage, ContextUpgradeable, OwnableUpgradeab
     event ETHPaymentReceived(address from, uint256 amount);
 
     /**
-     * @dev Creates an instance of `FeeSplitter`
+     * @dev Used to prevent initialization of the implementation contract.
+     * @custom:oz-upgrades-unsafe-allow constructor.
+     */
+    constructor() {
+    }
+
+    /**
+     * @dev Initialize an instance of `FeeSplitter`
      * @param cinchPxAddress The address of the target CinchPx contract.
      * @param protocolAddress The address of the target protocol contract.
      * @param supportedERC20Addresses Array of ERC20 token address to be supported.
      * @param protocolPayee The wallet address of the target protocol where funds will be splitted to.
      * @param cinchPxPayees Array of wallet addresses of the target payee (besides protocolPayee) where funds will be splitted to. Can be updated with addCinchPxPayee by contract owner.
      */
-    constructor(address cinchPxAddress, address protocolAddress, address[] memory supportedERC20Addresses, address protocolPayee, address[] memory cinchPxPayees) payable {
+    function initialize(address cinchPxAddress, address protocolAddress, address[] memory supportedERC20Addresses, address protocolPayee, address[] memory cinchPxPayees) public initializer {
+        __Context_init();
+        __Ownable_init();
+        __Pausable_init();
+        __ReentrancyGuard_init();
+
         require(cinchPxAddress != address(0), "cinchPxAddress is zero");
         require(protocolAddress != address(0), "protocolAddress is zero");
         require(supportedERC20Addresses.length > 0, "supportedERC20Addresses is empty");
@@ -95,8 +108,7 @@ contract FeeSplitter is FeeSplitterStorage, ContextUpgradeable, OwnableUpgradeab
      * @param cinchPxPayee The address of the cinchPxPayee to add.
      * onlyOwner
      */
-     //!!! onlyOwner
-    function addCinchPxPayee(address cinchPxPayee) public whenNotPaused {
+    function addCinchPxPayee(address cinchPxPayee) public whenNotPaused onlyOwner {
         require(cinchPxPayee != address(0), "cinchPxPayee is zero");
         require(_cinchPxPayeeSet.add(cinchPxPayee), "cinchPxPayee already exists");
 

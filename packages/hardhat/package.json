@@ -36,6 +36,7 @@
     "compile": "hardhat compile",
     "deploy": "hardhat deploy --export-all ../react-app/contracts/hardhat_contracts.json",
     "deploy_feesplitter": "hardhat run scripts/deploy_upgradeable_feesplitter.js",
+    "upgrade_feesplitter": "hardhat run scripts/upgrade_feesplitter.js",
     "postdeploy": "hardhat run scripts/publish.js",
     "watch": "node scripts/watch.js",
     "accounts": "hardhat accounts",

@@ -1,3 +1,4 @@
+// npx hardhat run --network localhost scripts/deploy_upgradeable_feesplitter.js
 const { ethers, upgrades } = require("hardhat");
 
 async function main() {
@@ -23,4 +24,3 @@ async function main() {
 }
 
 main();
-// npx hardhat run --network localhost scripts/deploy_upgradeable_feesplitter.js

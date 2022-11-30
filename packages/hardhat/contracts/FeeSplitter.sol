@@ -50,11 +50,9 @@ contract FeeSplitter is FeeSplitterStorage, Initializable, ContextUpgradeable, O
     event ERC20PaymentReleased(IERC20Upgradeable indexed token, address to, uint256 amount);
     event ETHPaymentReceived(address from, uint256 amount);
 
-    /**
-     * @dev Used to prevent initialization of the implementation contract.
-     * @custom:oz-upgrades-unsafe-allow constructor.
-     */
+    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
+        //_disableInitializers();
     }
 
     /**

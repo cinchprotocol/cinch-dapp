@@ -41,9 +41,11 @@ describe("FeeSplitter", function () {
       expect(mockCinchPx.address).to.not.be.undefined;
     });
 
-    it("Should not deploy FeeSplitter", async function () {
+    it("Should not initialize FeeSplitter", async function () {
       const FeeSplitter = await ethers.getContractFactory("FeeSplitter");
-      const tx01 = FeeSplitter.deploy(
+      feeSplitter = await FeeSplitter.deploy();
+
+      const tx01 = feeSplitter.initialize(
         ethers.constants.AddressZero,
         sampleProtocol.address,
         [testToken.address],
@@ -52,7 +54,7 @@ describe("FeeSplitter", function () {
       );
       await expect(tx01).to.be.revertedWith("cinchPxAddress is zero");
 
-      const tx02 = FeeSplitter.deploy(
+      const tx02 = feeSplitter.initialize(
         mockCinchPx.address,
         ethers.constants.AddressZero,
         [testToken.address],
@@ -61,7 +63,7 @@ describe("FeeSplitter", function () {
       );
       await expect(tx02).to.be.revertedWith("protocolAddress is zero");
 
-      const tx03 = FeeSplitter.deploy(
+      const tx03 = feeSplitter.initialize(
         mockCinchPx.address,
         sampleProtocol.address,
         [ethers.constants.AddressZero],
@@ -70,7 +72,7 @@ describe("FeeSplitter", function () {
       );
       await expect(tx03).to.be.revertedWith("tokenAddress is zero");
 
-      const tx04 = FeeSplitter.deploy(
+      const tx04 = feeSplitter.initialize(
         mockCinchPx.address,
         sampleProtocol.address,
         [testToken.address],
@@ -79,7 +81,7 @@ describe("FeeSplitter", function () {
       );
       await expect(tx04).to.be.revertedWith("protocolPayee_ is zero");
 
-      const tx05 = FeeSplitter.deploy(
+      const tx05 = feeSplitter.initialize(
         mockCinchPx.address,
         sampleProtocol.address,
         [testToken.address],
@@ -89,9 +91,8 @@ describe("FeeSplitter", function () {
       await expect(tx05).to.be.revertedWith("cinchPxPayee is zero");
     });
 
-    it("Should deploy FeeSplitter", async function () {
-      const FeeSplitter = await ethers.getContractFactory("FeeSplitter");
-      feeSplitter = await FeeSplitter.deploy(
+    it("Should initialize FeeSplitter", async function () {
+      const tx01 = feeSplitter.initialize(
         mockCinchPx.address,
         sampleProtocol.address,
         [testToken.address],
@@ -100,6 +101,18 @@ describe("FeeSplitter", function () {
       );
       expect(feeSplitter.address).to.not.be.undefined;
       console.log("feeSplitter.address: ", feeSplitter.address);
+      await expect(tx01).not.to.be.revertedWith("");
+
+      const tx02 = feeSplitter.initialize(
+        mockCinchPx.address,
+        sampleProtocol.address,
+        [testToken.address],
+        accounts[accountIndexProtocolPayee].address,
+        [accounts[accountIndexCinchPxPayee].address]
+      );
+      await expect(tx02).to.be.revertedWith(
+        "Initializable: contract is already initialized"
+      );
     });
   });
 

@@ -26,6 +26,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
+  await deploy("MockCinchPx", {
+    from: deployer,
+    log: true,
+  });
+
   // const marketPlaceContract = await ethers.getContract("MarketPlace", deployer);
   // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
 

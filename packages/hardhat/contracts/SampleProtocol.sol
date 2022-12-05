@@ -69,6 +69,13 @@ contract SampleProtocol is Ownable {
     }
 
     /**
+     * @dev Getter of _totalValueLocked
+     */
+    function getContractValue() external view returns (uint256) {
+        return _totalValueLocked;
+    }
+
+    /**
      * @dev Setter of _totalValueLocked
      */
     function setTotalValueLocked(uint256 tvl) external onlyOwner {

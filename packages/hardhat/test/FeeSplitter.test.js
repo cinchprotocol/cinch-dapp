@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-const { ethers } = require("hardhat");
+const { ethers, upgrades } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 
@@ -10,7 +10,7 @@ let testToken;
 let sampleProtocol;
 let mockCinchPx;
 let feeSplitter;
-const accountIndexOwner = 0;
+let accountOwner;
 const accountIndexProtocolPayee = 1;
 const accountIndexCinchPxPayee = 2;
 const accountIndexCinchPxPayee02 = 3;
@@ -18,7 +18,8 @@ const accountIndexCinchPxPayee02 = 3;
 before(async function () {
   // get accounts from hardhat
   accounts = await ethers.getSigners();
-  console.log("accounts: ", accounts[accountIndexOwner].address);
+  accountOwner = accounts[0];
+  console.log("accounts: ", accountOwner.address);
 });
 
 describe("FeeSplitter", function () {
@@ -41,9 +42,11 @@ describe("FeeSplitter", function () {
       expect(mockCinchPx.address).to.not.be.undefined;
     });
 
-    it("Should not deploy FeeSplitter", async function () {
+    it("Should not initialize FeeSplitter", async function () {
       const FeeSplitter = await ethers.getContractFactory("FeeSplitter");
-      const tx01 = FeeSplitter.deploy(
+      const feeSplitterX = await FeeSplitter.deploy();
+
+      const tx01 = feeSplitterX.initialize(
         ethers.constants.AddressZero,
         sampleProtocol.address,
         [testToken.address],
@@ -52,7 +55,7 @@ describe("FeeSplitter", function () {
       );
       await expect(tx01).to.be.revertedWith("cinchPxAddress is zero");
 
-      const tx02 = FeeSplitter.deploy(
+      const tx02 = feeSplitterX.initialize(
         mockCinchPx.address,
         ethers.constants.AddressZero,
         [testToken.address],
@@ -61,7 +64,7 @@ describe("FeeSplitter", function () {
       );
       await expect(tx02).to.be.revertedWith("protocolAddress is zero");
 
-      const tx03 = FeeSplitter.deploy(
+      const tx03 = feeSplitterX.initialize(
         mockCinchPx.address,
         sampleProtocol.address,
         [ethers.constants.AddressZero],
@@ -70,7 +73,7 @@ describe("FeeSplitter", function () {
       );
       await expect(tx03).to.be.revertedWith("tokenAddress is zero");
 
-      const tx04 = FeeSplitter.deploy(
+      const tx04 = feeSplitterX.initialize(
         mockCinchPx.address,
         sampleProtocol.address,
         [testToken.address],
@@ -79,7 +82,7 @@ describe("FeeSplitter", function () {
       );
       await expect(tx04).to.be.revertedWith("protocolPayee_ is zero");
 
-      const tx05 = FeeSplitter.deploy(
+      const tx05 = feeSplitterX.initialize(
         mockCinchPx.address,
         sampleProtocol.address,
         [testToken.address],
@@ -90,16 +93,25 @@ describe("FeeSplitter", function () {
     });
 
     it("Should deploy FeeSplitter", async function () {
-      const FeeSplitter = await ethers.getContractFactory("FeeSplitter");
-      feeSplitter = await FeeSplitter.deploy(
+      const FeeSplitter = await ethers.getContractFactory(
+        "FeeSplitter",
+        accountOwner
+      );
+      feeSplitter = await upgrades.deployProxy(FeeSplitter, [
         mockCinchPx.address,
         sampleProtocol.address,
         [testToken.address],
         accounts[accountIndexProtocolPayee].address,
-        [accounts[accountIndexCinchPxPayee].address]
-      );
+        [accounts[accountIndexCinchPxPayee].address],
+      ]);
+      const contractReceipt = await feeSplitter.deployed();
       expect(feeSplitter.address).to.not.be.undefined;
-      console.log("feeSplitter.address: ", feeSplitter.address);
+      console.log(
+        "feeSplitter.address: ",
+        feeSplitter.address,
+        ", tx: ",
+        contractReceipt.transactionHash
+      );
     });
   });
 
@@ -222,10 +234,7 @@ describe("FeeSplitter", function () {
         await expect(tx).to.be.revertedWith("token is not supported");
       });
       it("should not work when payee is invalid", async () => {
-        const tx = feeSplitter.release(
-          testToken.address,
-          accounts[accountIndexOwner].address
-        );
+        const tx = feeSplitter.release(testToken.address, accountOwner.address);
         await expect(tx).to.be.revertedWith("invalid payee");
       });
       it("should not work when internal balance is zero", async () => {

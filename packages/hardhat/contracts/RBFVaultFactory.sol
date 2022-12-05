@@ -34,16 +34,17 @@ contract RBFVaultFactory is Ownable {
         //TODO - get function sig input during the listing of item so it can be set here in the guard
         CinchSafeGuard multiSigGuard = new CinchSafeGuard();
 
-        RBFVault vault = new RBFVault(
-            item,
-            address(multiSigGuard),
-            underlyingToken
-        );
-        borrowerVault[item.seller].push(address(vault));
-        lenderVault[item.buyer].push(address(vault));
+        // RBFVault vault = new RBFVault(
+        //     item,
+        //     address(multiSigGuard),
+        //     underlyingToken
+        // );
+        // borrowerVault[item.seller].push(address(vault));
+        // lenderVault[item.buyer].push(address(vault));
 
-        emit RBFVaultCreated(item.buyer, item.seller, address(vault));
-        return address(vault);
+        // emit RBFVaultCreated(item.buyer, item.seller, address(vault));
+        // return address(vault);
+        return address(0);
     }
 
     function getlenderVaults(address lender)

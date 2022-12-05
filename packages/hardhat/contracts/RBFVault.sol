@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "./interfaces/IGnosisSafe.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./MarketPlaceStorage.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 
 interface IBorrowerContract {
     function feeReceiver() external view returns (address);
@@ -22,9 +23,8 @@ interface IBorrowerContract {
  * @notice Contract allowing Lender to secure royalty revenue streams
  * @dev Should be deployed per revenue stream.
  */
-contract RBFVault {
+contract RBFVault is ERC4626 {
     event RBFVaultActivated();
-    event BalanceWithdrawn();
     event RBFVaultRefundInitiated();
 
     enum Status {
@@ -34,59 +34,141 @@ contract RBFVault {
         Canceled
     }
 
-    string public name;
-    address public feeCollector;
-    address public multiSig;
-    uint256 public revenuePct;
-    uint256 public price;
-    //TODO: If feeCollector is responsible for the revenue share, should it be responsible for tracking the total amount of revenue shared as well ? How buyer fetch the amount of revenue share received ?
-    //TODO: If feeCollector is responsible for the revenue share, it should be notified with expAmount such that it can stop the revenue share upon expAmount.
-    uint256 public expAmount; 
-    address public borrower;
-    address public lender;
-    address public underlyingToken;
+    struct ProtocolDetail {
+        address feeCollector;
+        address multiSig;
+        uint256 expAmount;
+    }
+    ProtocolDetail public protocolDetail;
     address public multisigGuard;
+
+    mapping(address => uint256) internal _totalValueLocked; // token => totalReleased
 
     // If vault is not active after this timeout period then lender can withdraw the fund
     uint256 public constant TIMEOUT_PERIOD = 1 weeks;
 
-    Status public status;
+    Status public vaultStatus;
     uint256 public vaultActivationDate;
     uint256 public vaultDeployDate;
 
-    /**
-     *
-     * @dev Configure data for revenue shares
-     *
-     */
-    constructor(
-        MarketPlaceStorage.MarketItem memory item,
-        address _multisigGuard,
-        address _underlyingToken
-    ) payable {
-        //TODO: Add require statements for invalid inputs
-        name = item.name;
-        feeCollector = item.feeCollector;
-        multiSig = item.multiSig;
-        revenuePct = item.revenuePct;
-        price = item.soldPrice;
-        expAmount = item.expAmount;
-        borrower = item.seller;
-        lender = item.buyer;
+    uint256 internal storedTotalAssets;
 
-        underlyingToken = _underlyingToken;
+    /// @notice vault constructor
+    /// @param asset vault asset
+    /// @param name ERC20 name of the vault shares token
+    /// @param symbol ERC20 symbol of the vault shares token
+    constructor(
+        address asset,
+        string memory name,
+        string memory symbol,
+        ProtocolDetail memory _protocolDetail,
+        address _multisigGuard
+    ) ERC4626(ERC20(asset)) ERC20(name, symbol) {
+        protocolDetail.feeCollector = _protocolDetail.feeCollector;
+        protocolDetail.multiSig = _protocolDetail.multiSig;
+        protocolDetail.expAmount = _protocolDetail.expAmount;
         multisigGuard = _multisigGuard;
 
-        status = Status.Pending;
+        vaultStatus = Status.Pending;
         vaultDeployDate = block.timestamp;
     }
 
+    //TODO: should this function be bounded to be called by the borrower only?
     /**
-     * @dev Check if the terms are satisfied
+     * @dev Activates the vault after the required condition has been met and transfer funds to the borrower.
      */
-    function isTermsSatisfied() public view returns (bool) {
-        // Todo - check fee collector and multi-sig
+    function activate() external {
+        _isValidState(Status.Pending);
+
+        require(isReadyToActivate(), "VAULT_ACTIVATION_TERMS_NOT_MET");
+
+        vaultStatus = Status.Active;
+        vaultActivationDate = block.timestamp;
+
+        emit RBFVaultActivated();
     }
+
+    function depositWithReferral(
+        uint256 assets,
+        address receiver,
+        address referral
+    ) public returns (uint256) {
+        _isValidState(Status.Active);
+
+        uint256 shares = super.deposit(assets, receiver);
+        afterDeposit(assets, 0);
+        _totalValueLocked[referral] += assets;
+        return shares;
+    }
+
+    function deposit(uint256 assets, address receiver)
+        public
+        virtual
+        override
+        returns (uint256)
+    {
+        _isValidState(Status.Active);
+
+        uint256 shares = super.deposit(assets, receiver);
+        afterDeposit(assets, 0);
+        return shares;
+    }
+
+    function withdraw(
+        uint256 assets,
+        address receiver,
+        address owner
+    ) public virtual override returns (uint256) {
+        _isValidState(Status.Active);
+
+        beforeWithdraw(assets, 0);
+        uint256 shares = super.withdraw(assets, receiver, owner);
+        return shares;
+    }
+
+    function withdrawWithReferral(
+        uint256 assets,
+        address receiver,
+        address owner,
+        address referral
+    ) public returns (uint256) {
+        _isValidState(Status.Active);
+
+        beforeWithdraw(assets, 0);
+        uint256 shares = super.withdraw(assets, receiver, owner);
+        _totalValueLocked[referral] -= assets;
+        return shares;
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                         INTERNAL HOOKS LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function beforeWithdraw(uint256 amount, uint256) internal {
+        storedTotalAssets -= amount;
+
+        IBorrowerContract(protocolDetail.feeCollector).withdraw(
+            asset(),
+            amount
+        );
+    }
+
+    function afterDeposit(uint256 amount, uint256) internal {
+        IERC20(asset()).approve(protocolDetail.feeCollector, amount);
+        IBorrowerContract(protocolDetail.feeCollector).deposit(asset(), amount);
+
+        storedTotalAssets += amount;
+    }
+
+    /// @notice Total amount of the underlying asset that
+    /// is "managed" by Vault.
+    function totalAssets() public view override returns (uint256) {
+        return storedTotalAssets;
+    }
+
+    /************************/
+    /*** Helper Functions ***/
+    /************************/
 
     /**
      * @dev Check if the vault is ready to be activated
@@ -108,96 +190,50 @@ contract RBFVault {
      * @dev Check if the fee collector is updated
      */
     function isFeeCollectorUpdated() public view returns (bool) {
-        return IBorrowerContract(feeCollector).feeReceiver() == address(this);
+        return
+            IBorrowerContract(protocolDetail.feeCollector).feeReceiver() ==
+            address(this);
     }
 
     /**
      * @dev Check if the provided multi-sig address is the revenue contract owner
      */
     function isMultisigOwnsTheRevenueContract() public view returns (bool) {
-        return IBorrowerContract(feeCollector).owner() == multiSig;
+        return
+            IBorrowerContract(protocolDetail.feeCollector).owner() ==
+            protocolDetail.multiSig;
     }
 
     /**
      * @dev Check if cinch multi-sig guard is added
      */
     function isMultisigGuardAdded() public view returns (bool) {
-        // TODO- Uncomment the line below ?
-        //return GnosisSafe(multiSig).getGuard() == multisigGuard;
-        return true;
+        return GnosisSafe(protocolDetail.multiSig).getGuard() == multisigGuard;
     }
 
-    //TODO: should this function be bounded to be called by the borrower only?
+    // /**
+    //  * @dev getVaultBalance
+    //  */
+    // function getVaultBalance() external view returns (uint256) {
+    //     return IERC20(asset).balanceOf(address(this));
+    // }
+
     /**
-     * @dev Activates the vault after the required condition has been met and transfer funds to the borrower.
-     */
-    function activate() external {
-        require(status == Status.Pending, "VAULT_STATUS_NEED_TO_BE_'PENDING'");
-
-        require(isReadyToActivate(), "VAULT_ACTIVATION_TERMS_NOT_MET");
-
-        status = Status.Active;
-        vaultActivationDate = block.timestamp;
-
-        deposit();
-
-        emit RBFVaultActivated();
+        @dev   Checks that the current state of the vault matches the provided state.
+        @param _status Enum of desired vault status.
+    */
+    function _isValidState(Status _status) internal view {
+        require(vaultStatus == _status, "INVALID_STATE");
     }
 
     /**
-     * @dev Deposit the agreed amount to the feeCollector
+     * @dev Getter of _totalValueLocked
      */
-    function deposit() private {
-        IERC20(underlyingToken).approve(feeCollector, price);
-        IBorrowerContract(feeCollector).deposit(underlyingToken, price);
-    }
-
-    //TODO: bound this function to be called by the lender only?
-    //TODO: add condition to block un-authorized withdraws
-    //TODO: is withdraw expected to be a one time function ?
-    //TODO: how about withdrawing the revenue share ?
-    //TODO: how about expAmount ?
-    /**
-     * @dev Withdraw the agreed amount from the feeCollector
-     */
-    function withdraw() external {
-        IBorrowerContract(feeCollector).withdraw(underlyingToken, price);
-        IERC20(underlyingToken).transfer(lender, price);
-        emit BalanceWithdrawn();
-    }
-
-    /**
-     * @dev getVaultBalance
-     */
-    function getVaultBalance() external view returns (uint256) {
-        return IERC20(underlyingToken).balanceOf(address(this));
-    }
-
-    /**
-     * @return The current state of the vault.
-     */
-    function vaultStatus() external view returns (Status) {
-        return status;
-    }
-
-    //TODO: should this function be bounded to be called by the lender only ?
-    /**
-     * @dev Allows the lender to withdrawn deposited money if vault doesn't get activated on agreed upon time
-     */
-    function refundTheLender() external {
-        require(
-            status == Status.Pending,
-            "CAN_REFUND_ONLY_WHEN_STATUS_IS_'PENDING'"
-        );
-
-        require(
-            block.timestamp > (vaultDeployDate + TIMEOUT_PERIOD),
-            "TIMEOUT_PERIOD_NOT_REACHED"
-        );
-
-        status = Status.Canceled;
-        IERC20(underlyingToken).transfer(lender, price);
-
-        emit RBFVaultRefundInitiated();
+    function getTotalValueLocked(address referral)
+        external
+        view
+        returns (uint256)
+    {
+        return _totalValueLocked[referral];
     }
 }

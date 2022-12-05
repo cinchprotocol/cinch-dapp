@@ -13,18 +13,25 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   });
   // const tokenContract = await ethers.getContract("TestToken", deployer);
 
-  await deploy("MarketPlace", {
+  await deploy("RBFVault", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: [deployer, 20000, "0x5FbDB2315678afecb367f032d93F642f64180aa3"],
+    args: ["0x5FbDB2315678afecb367f032d93F642f64180aa3", "CinchPx", "CPxIdleClearPool"],
     log: true,
   });
 
-  await deploy("SampleProtocol", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-    log: true,
-  });
+  // await deploy("MarketPlace", {
+  //   // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+  //   from: deployer,
+  //   args: [deployer, 20000, "0x5FbDB2315678afecb367f032d93F642f64180aa3"],
+  //   log: true,
+  // });
+
+  // await deploy("SampleProtocol", {
+  //   // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+  //   from: deployer,
+  //   log: true,
+  // });
 
   // const marketPlaceContract = await ethers.getContract("MarketPlace", deployer);
   // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');

@@ -30,7 +30,7 @@ function DebugPage({ web3 }) {
         </div>
         <div className="text-center">
           <Contract
-            name="MarketPlace"
+            name="RBFVault"
             signer={web3.userSigner}
             provider={web3.localProvider}
             address={web3.address}

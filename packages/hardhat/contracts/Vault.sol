@@ -24,13 +24,13 @@ interface IBorrowerContract {
 
 //TODO: Update the lender and borrower terms/concept used in this contract. In the Idle case, it would be staking and unstaking. In general, it would be buying and selling. In either case, we should clarify the docs.
 /**
- * @title RBFVault
+ * @title Vault
  * @notice Contract allowing Lender to secure royalty revenue streams
  * @dev Should be deployed per revenue stream.
  */
-contract RBFVault is ERC4626Upgradeable {
-    event RBFVaultActivated();
-    event RBFVaultRefundInitiated();
+contract Vault is ERC4626Upgradeable {
+    event VaultActivated();
+    event VaultRefundInitiated();
 
     enum Status {
         Pending,
@@ -93,7 +93,7 @@ contract RBFVault is ERC4626Upgradeable {
         vaultStatus = Status.Active;
         vaultActivationDate = block.timestamp;
 
-        emit RBFVaultActivated();
+        emit VaultActivated();
     }
 
     function deposit(uint256 assets, address receiver)

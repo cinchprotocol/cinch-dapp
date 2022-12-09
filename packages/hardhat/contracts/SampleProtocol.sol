@@ -8,6 +8,7 @@ contract SampleProtocol is Ownable {
     event FeeReceiverUpdated(address indexed feeReceiver);
     event Deposited(address indexed token, uint256 amount);
     event Withdrawn(address indexed token, uint256 amount);
+    event FeeReleased(address indexed token, uint256 amount);
 
     address public feeReceiver;
     uint256 public fee;
@@ -52,7 +53,7 @@ contract SampleProtocol is Ownable {
         emit Deposited(tokenAddress, _amount);
     }
 
-     /**
+    /**
      * @notice withdraw tokens
      * @param _amount of the underlying token to deposit
      */
@@ -80,5 +81,16 @@ contract SampleProtocol is Ownable {
      */
     function setTotalValueLocked(uint256 tvl) external onlyOwner {
         _totalValueLocked = tvl;
+    }
+
+    /**
+     * @dev Send the fee to the fee receiver address
+     */
+    function releaseFee(address tokenAddress, uint256 amount)
+        external
+        onlyOwner
+    {
+        IERC20(tokenAddress).transfer(feeReceiver, amount);
+        emit FeeReleased(tokenAddress, amount);
     }
 }

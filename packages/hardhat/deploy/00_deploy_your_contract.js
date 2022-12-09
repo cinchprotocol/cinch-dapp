@@ -1,24 +1,48 @@
-// deploy/00_deploy_your_contract.js
-
 const { ethers } = require("hardhat");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  await deploy("TestToken", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+  var testToken = await deploy("TestToken", {
     from: deployer,
     log: true,
   });
-  // const tokenContract = await ethers.getContract("TestToken", deployer);
+  
 
-  await deploy("RBFVault", {
+  var sampleProtocol = await deploy("SampleProtocol", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: ["0x5FbDB2315678afecb367f032d93F642f64180aa3", "CinchPx", "CPxIdleClearPool"],
     log: true,
   });
+
+  var mockGnosisSafe = await deploy("MockGnosisSafe", {
+    from: deployer,
+    log: true,
+  });
+
+  var cinchSafeGuard = await deploy("CinchSafeGuard", {
+    from: deployer,
+    log: true,
+  });
+
+  var vault = await deploy("RBFVault", {
+    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+    from: deployer,
+    args: [testToken.address, "CinchPx", "CPxIdleClearPool",
+    [sampleProtocol.address, mockGnosisSafe.address, 10000000],
+    cinchSafeGuard.address],
+    log: true,
+  });
+
+  var mockGnosisSafeContract = await ethers.getContractAt("MockGnosisSafe", mockGnosisSafe.address);
+  // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
+  await mockGnosisSafeContract.setGuard(cinchSafeGuard.address);
+
+  var sampleProtocolContract = await ethers.getContractAt("SampleProtocol", sampleProtocol.address);
+  await sampleProtocolContract.transferOwnership(mockGnosisSafe.address);
+
+  await sampleProtocolContract.setFeeReceiver(vault.address);
 
   // await deploy("MarketPlace", {
   //   // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
@@ -27,40 +51,19 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   //   log: true,
   // });
 
-  // await deploy("SampleProtocol", {
-  //   // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+
+
+  // await deploy("MockCinchPx", {
   //   from: deployer,
   //   log: true,
   // });
 
-  await deploy("MockCinchPx", {
-    from: deployer,
-    log: true,
-  });
-
   // const marketPlaceContract = await ethers.getContract("MarketPlace", deployer);
   // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
 
-  // const tokenContract = await ethers.getContract("TestToken", deployer);
-  // await tokenContract.transfer('0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F', 5000 * (10**18));
-  // await tokenContract.transfer('0xEdfdb5f2f02432F1E3271582056ECd0f884126aC', 5000 * (10**18));
-
   // const tokenContract = await ethers.getContractAt("TestToken", "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570");
   // await tokenContract.faucet('0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F', 5000 * 10**18);
-  // await tokenContract.faucet('0xEdfdb5f2f02432F1E3271582056ECd0f884126aC', 5000 * 10**18);
 
-  // const tokenContract = await ethers.getContractAt(
-  //   "TestToken",
-  //   "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-  // );
-  // await tokenContract.transfer(
-  //   "0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F",
-  //   5000
-  // );
-  // await tokenContract.transfer(
-  //   "0xEdfdb5f2f02432F1E3271582056ECd0f884126aC",
-  //   5000
-  // );
 
   /*
     // Getting a previously deployed contract

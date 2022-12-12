@@ -29,13 +29,12 @@ interface IBorrowerContract {
     function balanceOf(address _address) external view returns (uint256 assets);
 }
 
-//TODO: Update the lender and borrower terms/concept used in this contract. In the Idle case, it would be staking and unstaking. In general, it would be buying and selling. In either case, we should clarify the docs.
 /**
  * @title Vault
- * @notice Contract allowing Lender to secure royalty revenue streams
- * @dev Should be deployed per revenue stream.
+ * @notice Contract allows deposits and Withdrawals to Yield source product
+ * @dev Should be deployed per yield source pool/vault.
  */
-contract Vault is ERC4626Upgradeable {
+contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     event VaultActivated();
     event VaultRefundInitiated();
 
@@ -90,11 +89,10 @@ contract Vault is ERC4626Upgradeable {
         vaultDeployDate = block.timestamp;
     }
 
-    //TODO: should this function be bounded to be called by the borrower only?
     /**
      * @dev Activates the vault after the required condition has been met and transfer funds to the borrower.
      */
-    function activate() external {
+    function activate() external onlyOwner {
         _isValidState(Status.Pending);
 
         require(isReadyToActivate(), "VAULT_ACTIVATION_TERMS_NOT_MET");
@@ -105,6 +103,9 @@ contract Vault is ERC4626Upgradeable {
         emit VaultActivated();
     }
 
+    /**
+     * @dev Override openzeppelin ERC4626 deposit to include after Deposit hook
+     */
     function deposit(uint256 assets, address receiver)
         public
         virtual
@@ -118,6 +119,9 @@ contract Vault is ERC4626Upgradeable {
         return shares;
     }
 
+    /**
+     * @dev Override openzeppelin ERC4626 withdraw to include before withdraw hook
+     */
     function withdraw(
         uint256 assets,
         address receiver,
@@ -130,6 +134,9 @@ contract Vault is ERC4626Upgradeable {
         return shares;
     }
 
+    /**
+     * @dev Override openzeppelin ERC4626 deposit to include after Deposit hook and referral tag
+     */
     function depositWithReferral(
         uint256 assets,
         address receiver,
@@ -143,6 +150,9 @@ contract Vault is ERC4626Upgradeable {
         return shares;
     }
 
+    /**
+     * @dev Override openzeppelin ERC4626 withdraw to include before withdraw hook and referral tag
+     */
     function withdrawWithReferral(
         uint256 assets,
         address receiver,

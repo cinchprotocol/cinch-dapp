@@ -20,6 +20,13 @@ interface IBorrowerContract {
     function withdraw(address tokenAddress, uint256 amount) external;
 
     function owner() external view returns (address);
+
+    function convertToAssets(uint256 shares)
+        external
+        view
+        returns (uint256 assets);
+
+    function balanceOf(address _address) external view returns (uint256 assets);
 }
 
 //TODO: Update the lender and borrower terms/concept used in this contract. In the Idle case, it would be staking and unstaking. In general, it would be buying and selling. In either case, we should clarify the docs.
@@ -31,6 +38,8 @@ interface IBorrowerContract {
 contract Vault is ERC4626Upgradeable {
     event VaultActivated();
     event VaultRefundInitiated();
+
+    uint256 internal constant ONE_E_18 = 1e18;
 
     enum Status {
         Pending,
@@ -168,10 +177,61 @@ contract Vault is ERC4626Upgradeable {
         storedTotalAssets += amount;
     }
 
+    /*//////////////////////////////////////////////////////////////
+                            ACCOUNTING LOGIC
+    //////////////////////////////////////////////////////////////*/
+
     /// @notice Total amount of the underlying asset that
     /// is "managed" by Vault.
     function totalAssets() public view override returns (uint256) {
-        return storedTotalAssets;
+        return
+            (getPriceOfYieldSource() * vaultBalanceAtYieldSource()) / ONE_E_18;
+    }
+
+    /**
+     * @dev Returns the price of yield source token
+     */
+    function getPriceOfYieldSource() public view returns (uint256) {
+        return
+            IBorrowerContract(protocolDetail.feeCollector).convertToAssets(1);
+    }
+
+    /**
+     * @dev Returns the price of yield source token
+     */
+    function vaultBalanceAtYieldSource() public view returns (uint256) {
+        return
+            IBorrowerContract(protocolDetail.feeCollector).balanceOf(
+                address(this)
+            );
+    }
+
+    /**
+     * @dev Returns the amount of shares that the Vault would exchange for the amount of assets provided, in an ideal
+     * scenario where all the conditions are met.
+     */
+    function convertToShares(uint256 assets)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        return ((assets * ONE_E_18) / getPriceOfYieldSource());
+    }
+
+    /**
+     * @dev Returns the amount of assets that the Vault would exchange for the amount of shares provided, in an ideal
+     * scenario where all the conditions are met.
+     */
+    function convertToAssets(uint256 shares)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        return (shares * getPriceOfYieldSource()) / ONE_E_18;
     }
 
     /************************/

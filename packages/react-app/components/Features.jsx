@@ -11,8 +11,7 @@ import {
 const features = [
   {
     name: "Acquire customers",
-    description:
-      "Share protocol fees to gain customers. FinTech companies need to monetize their non-custodial wallets.",
+    description: "FinTech platforms are already onboarding ordinary people. Give those people access to your product.",
     icon: UserGroupIcon,
   },
 
@@ -34,9 +33,8 @@ const features = [
   },
   ,
   {
-    name: "Access everyday users",
-    description:
-      "FinTech platforms are already onboarding ordinary people, not just the crowd from CT. Give them access to your products.",
+    name: "Save developer bandwidth",
+    description: "We do all the work. Our guided approach makes integrations a breeze.",
     icon: ClockIcon,
   },
 
@@ -52,7 +50,7 @@ export function Features() {
     <div className="py-12 bg-sky-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-aos="fade-up">
         <div className="text-center">
-          <h2 className="text-lg text-blue-600 font-semibold">Benefits</h2>
+          <h2 className="text-lg text-blue-600 font-semibold">One stop go-to-market solution</h2>
           <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
             Cinch Protocol puts amazing DeFi products in front of everyday people.
           </p>

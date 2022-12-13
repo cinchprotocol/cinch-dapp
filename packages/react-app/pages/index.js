@@ -20,10 +20,12 @@ const LandingPage = () => {
       <main>
         <Hero />
         <Features />
+        {/*
         <HowItWorks />
+        */}
         <UseCases />
         <CallToAction />
-        <About/>
+        <About />
       </main>
       <Footer />
     </>

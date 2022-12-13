@@ -8,11 +8,12 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import 'aos/dist/aos.css';
 import AOS from 'aos';
+import { CommonHead } from "/components/CommonHead";
 
 function MyApp({ Component, pageProps }) {
   const prevTheme = useRef("light");
   const router = useRouter();
-  const defaultWeb3Provider = process.env.DEFAULT_WEB3_PROVIDER || "rinkeby";
+  const defaultWeb3Provider = process.env.DEFAULT_WEB3_PROVIDER || "goerli";
 
   const themes = {
     dark: `/css/dark-theme.css`,
@@ -21,7 +22,7 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     prevTheme.current = window.localStorage.getItem("theme");
-    AOS.init({     
+    AOS.init({
     });
   }, []);
 
@@ -29,12 +30,10 @@ function MyApp({ Component, pageProps }) {
     <Web3Provider network={defaultWeb3Provider}>
       <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme.current}>
         <>
-          <Head>
-            <link rel="icon" type="image/x-icon" href="cinch_logo.png"></link>
-          </Head>
-          {router?.pathname === "/" ? null : <NetworkDisplay />}
-          {router?.pathname === "/" ? null : <DevUI />}
-          {router?.pathname === "/" ? null : <ThemeSwitch />}
+          <CommonHead />
+          {router?.pathname !== "/debug" ? null : <NetworkDisplay />}
+          {router?.pathname !== "/debug" ? null : <DevUI />}
+          {/* {router?.pathname === "/" ? null : <ThemeSwitch />} */}
           <Component {...pageProps} />
         </>
       </ThemeSwitcherProvider>

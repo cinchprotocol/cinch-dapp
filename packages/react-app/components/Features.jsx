@@ -18,7 +18,7 @@ const features = [
 
   {
     name: "Grow TVL",
-    description: "More users means more TVL.",
+    description: "Get access to more users quickly to grow total-value-locked and reach critical scale.",
     icon: CurrencyDollarIcon,
   },
   {

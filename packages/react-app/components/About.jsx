@@ -54,10 +54,6 @@ export function About() {
               What we’re building
             </span>
           </h1>
-          <p className="mt-8 text-gray-500 leading-8">
-            Cinch Protocol is a tool that represents revenue streams as transferrable tokens. Cinch Protocol is also a
-            trading platform for buyers of revenue tokens.
-          </p>
         </div>
         <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
           <h2>DeFi-as-a-service</h2>

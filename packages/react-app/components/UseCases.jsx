@@ -1,4 +1,9 @@
 import { CheckIcon as CheckIconSolid, ChevronDownIcon } from "@heroicons/react/solid";
+import Image from "next/image";
+import { Table, Space, Row, Col } from "antd";
+
+import outletLogo from "/images/logos/outlet_logo_01.png";
+import stablecorpLogo from "/images/logos/stablecorp_logo_01.png";
 
 export function UseCases() {
   return (
@@ -12,6 +17,27 @@ export function UseCases() {
           <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
             Cinch Protocol is putting DeFi in front of thousands of everyday people.
           </p>
+        </div>
+        <div className="mt-10">
+          <ul
+            role="list"
+            className="mx-auto grid max-w-2xl grid-cols-1 gap-6 text-sm sm:grid-cols-2 lg:max-w-none lg:grid-cols-3"
+          >
+            <li key="outlet" className="p-6">
+              <div className="flex justify-center">
+                <a target="_blank" href="https://outlet.finance/" rel="noreferrer">
+                  <Image src={outletLogo} />
+                </a>
+              </div>
+            </li>
+            <li key="stablecorp" className="p-6">
+              <div className="flex justify-center">
+                <a target="_blank" href="https://app.idle.finance/#/tranches/clearpool/USDC" rel="noreferrer">
+                  <Image src={stablecorpLogo} />
+                </a>
+              </div>
+            </li>
+          </ul>
         </div>
         {/*
         <div className="mt-10">

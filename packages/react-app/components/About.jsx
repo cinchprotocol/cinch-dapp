@@ -45,32 +45,46 @@ export function About() {
             </defs>
             <rect width={404} height={384} fill="url(#f210dbf6-a58d-4871-961e-36d5016a0f49)" />
           </svg>
-
         </div>
       </div>
       <div className="relative px-4 sm:px-6 lg:px-8">
         <div className="text-lg max-w-prose mx-auto">
           <h1>
             <span className="mt-2 block text-3xl text-center leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              Who we are
+              What we’re building
             </span>
           </h1>
-          <p className="mt-8 text-gray-500 leading-8">
-            Cinch Protocol is a tool that represents revenue streams as transferrable tokens. Cinch Protocol is also a trading platform for buyers of revenue tokens.
-          </p>
         </div>
         <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
-          <h2>Our vision</h2>
+          <h2>DeFi-as-a-service</h2>
           <p>
-            To be the preferred buying platform for revenue tokens.
+            Our mission is to put DeFi projects in front of millions of users. Cinch Protocol is the primary
+            go-to-market tool for protocols and non-custodial investment platforms.
           </p>
-
-          <h2>Our mission</h2>
           <p>
-            We believe blockchain technology will change the world for the better. Our mission is to provide the infrastructure required to help blockchain projects reach their full potential.
+            Apps and platforms need ways to monetize user deposits. They are incentivized to put protocols that are
+            willing to share revenue in front of their users. Cinch’s dApp provides smart contracts to implement fee
+            sharing on chain.
           </p>
+          <p>
+            Protocol that uses Cinch Protocol will be able to quickly and easily get access to millions of users via the
+            investment platforms that use our fee sharing infrastructure.
+          </p>
+          <p>
+            Cinch will be the one stop go-to-market tool for FinTechs and protocols, like banking-as-a-service but for
+            DeFi.
+          </p>
+          <div className="mt-10 sm:mt-12">
+            <a
+              href="https://tr61ro2oj6g.typeform.com/to/N5Oam3nb"
+              target="blank"
+              className="inline-flex items-center px-8 py-2 border border-transparent text-lg font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Talk to us
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

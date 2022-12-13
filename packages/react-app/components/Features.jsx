@@ -1,46 +1,51 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { ClockIcon, UserGroupIcon, LightningBoltIcon, CurrencyDollarIcon, ShieldCheckIcon, BanIcon } from '@heroicons/react/outline'
+import {
+  ClockIcon,
+  UserGroupIcon,
+  LightningBoltIcon,
+  CurrencyDollarIcon,
+  ShieldCheckIcon,
+  KeyIcon,
+} from "@heroicons/react/outline";
 
 const features = [
   {
-    name: 'Acquire customers',
-    description: 'Incentivize customers with rewards that do not cause sell pressure or dilution.',
+    name: "Acquire customers",
+    description:
+      "Share protocol fees to gain customers. FinTech companies need to monetize their non-custodial wallets.",
     icon: UserGroupIcon,
   },
 
   {
-    name: 'Reward stakeholders',
-    description:
-      'Issue a token that derives its value from your revenue, not from your future equity value.',
+    name: "Grow TVL",
+    description: "Get access to more users quickly to grow total-value-locked and reach critical scale.",
     icon: CurrencyDollarIcon,
   },
   {
-    name: 'End native token sell pressure',
-    description:
-      'Revenue tokens can replace native token emissions across every single use case.',
-    icon: BanIcon,
+    name: "Get to market faster",
+    description: "Access thousands of users with a single integration.",
+    icon: LightningBoltIcon,
   },
 
   {
-    name: 'Instant liquidity',
-    description:
-      'We create a Uniswap v3 liquidity pool for your revenue tokens.',
-    icon: LightningBoltIcon,
+    name: "Sustainability is key",
+    description: "Native tokens and dilution are not required.",
+    icon: KeyIcon,
   },
   ,
   {
-    name: 'Save developer bandwidth',
-    description: 'Our guided approach will make issuing revenue token a breeze.',
+    name: "Access everyday users",
+    description:
+      "FinTech platforms are already onboarding ordinary people, not just the crowd from CT. Give them access to your products.",
     icon: ClockIcon,
   },
 
   {
-    name: 'Safeguard treasury assets',
-    description:
-      'You may very well never have to spend treasury funds or issue native tokens again.',
+    name: "Secure & efficient",
+    description: "We use EIP-4626 to standardize onboarding of protocols and FinTech partners.",
     icon: ShieldCheckIcon,
   },
-]
+];
 
 export function Features() {
   return (
@@ -49,7 +54,7 @@ export function Features() {
         <div className="text-center">
           <h2 className="text-lg text-blue-600 font-semibold">Benefits</h2>
           <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
-            Cinch Protocol is a trustless way to create and trade revenue tokens.
+            Cinch Protocol puts amazing DeFi products in front of everyday people.
           </p>
           {/* <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
           Lorem ipsum dolor sit amet consect adipisicing elit. Possimus magnam voluptatum cupiditate veritatis in
@@ -62,18 +67,13 @@ export function Features() {
             role="list"
             className="mx-auto grid max-w-2xl grid-cols-1 gap-6 text-sm sm:grid-cols-2 lg:max-w-none lg:grid-cols-3"
           >
-            {features.map((feature) => (
-              <li
-                key={feature.name}
-                className="p-6"
-              >
-                <div className='flex justify-center'>
+            {features.map(feature => (
+              <li key={feature.name} className="p-6">
+                <div className="flex justify-center">
                   <feature.icon className="h-14 w-14 text-blue-500" />
                 </div>
 
-                <h3 className="mt-5 text-2xl text-center font-semibold text-gray-900">
-                  {feature.name}
-                </h3>
+                <h3 className="mt-5 text-2xl text-center font-semibold text-gray-900">{feature.name}</h3>
                 <p className="mt-2 text-base text-center text-gray-500">{feature.description}</p>
               </li>
             ))}
@@ -81,5 +81,5 @@ export function Features() {
         </div>
       </div>
     </div>
-  )
+  );
 }

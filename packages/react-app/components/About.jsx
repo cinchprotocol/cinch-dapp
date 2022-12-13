@@ -80,7 +80,7 @@ export function About() {
               target="blank"
               className="inline-flex items-center px-8 py-2 border border-transparent text-lg font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Talk to us
+              Request Demo
             </a>
           </div>
         </div>

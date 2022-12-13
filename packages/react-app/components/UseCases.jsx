@@ -10,18 +10,22 @@ export function UseCases() {
     <div className="bg-slate-50 py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-aos="fade-up">
         <div className="lg:text-center">
+          {/*
           <h2 className="text-lg font-semibold text-blue-600">Cinch Protocol powers the best in web3</h2>
+            */}
           <span className="mt-2 text-3xl font-bold leading-8 tracking-tight text-gray-900 sm:text-4xl">
-            Who we work with ?
+            Our partners
           </span>
+          {/*
           <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
             Cinch Protocol is putting DeFi in front of thousands of everyday people.
           </p>
+            */}
         </div>
         <div className="mt-10">
           <ul
             role="list"
-            className="mx-auto grid max-w-2xl grid-cols-1 gap-6 text-sm sm:grid-cols-2 lg:max-w-none lg:grid-cols-3"
+            className="mx-auto grid max-w-2xl grid-cols-1 gap-6 text-sm sm:grid-cols-2 lg:max-w-none lg:grid-cols-2"
           >
             <li key="outlet" className="p-6">
               <div className="flex justify-center">

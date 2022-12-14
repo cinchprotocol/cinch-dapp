@@ -4,8 +4,11 @@ import Head from "next/head";
 export const CommonHead = () => {
   return (
     <Head>
-      <title>Cinch - Reward community, Grow treasury</title>
-      <meta name="description" content="Reduce native token sell pressure by creating custom revenue-share tokens." />
+      <title>Cinch - Go-to-market solution for DeFi</title>
+      <meta
+        name="description"
+        content="Cinch Protocol is b2b fee sharing infrastructure for web3. Non-custodial wallets turn user deposits into new and recurring revenue."
+      />
       <link rel="icon" type="image/x-icon" href="cinch_logo.png"></link>
     </Head>
   );

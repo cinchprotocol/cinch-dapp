@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IGnosisSafe.sol";
 import "./MarketPlaceStorage.sol";
 
-interface IBorrowerContract {
+interface IYieldSourceContract {
     function feeReceiver() external view returns (address);
 
     function deposit(address tokenAddress, uint256 amount) external;
@@ -21,12 +21,9 @@ interface IBorrowerContract {
 
     function owner() external view returns (address);
 
-    function convertToAssets(uint256 shares)
-        external
-        view
-        returns (uint256 assets);
+    function priceAA() external view returns (uint256);
 
-    function balanceOf(address _address) external view returns (uint256 assets);
+    function AATranche() external view returns (address);
 }
 
 /**
@@ -36,9 +33,6 @@ interface IBorrowerContract {
  */
 contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     event VaultActivated();
-    event VaultRefundInitiated();
-
-    uint256 internal constant ONE_E_18 = 1e18;
 
     enum Status {
         Pending,
@@ -47,18 +41,14 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         Canceled
     }
 
-    struct ProtocolDetail {
-        address feeCollector;
-        address multiSig;
-        uint256 expAmount;
-    }
-    ProtocolDetail public protocolDetail;
+    uint256 internal constant ONE_E_18 = 1e18;
+    // ERC4626 vault address of yield source
+    address yieldSourceVault;
+    // Address of Gnosis multi-sig which is the owner of yield soure vault
+    address multiSig;
     address public multisigGuard;
-
-    mapping(address => uint256) internal _totalValueLocked; // token => totalReleased
-
-    // If vault is not active after this timeout period then lender can withdraw the fund
-    uint256 public constant TIMEOUT_PERIOD = 1 weeks;
+    // Partner referral -> Total value locked
+    mapping(address => uint256) internal _totalValueLocked;
 
     Status public vaultStatus;
     uint256 public vaultActivationDate;
@@ -70,19 +60,21 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     /// @param asset vault asset
     /// @param name ERC20 name of the vault shares token
     /// @param symbol ERC20 symbol of the vault shares token
+    /// @param _yieldSourceVault vault address of yield source
+    /// @param _multiSig Address of Gnosis multi-sig which is the owner of yield soure vault
     function initialize(
         address asset,
         string memory name,
         string memory symbol,
-        ProtocolDetail memory _protocolDetail,
+        address _yieldSourceVault,
+        address _multiSig,
         address _multisigGuard
     ) public initializer {
         __ERC4626_init(IERC20Upgradeable(asset));
         __ERC20_init(name, symbol);
 
-        protocolDetail.feeCollector = _protocolDetail.feeCollector;
-        protocolDetail.multiSig = _protocolDetail.multiSig;
-        protocolDetail.expAmount = _protocolDetail.expAmount;
+        yieldSourceVault = _yieldSourceVault;
+        multiSig = _multiSig;
         multisigGuard = _multisigGuard;
 
         vaultStatus = Status.Pending;
@@ -104,7 +96,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Override openzeppelin ERC4626 deposit to include after Deposit hook
+     * @dev openzeppelin ERC4626 deposit to include after Deposit hook
      */
     function deposit(uint256 assets, address receiver)
         public
@@ -115,12 +107,12 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         _isValidState(Status.Active);
 
         uint256 shares = super.deposit(assets, receiver);
-        afterDeposit(assets, 0);
+        afterDeposit(assets);
         return shares;
     }
 
     /**
-     * @dev Override openzeppelin ERC4626 withdraw to include before withdraw hook
+     * @dev openzeppelin ERC4626 withdraw to include before withdraw hook
      */
     function withdraw(
         uint256 assets,
@@ -129,13 +121,13 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     ) public virtual override returns (uint256) {
         _isValidState(Status.Active);
 
-        beforeWithdraw(assets, 0);
+        beforeWithdraw(assets);
         uint256 shares = super.withdraw(assets, receiver, owner);
         return shares;
     }
 
     /**
-     * @dev Override openzeppelin ERC4626 deposit to include after Deposit hook and referral tag
+     * @dev openzeppelin ERC4626 deposit to include after Deposit hook and referral tag
      */
     function depositWithReferral(
         uint256 assets,
@@ -143,15 +135,16 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         address referral
     ) public returns (uint256) {
         _isValidState(Status.Active);
+        require(referral != address(0), "ZERO_ADDRESS");
 
         uint256 shares = super.deposit(assets, receiver);
-        afterDeposit(assets, 0);
+        afterDeposit(assets);
         _totalValueLocked[referral] += assets;
         return shares;
     }
 
     /**
-     * @dev Override openzeppelin ERC4626 withdraw to include before withdraw hook and referral tag
+     * @dev openzeppelin ERC4626 withdraw to include before withdraw hook and referral tag
      */
     function withdrawWithReferral(
         uint256 assets,
@@ -160,8 +153,9 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         address referral
     ) public returns (uint256) {
         _isValidState(Status.Active);
+        require(referral != address(0), "ZERO_ADDRESS");
 
-        beforeWithdraw(assets, 0);
+        beforeWithdraw(assets);
         uint256 shares = super.withdraw(assets, receiver, owner);
         _totalValueLocked[referral] -= assets;
         return shares;
@@ -171,18 +165,15 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
                          INTERNAL HOOKS LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function beforeWithdraw(uint256 amount, uint256) internal {
+    function beforeWithdraw(uint256 amount) internal {
         storedTotalAssets -= amount;
 
-        IBorrowerContract(protocolDetail.feeCollector).withdraw(
-            asset(),
-            amount
-        );
+        IYieldSourceContract(yieldSourceVault).withdraw(asset(), amount);
     }
 
-    function afterDeposit(uint256 amount, uint256) internal {
-        IERC20(asset()).approve(protocolDetail.feeCollector, amount);
-        IBorrowerContract(protocolDetail.feeCollector).deposit(asset(), amount);
+    function afterDeposit(uint256 amount) internal {
+        IERC20(asset()).approve(yieldSourceVault, amount);
+        IYieldSourceContract(yieldSourceVault).deposit(asset(), amount);
 
         storedTotalAssets += amount;
     }
@@ -199,21 +190,19 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev Returns the price of yield source token
+     * @dev Returns the price of yield source token in underlyings
      */
     function getPriceOfYieldSource() public view returns (uint256) {
-        return
-            IBorrowerContract(protocolDetail.feeCollector).convertToAssets(1);
+        return IYieldSourceContract(yieldSourceVault).priceAA();
     }
 
     /**
-     * @dev Returns the price of yield source token
+     * @dev Returns the vault balance at yield source
      */
     function vaultBalanceAtYieldSource() public view returns (uint256) {
         return
-            IBorrowerContract(protocolDetail.feeCollector).balanceOf(
-                address(this)
-            );
+            IERC20(IYieldSourceContract(yieldSourceVault).AATranche())
+                .balanceOf(address(this));
     }
 
     /**
@@ -269,7 +258,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
      */
     function isFeeCollectorUpdated() public view returns (bool) {
         return
-            IBorrowerContract(protocolDetail.feeCollector).feeReceiver() ==
+            IYieldSourceContract(yieldSourceVault).feeReceiver() ==
             address(this);
     }
 
@@ -277,16 +266,14 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
      * @dev Check if the provided multi-sig address is the revenue contract owner
      */
     function isMultisigOwnsTheRevenueContract() public view returns (bool) {
-        return
-            IBorrowerContract(protocolDetail.feeCollector).owner() ==
-            protocolDetail.multiSig;
+        return IYieldSourceContract(yieldSourceVault).owner() == multiSig;
     }
 
     /**
      * @dev Check if cinch multi-sig guard is added
      */
     function isMultisigGuardAdded() public view returns (bool) {
-        return GnosisSafe(protocolDetail.multiSig).getGuard() == multisigGuard;
+        return GnosisSafe(multiSig).getGuard() == multisigGuard;
     }
 
     // /**

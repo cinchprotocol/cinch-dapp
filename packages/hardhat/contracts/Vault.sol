@@ -8,6 +8,8 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+//import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
+
 
 import "./interfaces/IGnosisSafe.sol";
 import "./MarketPlaceStorage.sol";
@@ -41,7 +43,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         Canceled
     }
 
-    uint256 internal constant ONE_E_18 = 1e18;
+    uint256 internal constant ONE_E_6 = 1e6;
     // ERC4626 vault address of yield source
     address public yieldSourceVault;
     // Address of Gnosis multi-sig which is the owner of yield soure vault
@@ -187,7 +189,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     /// is "managed" by Vault.
     function totalAssets() public view override returns (uint256) {
         return
-            (getPriceOfYieldSource() * vaultBalanceAtYieldSource()) / ONE_E_18;
+            (getPriceOfYieldSource() * vaultBalanceAtYieldSource()) / ONE_E_6;
     }
 
     /**
@@ -218,28 +220,29 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
      * @dev Returns the amount of shares that the Vault would exchange for the amount of assets provided, in an ideal
      * scenario where all the conditions are met.
      */
-    function convertToShares(uint256 assets)
-        public
+    function _convertToShares(uint256 assets, MathUpgradeable.Rounding rounding)
+        internal
         view
         virtual
         override
         returns (uint256)
     {
-        return ((assets * ONE_E_18) / getPriceOfYieldSource());
+        return ((assets * ONE_E_6) / getPriceOfYieldSource());
+        //return assets.mulDiv(ONE_E_6, getPriceOfYieldSource(), rounding);
     }
 
     /**
      * @dev Returns the amount of assets that the Vault would exchange for the amount of shares provided, in an ideal
      * scenario where all the conditions are met.
      */
-    function convertToAssets(uint256 shares)
-        public
+    function _convertToAssets(uint256 shares, MathUpgradeable.Rounding rounding)
+        internal
         view
         virtual
         override
         returns (uint256)
     {
-        return (shares * getPriceOfYieldSource()) / ONE_E_18;
+        return (shares * getPriceOfYieldSource()) / ONE_E_6;
     }
 
     /************************/

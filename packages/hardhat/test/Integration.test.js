@@ -158,6 +158,7 @@ describe("INTEGRATION TEST", function () {
         it("should be able to withdraw", async function () {
             const tx = await vault.connect(accounts[1]).withdraw(750 * (10 ** mockERC20Decimals), accounts[1].address, accounts[1].address);
             expect(await vault.balanceOf(accounts[1].address)).to.equal(0);
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
         });
 
     });

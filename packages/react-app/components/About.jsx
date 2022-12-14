@@ -67,7 +67,7 @@ export function About() {
             sharing on chain.
           </p>
           <p>
-            Protocol that uses Cinch Protocol will be able to quickly and easily get access to millions of users via the
+            Protocols that use Cinch will be able to quickly and easily get access to millions of users via the
             investment platforms that use our fee sharing infrastructure.
           </p>
           <p>

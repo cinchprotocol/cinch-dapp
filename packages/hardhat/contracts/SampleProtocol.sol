@@ -89,10 +89,7 @@ contract SampleProtocol is Ownable {
     /**
      * @dev Send the fee to the fee receiver address
      */
-    function releaseFee(address tokenAddress, uint256 amount)
-        external
-        onlyOwner
-    {
+    function releaseFee(address tokenAddress, uint256 amount) external {
         IERC20(tokenAddress).transfer(feeReceiver, amount);
         emit FeeReleased(tokenAddress, amount);
     }

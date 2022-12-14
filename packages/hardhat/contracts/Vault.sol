@@ -43,9 +43,9 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
 
     uint256 internal constant ONE_E_18 = 1e18;
     // ERC4626 vault address of yield source
-    address yieldSourceVault;
+    address public yieldSourceVault;
     // Address of Gnosis multi-sig which is the owner of yield soure vault
-    address multiSig;
+    address public multiSig;
     address public multisigGuard;
     // Partner referral -> Total value locked
     mapping(address => uint256) internal _totalValueLocked;
@@ -84,7 +84,8 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     /**
      * @dev Activates the vault after the required condition has been met and transfer funds to the borrower.
      */
-    function activate() external onlyOwner {
+    function activate() external 
+    {
         _isValidState(Status.Pending);
 
         require(isReadyToActivate(), "VAULT_ACTIVATION_TERMS_NOT_MET");
@@ -166,7 +167,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     //////////////////////////////////////////////////////////////*/
 
     function beforeWithdraw(uint256 amount) internal {
-        storedTotalAssets -= amount;
+       // storedTotalAssets -= amount;
 
         IYieldSourceContract(yieldSourceVault).withdraw(asset(), amount);
     }
@@ -175,7 +176,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         IERC20(asset()).approve(yieldSourceVault, amount);
         IYieldSourceContract(yieldSourceVault).deposit(asset(), amount);
 
-        storedTotalAssets += amount;
+        //storedTotalAssets += amount;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -203,6 +204,14 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         return
             IERC20(IYieldSourceContract(yieldSourceVault).AATranche())
                 .balanceOf(address(this));
+    }
+
+    function maxDeposit(address) public view virtual override returns (uint256) {
+        return type(uint256).max;
+    }
+
+     function maxWithdraw(address _owner) public view virtual override returns (uint256) {
+        return convertToAssets(balanceOf(_owner));
     }
 
     /**

@@ -13,6 +13,8 @@ contract SampleProtocol is Ownable {
     address public feeReceiver;
     uint256 public fee;
     uint256 internal _totalValueLocked;
+    uint256 public priceAA;
+    address public AATranche;
 
     /**
      * @dev Constructor of the contract.
@@ -20,6 +22,7 @@ contract SampleProtocol is Ownable {
     constructor() {
         feeReceiver = msg.sender;
         fee = 1;
+        priceAA = 1000000;
     }
 
     /**
@@ -92,5 +95,13 @@ contract SampleProtocol is Ownable {
     {
         IERC20(tokenAddress).transfer(feeReceiver, amount);
         emit FeeReleased(tokenAddress, amount);
+    }
+
+    function setPriceAA(uint256 price) external {
+        priceAA = price;
+    }
+
+    function setAATranche(address tranchAddress) external {
+        AATranche = tranchAddress;
     }
 }

@@ -23,6 +23,7 @@ before(async function () {
 
 describe("Vault tests", function () {
   describe("Deploy", function () {
+    
     it("Should deploy MockFeeCollector", async function () {
       const MockFeeCollector = await ethers.getContractFactory(
         "SampleProtocol"
@@ -32,6 +33,7 @@ describe("Vault tests", function () {
       expect(mockFeeCollector.address).to.not.be.undefined;
       console.log("mockFeeCollector.address: ", mockFeeCollector.address);
     });
+
     it("Should deploy MockGnosisSafe", async function () {
       const MockGnosisSafe = await ethers.getContractFactory("MockGnosisSafe");
 
@@ -39,12 +41,14 @@ describe("Vault tests", function () {
       expect(mockGnosisSafe.address).to.not.be.undefined;
       console.log("mockGnosisSafe.address: ", mockGnosisSafe.address);
     });
+
     it("Should deploy MockERC20", async function () {
       const MockERC20 = await ethers.getContractFactory("TestToken");
       mockERC20 = await MockERC20.deploy();
       mockERC20Decimals = await mockERC20.decimals();
       expect(mockERC20.address).to.not.be.undefined;
     });
+
     it("Should deploy CinchSafeGuard", async function () {
       const CinchSafeGuard = await ethers.getContractFactory("CinchSafeGuard");
 
@@ -52,20 +56,16 @@ describe("Vault tests", function () {
       expect(cinchSafeGuard.address).to.not.be.undefined;
       console.log("cinchSafeGuard.address: ", cinchSafeGuard.address);
     });
+    
     it("Should deploy and Initialize Vault", async function () {
       const Vault = await ethers.getContractFactory("Vault", accounts[0]);
-
-      const protocolDetail = {
-        feeCollector: mockFeeCollector.address,
-        multiSig: mockGnosisSafe.address,
-        expAmount: 1000000,
-      };     
 
       vault = await upgrades.deployProxy(Vault, [
         mockERC20.address,
         "CinchPx",
         "CPX",
-        protocolDetail,
+        mockFeeCollector.address,
+        mockGnosisSafe.address,
         cinchSafeGuard.address
       ]);
 
@@ -74,6 +74,7 @@ describe("Vault tests", function () {
     });
 
   });
+
   describe("activate", function () {
     it("should revert if FEE_COLLECTOR_RECEIVER_NOT_UPDATED", async function () {
       const tx = vault.activate();
@@ -112,7 +113,7 @@ describe("Vault tests", function () {
     it("should be activated", async function () {
       const tx01 = mockERC20
         .connect(accounts[0])
-        .faucet(vault.address, 1000 * 10 ** 12);
+        .faucet(vault.address, 1000 * (10 ** mockERC20Decimals));
       await expect(tx01).not.to.be.revertedWith();
       const tx03 = await vault.activate();
       expect(tx03).to.emit(vault, "VaultActivated");
@@ -127,21 +128,21 @@ describe("Vault tests", function () {
   describe("Transactions", function () {
 
     it("can't deposit before approval", async function () {
-      const tx = vault.connect(accounts[1]).deposit(500 * mockERC20Decimals, accounts[1].address);
+      const tx = vault.connect(accounts[1]).deposit(500 * (10 ** mockERC20Decimals), accounts[1].address);
       await expect(tx).to.be.revertedWith("ERC20: insufficient allowance");
     });
 
     it("should fail if sender doesn't have enough funds", async function () {
-      await mockERC20.faucet(accounts[1].address, 1000 * mockERC20Decimals);
-      await mockERC20.connect(accounts[1]).approve(vault.address, 1000 * mockERC20Decimals);
-      const tx = vault.connect(accounts[1]).deposit(1001 * mockERC20Decimals, accounts[1].address);
+      await mockERC20.faucet(accounts[1].address, 1000 * (10 ** mockERC20Decimals));
+      await mockERC20.connect(accounts[1]).approve(vault.address, 1000 * (10 ** mockERC20Decimals));
+      const tx = vault.connect(accounts[1]).deposit(1001 * (10 ** mockERC20Decimals), accounts[1].address);
       await expect(tx).to.be.revertedWith("ERC20: insufficient allowance");
     });
 
     it("should be able to deposit", async function () {
-      const tx = vault.connect(accounts[1]).deposit(1000 * 1000000, accounts[1].address);
+      const tx = vault.connect(accounts[1]).deposit(1000 * (10 ** mockERC20Decimals), accounts[1].address);
       //await expect(tx).to.equal(1000*(10**6));
-      expect(await vault.balanceOf(accounts[1].address)).to.equal(1000 * (10 ** 6));
+      expect(await vault.balanceOf(accounts[1].address)).to.equal(1000 * (10 ** mockERC20Decimals));
     });
 
     // it("should be able to withdraw", async function () {

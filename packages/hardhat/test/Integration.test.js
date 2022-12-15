@@ -150,6 +150,18 @@ describe("INTEGRATION TEST", function () {
             console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
         });
 
+        it("should be able to deposit with referral", async function () {
+            console.log("Referral Balance before: " + await vault.getTotalValueLocked(accounts[9].address));
+            await mockERC20.faucet(accounts[2].address, 1100 * (10 ** mockERC20Decimals));
+            await mockERC20.connect(accounts[2]).approve(vault.address, 1100 * (10 ** mockERC20Decimals));
+            const tx = await vault.connect(accounts[2]).depositWithReferral(1100 * (10 ** mockERC20Decimals), accounts[2].address, accounts[9].address);
+            expect(await vault.balanceOf(accounts[2].address)).to.equal(1100 * (10 ** mockERC20Decimals));
+            console.log("User Balance: " + await vault.balanceOf(accounts[2].address));
+            console.log("Max withdraw: " + await vault.maxWithdraw(accounts[2].address));
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+            console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[9].address));
+        });
+
         it("protocol release the fee", async function () {
             await mockERC20.faucet(sampleProtocol.address, 100 * (10 ** mockERC20Decimals));
             const tx = await sampleProtocol.releaseFee(mockERC20.address, 100 * 10 ** mockERC20Decimals);
@@ -167,6 +179,15 @@ describe("INTEGRATION TEST", function () {
             expect(await vault.balanceOf(accounts[1].address)).to.equal(0);
             console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
         });
+
+        it("should be able to withdraw with referral", async function () {
+            console.log("Referral Balance before: " + await vault.getTotalValueLocked(accounts[9].address));
+            const tx = await vault.connect(accounts[2]).withdrawWithReferral(1100 * (10 ** mockERC20Decimals), accounts[2].address, accounts[2].address, accounts[9].address);
+            expect(await vault.balanceOf(accounts[2].address)).to.equal(0);
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+            console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[9].address));
+        });
+
 
     });
 

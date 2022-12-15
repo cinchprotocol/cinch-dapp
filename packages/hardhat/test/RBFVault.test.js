@@ -9,7 +9,7 @@ const sellerAccountIndex = 1;
 const buyerAccountIndex = 2;
 
 let accounts;
-let mockFeeCollector;
+let mockProtocol;
 let mockGnosisSafe;
 let cinchSafeGuard;
 let rbfVault;
@@ -24,13 +24,13 @@ before(async function () {
 describe("RBFVault tests", function () {
   describe("Deploy", function () {
     it("Should deploy MockFeeCollector", async function () {
-      const MockFeeCollector = await ethers.getContractFactory(
-        "SampleProtocol"
+      const MockProtocol = await ethers.getContractFactory(
+        "MockProtocol"
       );
 
-      mockFeeCollector = await MockFeeCollector.deploy();
-      expect(mockFeeCollector.address).to.not.be.undefined;
-      console.log("mockFeeCollector.address: ", mockFeeCollector.address);
+      mockProtocol = await MockProtocol.deploy();
+      expect(mockProtocol.address).to.not.be.undefined;
+      console.log("mockFeeCollector.address: ", mockProtocol.address);
     });
     it("Should deploy MockGnosisSafe", async function () {
       const MockGnosisSafe = await ethers.getContractFactory("MockGnosisSafe");
@@ -40,7 +40,7 @@ describe("RBFVault tests", function () {
       console.log("mockGnosisSafe.address: ", mockGnosisSafe.address);
     });
     it("Should deploy MockERC20", async function () {
-      const MockERC20 = await ethers.getContractFactory("TestToken");
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
       mockERC20 = await MockERC20.deploy();
       mockERC20Decimals = await mockERC20.decimals();
       expect(mockERC20.address).to.not.be.undefined;
@@ -56,7 +56,7 @@ describe("RBFVault tests", function () {
       const RBFVault = await ethers.getContractFactory("RBFVault");
       const price = 100 * 10 ** 12;
       const protocolDetail = {
-        feeCollector: mockFeeCollector.address,
+        feeCollector: mockProtocol.address,
         multiSig: mockGnosisSafe.address,
         expAmount: 1000000,
       };
@@ -80,8 +80,8 @@ describe("RBFVault tests", function () {
     });
 
     it("feeReceiver should be updated", async function () {
-      const tx = await mockFeeCollector.setFeeReceiver(rbfVault.address);
-      expect(tx).to.emit(mockFeeCollector, "FeeReceiverUpdated");
+      const tx = await mockProtocol.setFeeReceiver(rbfVault.address);
+      expect(tx).to.emit(mockProtocol, "FeeReceiverUpdated");
     });
 
 
@@ -102,10 +102,10 @@ describe("RBFVault tests", function () {
       );
     });
     it("transferOwnership should work", async function () {
-      const tx = await mockFeeCollector
+      const tx = await mockProtocol
         .connect(accounts[0])
         .transferOwnership(mockGnosisSafe.address);
-      expect(tx).to.emit(mockFeeCollector, "OwnershipTransferred");
+      expect(tx).to.emit(mockProtocol, "OwnershipTransferred");
     });
 
     it("should be activated", async function () {

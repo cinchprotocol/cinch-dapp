@@ -4,13 +4,13 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  var testToken = await deploy("TestToken", {
+  var mockERC20 = await deploy("MockERC20", {
     from: deployer,
     log: true,
   });
-  
 
-  var sampleProtocol = await deploy("SampleProtocol", {
+
+  var mockProtocol = await deploy("MockProtocol", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     log: true,
@@ -29,8 +29,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   var vault = await deploy("RBFVault", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: [testToken.address, "CinchPx", "CPxIdleClearPool",
-    [sampleProtocol.address, mockGnosisSafe.address, 10000000],
+    args: [mockERC20.address, "CinchPx", "CPxIdleClearPool",
+    [mockProtocol.address, mockGnosisSafe.address, 10000000],
     cinchSafeGuard.address],
     log: true,
   });
@@ -39,7 +39,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
   await mockGnosisSafeContract.setGuard(cinchSafeGuard.address);
 
-  var sampleProtocolContract = await ethers.getContractAt("SampleProtocol", sampleProtocol.address);
+  var sampleProtocolContract = await ethers.getContractAt("SampleProtocol", mockProtocol.address);
   await sampleProtocolContract.transferOwnership(mockGnosisSafe.address);
 
   await sampleProtocolContract.setFeeReceiver(vault.address);

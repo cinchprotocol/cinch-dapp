@@ -9,7 +9,7 @@ const sellerAccountIndex = 1;
 const buyerAccountIndex = 2;
 
 let accounts;
-let mockFeeCollector;
+let mockProtocol;
 let mockGnosisSafe;
 let cinchSafeGuard;
 let vault;
@@ -26,12 +26,12 @@ describe("Vault tests", function () {
 
     it("Should deploy MockFeeCollector", async function () {
       const MockFeeCollector = await ethers.getContractFactory(
-        "SampleProtocol"
+        "MockProtocol"
       );
 
-      mockFeeCollector = await MockFeeCollector.deploy();
-      expect(mockFeeCollector.address).to.not.be.undefined;
-      console.log("mockFeeCollector.address: ", mockFeeCollector.address);
+      mockProtocol = await MockFeeCollector.deploy();
+      expect(mockProtocol.address).to.not.be.undefined;
+      console.log("mockFeeCollector.address: ", mockProtocol.address);
     });
 
     it("Should deploy MockGnosisSafe", async function () {
@@ -43,7 +43,7 @@ describe("Vault tests", function () {
     });
 
     it("Should deploy MockERC20", async function () {
-      const MockERC20 = await ethers.getContractFactory("TestToken");
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
       mockERC20 = await MockERC20.deploy();
       mockERC20Decimals = await mockERC20.decimals();
       expect(mockERC20.address).to.not.be.undefined;
@@ -64,7 +64,7 @@ describe("Vault tests", function () {
         mockERC20.address,
         "CinchPx",
         "CPX",
-        mockFeeCollector.address,
+        mockProtocol.address,
         mockGnosisSafe.address,
         cinchSafeGuard.address
       ]);
@@ -82,8 +82,8 @@ describe("Vault tests", function () {
     });
 
     it("feeReceiver should be updated", async function () {
-      const tx = await mockFeeCollector.setFeeReceiver(vault.address);
-      expect(tx).to.emit(mockFeeCollector, "FeeReceiverUpdated");
+      const tx = await mockProtocol.setFeeReceiver(vault.address);
+      expect(tx).to.emit(mockProtocol, "FeeReceiverUpdated");
     });
 
 
@@ -104,10 +104,10 @@ describe("Vault tests", function () {
       );
     });
     it("transferOwnership should work", async function () {
-      const tx = await mockFeeCollector
+      const tx = await mockProtocol
         .connect(accounts[0])
         .transferOwnership(mockGnosisSafe.address);
-      expect(tx).to.emit(mockFeeCollector, "OwnershipTransferred");
+      expect(tx).to.emit(mockProtocol, "OwnershipTransferred");
     });
 
     it("should be activated", async function () {

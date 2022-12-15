@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract SampleProtocol is Ownable {
+contract MockProtocol is Ownable {
     event FeeReceiverUpdated(address indexed feeReceiver);
     event Deposited(address indexed token, uint256 amount);
     event Withdrawn(address indexed token, uint256 amount);

@@ -29,7 +29,7 @@ function DebugPage({ web3 }) {
           />
 
           <Contract
-            name="TestToken"
+            name="MockERC20"
             signer={web3.userSigner}
             provider={web3.localProvider}
             address={web3.address}
@@ -39,7 +39,7 @@ function DebugPage({ web3 }) {
 
 
           <Contract
-            name="SampleProtocol"
+            name="MockProtocol"
             signer={web3.userSigner}
             provider={web3.localProvider}
             address={web3.address}

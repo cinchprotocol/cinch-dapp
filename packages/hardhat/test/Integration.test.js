@@ -12,7 +12,7 @@ const sellerAccountIndex = 1;
 const buyerAccountIndex = 2;
 
 let accounts;
-let sampleProtocol;
+let mockProtocol;
 let mockGnosisSafe;
 let cinchSafeGuard;
 let vault;
@@ -31,13 +31,13 @@ describe("INTEGRATION TEST", function () {
     describe("SETUP", function () {
 
         it("Should deploy Mock Protocol", async function () {
-            const SampleProtocol = await ethers.getContractFactory(
-                "SampleProtocol"
+            const MockProtocol = await ethers.getContractFactory(
+                "MockProtocol"
             );
 
-            sampleProtocol = await SampleProtocol.deploy();
-            expect(sampleProtocol.address).to.not.be.undefined;
-            console.log("sampleProtocol.address: ", sampleProtocol.address);
+            mockProtocol = await MockProtocol.deploy();
+            expect(mockProtocol.address).to.not.be.undefined;
+            console.log("mockProtocol.address: ", mockProtocol.address);
         });
 
         it("Should deploy MockGnosisSafe", async function () {
@@ -49,7 +49,7 @@ describe("INTEGRATION TEST", function () {
         });
 
         it("Should deploy MockERC20", async function () {
-            const MockERC20 = await ethers.getContractFactory("TestToken");
+            const MockERC20 = await ethers.getContractFactory("MockERC20");
             mockERC20 = await MockERC20.deploy();
             mockERC20Decimals = await mockERC20.decimals();
             expect(mockERC20.address).to.not.be.undefined;
@@ -70,7 +70,7 @@ describe("INTEGRATION TEST", function () {
                 mockERC20.address,
                 "CinchPx",
                 "CPX",
-                sampleProtocol.address,
+                mockProtocol.address,
                 mockGnosisSafe.address,
                 cinchSafeGuard.address
             ]);
@@ -86,7 +86,7 @@ describe("INTEGRATION TEST", function () {
             );
             feeSplitter = await upgrades.deployProxy(FeeSplitter, [
                 vault.address,
-                sampleProtocol.address,
+                mockProtocol.address,
                 [mockERC20.address],
                 accounts[accountIndexProtocolPayee].address,
                 [accounts[accountIndexCinchPxPayee].address],
@@ -104,8 +104,8 @@ describe("INTEGRATION TEST", function () {
     });
     describe("Activate", function () {
         it("feeReceiver should be updated", async function () {
-            const tx = await sampleProtocol.setFeeReceiver(vault.address);
-            expect(tx).to.emit(sampleProtocol, "FeeReceiverUpdated");
+            const tx = await mockProtocol.setFeeReceiver(vault.address);
+            expect(tx).to.emit(mockProtocol, "FeeReceiverUpdated");
         });
 
 
@@ -115,10 +115,10 @@ describe("INTEGRATION TEST", function () {
         });
 
         it("transferOwnership should work", async function () {
-            const tx = await sampleProtocol
+            const tx = await mockProtocol
                 .connect(accounts[0])
                 .transferOwnership(mockGnosisSafe.address);
-            expect(tx).to.emit(sampleProtocol, "OwnershipTransferred");
+            expect(tx).to.emit(mockProtocol, "OwnershipTransferred");
         });
 
         it("should be activated", async function () {
@@ -150,7 +150,7 @@ describe("INTEGRATION TEST", function () {
 
             console.log("User Balance: " + await vault.balanceOf(accounts[1].address));
             console.log("Max withdraw: " + await vault.maxWithdraw(accounts[1].address));
-            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(mockProtocol.address));
         });
 
         it("should be able to deposit with referral", async function () {
@@ -165,21 +165,21 @@ describe("INTEGRATION TEST", function () {
 
             console.log("User Balance: " + await vault.balanceOf(accounts[2].address));
             console.log("Max withdraw: " + await vault.maxWithdraw(accounts[2].address));
-            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(mockProtocol.address));
             console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[9].address));
         });
 
         it("protocol release the fee", async function () {
-            await mockERC20.faucet(sampleProtocol.address, 100 * (10 ** mockERC20Decimals));
-            const tx = await sampleProtocol.releaseFee(mockERC20.address, 100 * 10 ** mockERC20Decimals);
-            expect(tx).to.emit(sampleProtocol, "FeeReleased");
+            await mockERC20.faucet(mockProtocol.address, 100 * (10 ** mockERC20Decimals));
+            const tx = await mockProtocol.releaseFee(mockERC20.address, 100 * 10 ** mockERC20Decimals);
+            expect(tx).to.emit(mockProtocol, "FeeReleased");
         });
 
         it("should be able to withdraw partial", async function () {
             const tx = await vault.connect(accounts[1]).withdraw(500 * (10 ** mockERC20Decimals), accounts[1].address, accounts[1].address);
             expect(await vault.balanceOf(accounts[1].address)).to.equal(250 * (10 ** mockERC20Decimals));
             expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(1100 * (10 ** mockERC20Decimals));
-            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(mockProtocol.address));
         });
 
         it("should be able to deposit with 2nd referral", async function () {
@@ -195,7 +195,7 @@ describe("INTEGRATION TEST", function () {
 
             console.log("User Balance: " + await vault.balanceOf(accounts[3].address));
             console.log("Max withdraw: " + await vault.maxWithdraw(accounts[3].address));
-            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(mockProtocol.address));
             console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[8].address));
         });
 
@@ -206,7 +206,7 @@ describe("INTEGRATION TEST", function () {
             expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(1100 * (10 ** mockERC20Decimals));
             expect(await vault.getTotalValueLocked(accounts[8].address)).to.equal(1000 * (10 ** mockERC20Decimals));
 
-            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(mockProtocol.address));
         });
 
         it("should be able to withdraw partial with referral", async function () {
@@ -217,7 +217,7 @@ describe("INTEGRATION TEST", function () {
             expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(500 * (10 ** mockERC20Decimals));
             expect(await vault.getTotalValueLocked(accounts[8].address)).to.equal(1000 * (10 ** mockERC20Decimals));
 
-            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(mockProtocol.address));
             console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[9].address));
         });
 
@@ -228,7 +228,7 @@ describe("INTEGRATION TEST", function () {
             expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(0);
             expect(await vault.getTotalValueLocked(accounts[8].address)).to.equal(1000 * (10 ** mockERC20Decimals));
 
-            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(mockProtocol.address));
             console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[9].address));
         });
 
@@ -239,7 +239,7 @@ describe("INTEGRATION TEST", function () {
             expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(0);
             expect(await vault.getTotalValueLocked(accounts[8].address)).to.equal(0);
 
-            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(mockProtocol.address));
             console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[9].address));
         });
 

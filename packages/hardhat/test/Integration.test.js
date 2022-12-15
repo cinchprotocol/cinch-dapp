@@ -150,13 +150,20 @@ describe("INTEGRATION TEST", function () {
             console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
         });
 
-        // it("protocol release the fee", async function () {
-        //     const tx = await sampleProtocol.releaseFee(mockERC20.address, 100 * 10 ** mockERC20Decimals);
-        //     expect(tx).to.emit(sampleProtocol, "FeeReleased");
-        // });
+        it("protocol release the fee", async function () {
+            await mockERC20.faucet(sampleProtocol.address, 100 * (10 ** mockERC20Decimals));
+            const tx = await sampleProtocol.releaseFee(mockERC20.address, 100 * 10 ** mockERC20Decimals);
+            expect(tx).to.emit(sampleProtocol, "FeeReleased");
+        });
 
-        it("should be able to withdraw", async function () {
-            const tx = await vault.connect(accounts[1]).withdraw(750 * (10 ** mockERC20Decimals), accounts[1].address, accounts[1].address);
+        it("should be able to withdraw partial", async function () {
+            const tx = await vault.connect(accounts[1]).withdraw(500 * (10 ** mockERC20Decimals), accounts[1].address, accounts[1].address);
+            expect(await vault.balanceOf(accounts[1].address)).to.equal(250 * (10** mockERC20Decimals));
+            console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+        });
+
+        it("should be able to withdraw remaining", async function () {
+            const tx = await vault.connect(accounts[1]).withdraw(250 * (10 ** mockERC20Decimals), accounts[1].address, accounts[1].address);
             expect(await vault.balanceOf(accounts[1].address)).to.equal(0);
             console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
         });

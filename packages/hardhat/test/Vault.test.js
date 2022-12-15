@@ -23,7 +23,7 @@ before(async function () {
 
 describe("Vault tests", function () {
   describe("Deploy", function () {
-    
+
     it("Should deploy MockFeeCollector", async function () {
       const MockFeeCollector = await ethers.getContractFactory(
         "SampleProtocol"
@@ -56,7 +56,7 @@ describe("Vault tests", function () {
       expect(cinchSafeGuard.address).to.not.be.undefined;
       console.log("cinchSafeGuard.address: ", cinchSafeGuard.address);
     });
-    
+
     it("Should deploy and Initialize Vault", async function () {
       const Vault = await ethers.getContractFactory("Vault", accounts[0]);
 
@@ -140,18 +140,101 @@ describe("Vault tests", function () {
     });
 
     it("should be able to deposit", async function () {
-      const tx = vault.connect(accounts[1]).deposit(1000 * (10 ** mockERC20Decimals), accounts[1].address);
-      //await expect(tx).to.equal(1000*(10**6));
-      expect(await vault.balanceOf(accounts[1].address)).to.equal(1000 * (10 ** mockERC20Decimals));
+      const tx = await vault.connect(accounts[1]).deposit(750 * (10 ** mockERC20Decimals), accounts[1].address);
+
+      expect(await vault.balanceOf(accounts[1].address)).to.equal(750 * (10 ** mockERC20Decimals));
+      expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(0);
+
+      console.log("User Balance: " + await vault.balanceOf(accounts[1].address));
+      console.log("Max withdraw: " + await vault.maxWithdraw(accounts[1].address));
+      console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
     });
 
-    // it("should be able to withdraw", async function () {
-    //   const tx = vault.connect(accounts[1]).withdraw(1000 * 1000000, accounts[1].address, accounts[1].address);
-    //   expect(await vault.balanceOf(accounts[1].address)).to.equal(0);
-    // });
+    it("should be able to deposit with referral", async function () {
+      console.log("Referral Balance before: " + await vault.getTotalValueLocked(accounts[9].address));
+
+      await mockERC20.faucet(accounts[2].address, 1100 * (10 ** mockERC20Decimals));
+      await mockERC20.connect(accounts[2]).approve(vault.address, 1100 * (10 ** mockERC20Decimals));
+      const tx = await vault.connect(accounts[2]).depositWithReferral(1100 * (10 ** mockERC20Decimals), accounts[2].address, accounts[9].address);
+
+      expect(await vault.balanceOf(accounts[2].address)).to.equal(1100 * (10 ** mockERC20Decimals));
+      expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(1100 * (10 ** mockERC20Decimals));
+
+      console.log("User Balance: " + await vault.balanceOf(accounts[2].address));
+      console.log("Max withdraw: " + await vault.maxWithdraw(accounts[2].address));
+      console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+      console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[9].address));
+    });
+
+    it("should be able to withdraw partial", async function () {
+      const tx = await vault.connect(accounts[1]).withdraw(500 * (10 ** mockERC20Decimals), accounts[1].address, accounts[1].address);
+      expect(await vault.balanceOf(accounts[1].address)).to.equal(250 * (10 ** mockERC20Decimals));
+      expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(1100 * (10 ** mockERC20Decimals));
+      console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+    });
+
+    it("should be able to deposit with 2nd referral", async function () {
+      console.log("Referral Balance before: " + await vault.getTotalValueLocked(accounts[8].address));
+
+      await mockERC20.faucet(accounts[3].address, 1000 * (10 ** mockERC20Decimals));
+      await mockERC20.connect(accounts[3]).approve(vault.address, 1000 * (10 ** mockERC20Decimals));
+      const tx = await vault.connect(accounts[3]).depositWithReferral(1000 * (10 ** mockERC20Decimals), accounts[3].address, accounts[8].address);
+
+      expect(await vault.balanceOf(accounts[3].address)).to.equal(1000 * (10 ** mockERC20Decimals));
+      expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(1100 * (10 ** mockERC20Decimals));
+      expect(await vault.getTotalValueLocked(accounts[8].address)).to.equal(1000 * (10 ** mockERC20Decimals));
+
+      console.log("User Balance: " + await vault.balanceOf(accounts[3].address));
+      console.log("Max withdraw: " + await vault.maxWithdraw(accounts[3].address));
+      console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+      console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[8].address));
+    });
+
+    it("should be able to withdraw remaining", async function () {
+      const tx = await vault.connect(accounts[1]).withdraw(250 * (10 ** mockERC20Decimals), accounts[1].address, accounts[1].address);
+
+      expect(await vault.balanceOf(accounts[1].address)).to.equal(0);
+      expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(1100 * (10 ** mockERC20Decimals));
+      expect(await vault.getTotalValueLocked(accounts[8].address)).to.equal(1000 * (10 ** mockERC20Decimals));
+
+      console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+    });
+
+    it("should be able to withdraw partial with referral", async function () {
+      console.log("Referral Balance before: " + await vault.getTotalValueLocked(accounts[9].address));
+      const tx = await vault.connect(accounts[2]).withdrawWithReferral(600 * (10 ** mockERC20Decimals), accounts[2].address, accounts[2].address, accounts[9].address);
+
+      expect(await vault.balanceOf(accounts[2].address)).to.equal(500 * (10 ** mockERC20Decimals));
+      expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(500 * (10 ** mockERC20Decimals));
+      expect(await vault.getTotalValueLocked(accounts[8].address)).to.equal(1000 * (10 ** mockERC20Decimals));
+
+      console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+      console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[9].address));
+    });
+
+    it("should be able to withdraw remaining balance with referral", async function () {
+      const tx = await vault.connect(accounts[2]).withdrawWithReferral(500 * (10 ** mockERC20Decimals), accounts[2].address, accounts[2].address, accounts[9].address);
+
+      expect(await vault.balanceOf(accounts[2].address)).to.equal(0);
+      expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(0);
+      expect(await vault.getTotalValueLocked(accounts[8].address)).to.equal(1000 * (10 ** mockERC20Decimals));
+
+      console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+      console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[9].address));
+    });
+
+    it("should be able to withdraw remaining balance with 2nd referral", async function () {
+      const tx = await vault.connect(accounts[3]).withdrawWithReferral(1000 * (10 ** mockERC20Decimals), accounts[3].address, accounts[3].address, accounts[8].address);
+
+      expect(await vault.balanceOf(accounts[3].address)).to.equal(0);
+      expect(await vault.getTotalValueLocked(accounts[9].address)).to.equal(0);
+      expect(await vault.getTotalValueLocked(accounts[8].address)).to.equal(0);
+
+      console.log("Protocol Balance: " + await mockERC20.balanceOf(sampleProtocol.address));
+      console.log("Referral Balance: " + await vault.getTotalValueLocked(accounts[9].address));
+    });
+
 
   });
-
-
 
 });

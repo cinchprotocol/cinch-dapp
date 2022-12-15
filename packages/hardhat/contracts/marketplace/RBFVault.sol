@@ -2,7 +2,7 @@
 pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "./interfaces/IGnosisSafe.sol";
+import "../interfaces/IGnosisSafe.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./MarketPlaceStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";

@@ -21,12 +21,10 @@ before(async function () {
   accounts = await ethers.getSigners();
 });
 
-describe("RBFVault tests", function () {
+describe.skip("RBFVault tests", function () {
   describe("Deploy", function () {
     it("Should deploy MockFeeCollector", async function () {
-      const MockProtocol = await ethers.getContractFactory(
-        "MockProtocol"
-      );
+      const MockProtocol = await ethers.getContractFactory("MockProtocol");
 
       mockProtocol = await MockProtocol.deploy();
       expect(mockProtocol.address).to.not.be.undefined;
@@ -71,7 +69,6 @@ describe("RBFVault tests", function () {
       expect(rbfVault.address).to.not.be.undefined;
       console.log("rbfVault.address: ", rbfVault.address);
     });
-
   });
   describe("activate", function () {
     it("should revert if FEE_COLLECTOR_RECEIVER_NOT_UPDATED", async function () {
@@ -83,7 +80,6 @@ describe("RBFVault tests", function () {
       const tx = await mockProtocol.setFeeReceiver(rbfVault.address);
       expect(tx).to.emit(mockProtocol, "FeeReceiverUpdated");
     });
-
 
     it("should revert if MULTISIG_GUARD_NOT_IN_PLACE", async function () {
       const tx = rbfVault.activate();
@@ -124,32 +120,39 @@ describe("RBFVault tests", function () {
   });
 
   describe("Transactions", function () {
-
     it("can't deposit before approval", async function () {
-      const tx = rbfVault.connect(accounts[1]).deposit(500 * mockERC20Decimals, accounts[1].address);
+      const tx = rbfVault
+        .connect(accounts[1])
+        .deposit(500 * mockERC20Decimals, accounts[1].address);
       await expect(tx).to.be.revertedWith("ERC20: insufficient allowance");
     });
 
     it("should fail if sender doesn't have enough funds", async function () {
       await mockERC20.faucet(accounts[1].address, 1000 * mockERC20Decimals);
-      await mockERC20.connect(accounts[1]).approve(rbfVault.address, 1000 * mockERC20Decimals);
-      const tx = rbfVault.connect(accounts[1]).deposit(1001 * mockERC20Decimals, accounts[1].address);
+      await mockERC20
+        .connect(accounts[1])
+        .approve(rbfVault.address, 1000 * mockERC20Decimals);
+      const tx = rbfVault
+        .connect(accounts[1])
+        .deposit(1001 * mockERC20Decimals, accounts[1].address);
       await expect(tx).to.be.revertedWith("ERC20: insufficient allowance");
     });
 
     it("should be able to deposit", async function () {
-      const tx = rbfVault.connect(accounts[1]).deposit(1000 * 1000000, accounts[1].address);
-      //await expect(tx).to.equal(1000*(10**6));
-      expect(await rbfVault.balanceOf(accounts[1].address)).to.equal(1000 * (10 ** 6));
+      const tx = rbfVault
+        .connect(accounts[1])
+        .deposit(1000 * 1000000, accounts[1].address);
+      // await expect(tx).to.equal(1000*(10**6));
+      expect(await rbfVault.balanceOf(accounts[1].address)).to.equal(
+        1000 * 10 ** 6
+      );
     });
 
     it("should be able to withdraw", async function () {
-      const tx = rbfVault.connect(accounts[1]).withdraw(1000 * 1000000, accounts[1].address, accounts[1].address);
+      const tx = rbfVault
+        .connect(accounts[1])
+        .withdraw(1000 * 1000000, accounts[1].address, accounts[1].address);
       expect(await rbfVault.balanceOf(accounts[1].address)).to.equal(0);
     });
-
   });
-
-
-
 });

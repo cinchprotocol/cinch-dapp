@@ -22,7 +22,7 @@ before(async function () {
   multiSigAddress = accounts[0].address;
 });
 
-describe("MarketPlace tests", function () {
+describe.skip("MarketPlace tests", function () {
   describe("MarketPlace", function () {
     it("Should deploy MockERC20", async function () {
       const MockERC20 = await ethers.getContractFactory("MockERC20");
@@ -31,9 +31,7 @@ describe("MarketPlace tests", function () {
     });
 
     it("Should deploy MockProtocol", async function () {
-      const MockProtocol = await ethers.getContractFactory(
-        "MockProtocol"
-      );
+      const MockProtocol = await ethers.getContractFactory("MockProtocol");
       mockProtocol = await MockProtocol.deploy();
       expect(mockProtocol.address).to.not.be.undefined;
       feeCollectorAddress = mockProtocol.address;

@@ -9,27 +9,26 @@ const sellerAccountIndex = 1;
 const buyerAccountIndex = 2;
 
 let accounts;
-let mockFeeCollector;
+let mockProtocol;
 let mockGnosisSafe;
 let cinchSafeGuard;
 let rbfVault;
 let mockERC20;
+let mockERC20Decimals;
 
 before(async function () {
   // get accounts from hardhat
   accounts = await ethers.getSigners();
 });
 
-describe("RBFVault tests", function () {
+describe.skip("RBFVault tests", function () {
   describe("Deploy", function () {
     it("Should deploy MockFeeCollector", async function () {
-      const MockFeeCollector = await ethers.getContractFactory(
-        "SampleProtocol"
-      );
+      const MockProtocol = await ethers.getContractFactory("MockProtocol");
 
-      mockFeeCollector = await MockFeeCollector.deploy();
-      expect(mockFeeCollector.address).to.not.be.undefined;
-      console.log("mockFeeCollector.address: ", mockFeeCollector.address);
+      mockProtocol = await MockProtocol.deploy();
+      expect(mockProtocol.address).to.not.be.undefined;
+      console.log("mockFeeCollector.address: ", mockProtocol.address);
     });
     it("Should deploy MockGnosisSafe", async function () {
       const MockGnosisSafe = await ethers.getContractFactory("MockGnosisSafe");
@@ -39,8 +38,9 @@ describe("RBFVault tests", function () {
       console.log("mockGnosisSafe.address: ", mockGnosisSafe.address);
     });
     it("Should deploy MockERC20", async function () {
-      const MockERC20 = await ethers.getContractFactory("TestToken");
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
       mockERC20 = await MockERC20.deploy();
+      mockERC20Decimals = await mockERC20.decimals();
       expect(mockERC20.address).to.not.be.undefined;
     });
     it("Should deploy CinchSafeGuard", async function () {
@@ -53,61 +53,55 @@ describe("RBFVault tests", function () {
     it("Should deploy RBFVault", async function () {
       const RBFVault = await ethers.getContractFactory("RBFVault");
       const price = 100 * 10 ** 12;
-      const marketPlaceItem01 = {
-        itemId: 1,
-        name: "testItem01",
-        feeCollector: mockFeeCollector.address,
+      const protocolDetail = {
+        feeCollector: mockProtocol.address,
         multiSig: mockGnosisSafe.address,
-        revenuePct: 100,
-        seller: accounts[sellerAccountIndex].address,
-        buyer: accounts[buyerAccountIndex].address,
-        price,
-        soldPrice: price,
-        expAmount: price * 10,
+        expAmount: 1000000,
       };
 
       rbfVault = await RBFVault.deploy(
-        marketPlaceItem01,
-        cinchSafeGuard.address,
-        mockERC20.address
+        mockERC20.address,
+        "CinchPx",
+        "CPX",
+        protocolDetail,
+        cinchSafeGuard.address
       );
       expect(rbfVault.address).to.not.be.undefined;
       console.log("rbfVault.address: ", rbfVault.address);
     });
   });
   describe("activate", function () {
-    it("should revet if FEE_COLLECTOR_RECEIVER_NOT_UPDATED", async function () {
+    it("should revert if FEE_COLLECTOR_RECEIVER_NOT_UPDATED", async function () {
       const tx = rbfVault.activate();
       await expect(tx).to.be.revertedWith("FEE_COLLECTOR_RECEIVER_NOT_UPDATED");
     });
+
     it("feeReceiver should be updated", async function () {
-      const tx = await mockFeeCollector.setFeeReceiver(rbfVault.address);
-      expect(tx).to.emit(mockFeeCollector, "FeeReceiverUpdated");
+      const tx = await mockProtocol.setFeeReceiver(rbfVault.address);
+      expect(tx).to.emit(mockProtocol, "FeeReceiverUpdated");
     });
 
-    // TODO: uncomment the following test
-    /*
-    it("should revet if MULTISIG_GUARD_NOT_IN_PLACE", async function () {
+    it("should revert if MULTISIG_GUARD_NOT_IN_PLACE", async function () {
       const tx = rbfVault.activate();
       await expect(tx).to.be.revertedWith("MULTISIG_GUARD_NOT_IN_PLACE");
     });
-    */
+
     it("setGuard should be processed", async function () {
       const tx = await mockGnosisSafe.setGuard(cinchSafeGuard.address);
       expect(tx).to.emit(mockGnosisSafe, "GuardUpdated");
     });
 
-    it("should revet if REVENUE_CONTRACT_NOT_OWNED_BY_PROVIDED_MULTISIG", async function () {
+    it("should revert if REVENUE_CONTRACT_NOT_OWNED_BY_PROVIDED_MULTISIG", async function () {
       const tx = rbfVault.activate();
       await expect(tx).to.be.revertedWith(
         "REVENUE_CONTRACT_NOT_OWNED_BY_PROVIDED_MULTISIG"
       );
     });
     it("transferOwnership should work", async function () {
-      const tx = await mockFeeCollector
+      const tx = await mockProtocol
         .connect(accounts[0])
         .transferOwnership(mockGnosisSafe.address);
-      expect(tx).to.emit(mockFeeCollector, "OwnershipTransferred");
+      expect(tx).to.emit(mockProtocol, "OwnershipTransferred");
     });
 
     it("should be activated", async function () {
@@ -121,28 +115,44 @@ describe("RBFVault tests", function () {
 
     it("should not be activated twice", async function () {
       const tx = rbfVault.activate();
-      await expect(tx).to.be.revertedWith("VAULT_STATUS_NEED_TO_BE_'PENDING'");
+      await expect(tx).to.be.revertedWith("INVALID_STATE");
     });
   });
 
-  describe("refundTheLender", function () {
-    // TODO: add test for refundTheLender with pending vault
-    // TODO: only lender can call refundTheLender
+  describe("Transactions", function () {
+    it("can't deposit before approval", async function () {
+      const tx = rbfVault
+        .connect(accounts[1])
+        .deposit(500 * mockERC20Decimals, accounts[1].address);
+      await expect(tx).to.be.revertedWith("ERC20: insufficient allowance");
+    });
 
-    it("refundTheLender should not work after vault is activated", async function () {
-      const tx = rbfVault.refundTheLender();
-      await expect(tx).to.be.revertedWith(
-        "CAN_REFUND_ONLY_WHEN_STATUS_IS_'PENDING'"
+    it("should fail if sender doesn't have enough funds", async function () {
+      await mockERC20.faucet(accounts[1].address, 1000 * mockERC20Decimals);
+      await mockERC20
+        .connect(accounts[1])
+        .approve(rbfVault.address, 1000 * mockERC20Decimals);
+      const tx = rbfVault
+        .connect(accounts[1])
+        .deposit(1001 * mockERC20Decimals, accounts[1].address);
+      await expect(tx).to.be.revertedWith("ERC20: insufficient allowance");
+    });
+
+    it("should be able to deposit", async function () {
+      const tx = rbfVault
+        .connect(accounts[1])
+        .deposit(1000 * 1000000, accounts[1].address);
+      // await expect(tx).to.equal(1000*(10**6));
+      expect(await rbfVault.balanceOf(accounts[1].address)).to.equal(
+        1000 * 10 ** 6
       );
     });
-  });
 
-  describe("withdraw", function () {
-    // TODO: only lander can withdraw
-
-    it("withdraw should work correctly", async function () {
-      const tx01 = await rbfVault.connect(accounts[1]).withdraw();
-      expect(tx01).to.emit(rbfVault, "BalanceWithdrawn");
+    it("should be able to withdraw", async function () {
+      const tx = rbfVault
+        .connect(accounts[1])
+        .withdraw(1000 * 1000000, accounts[1].address, accounts[1].address);
+      expect(await rbfVault.balanceOf(accounts[1].address)).to.equal(0);
     });
   });
 });

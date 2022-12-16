@@ -4,14 +4,17 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract SampleProtocol is Ownable {
+contract MockProtocol is Ownable {
     event FeeReceiverUpdated(address indexed feeReceiver);
     event Deposited(address indexed token, uint256 amount);
     event Withdrawn(address indexed token, uint256 amount);
+    event FeeReleased(address indexed token, uint256 amount);
 
     address public feeReceiver;
     uint256 public fee;
     uint256 internal _totalValueLocked;
+    uint256 public priceAA;
+    address public AATranche;
 
     /**
      * @dev Constructor of the contract.
@@ -19,6 +22,7 @@ contract SampleProtocol is Ownable {
     constructor() {
         feeReceiver = msg.sender;
         fee = 1;
+        priceAA = 1000000;
     }
 
     /**
@@ -52,7 +56,7 @@ contract SampleProtocol is Ownable {
         emit Deposited(tokenAddress, _amount);
     }
 
-     /**
+    /**
      * @notice withdraw tokens
      * @param _amount of the underlying token to deposit
      */
@@ -80,5 +84,21 @@ contract SampleProtocol is Ownable {
      */
     function setTotalValueLocked(uint256 tvl) external onlyOwner {
         _totalValueLocked = tvl;
+    }
+
+    /**
+     * @dev Send the fee to the fee receiver address
+     */
+    function releaseFee(address tokenAddress, uint256 amount) external {
+        IERC20(tokenAddress).transfer(feeReceiver, amount);
+        emit FeeReleased(tokenAddress, amount);
+    }
+
+    function setPriceAA(uint256 price) external {
+        priceAA = price;
+    }
+
+    function setAATranche(address tranchAddress) external {
+        AATranche = tranchAddress;
     }
 }

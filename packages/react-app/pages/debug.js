@@ -17,20 +17,10 @@ function DebugPage({ web3 }) {
 
       {/* Main Page Content start */}
       <div className="flex flex-1 flex-col h-screen w-full items-center">
-        <div className="text-center" style={{ margin: 64 }}>
-          <span>This App is powered by Scaffold-eth & Next.js!</span>
-          <br />
-          <span>
-            Added{" "}
-            <a href="https://tailwindcomponents.com/cheatsheet/" target="_blank" rel="noreferrer">
-              TailwindCSS
-            </a>{" "}
-            for easier styling.
-          </span>
-        </div>
+       
         <div className="text-center">
           <Contract
-            name="MarketPlace"
+            name="RBFVault"
             signer={web3.userSigner}
             provider={web3.localProvider}
             address={web3.address}
@@ -39,7 +29,7 @@ function DebugPage({ web3 }) {
           />
 
           <Contract
-            name="TestToken"
+            name="MockERC20"
             signer={web3.userSigner}
             provider={web3.localProvider}
             address={web3.address}
@@ -49,7 +39,16 @@ function DebugPage({ web3 }) {
 
 
           <Contract
-            name="SampleProtocol"
+            name="MockProtocol"
+            signer={web3.userSigner}
+            provider={web3.localProvider}
+            address={web3.address}
+            blockExplorer={web3.blockExplorer}
+            contractConfig={web3.contractConfig}
+          />
+
+<Contract
+            name="MockGnosisSafe"
             signer={web3.userSigner}
             provider={web3.localProvider}
             address={web3.address}

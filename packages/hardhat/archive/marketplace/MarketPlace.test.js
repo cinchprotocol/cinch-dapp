@@ -13,7 +13,7 @@ let accounts;
 let feeCollectorAddress;
 let multiSigAddress;
 let marketPlace;
-let mockFeeCollector;
+let mockProtocol;
 let mockERC20;
 
 before(async function () {
@@ -22,22 +22,20 @@ before(async function () {
   multiSigAddress = accounts[0].address;
 });
 
-describe("MarketPlace tests", function () {
+describe.skip("MarketPlace tests", function () {
   describe("MarketPlace", function () {
     it("Should deploy MockERC20", async function () {
-      const MockERC20 = await ethers.getContractFactory("TestToken");
+      const MockERC20 = await ethers.getContractFactory("MockERC20");
       mockERC20 = await MockERC20.deploy();
       expect(mockERC20.address).to.not.be.undefined;
     });
 
-    it("Should deploy MockFeeCollector", async function () {
-      const MockFeeCollector = await ethers.getContractFactory(
-        "SampleProtocol"
-      );
-      mockFeeCollector = await MockFeeCollector.deploy();
-      expect(mockFeeCollector.address).to.not.be.undefined;
-      feeCollectorAddress = mockFeeCollector.address;
-      console.log("mockFeeCollector.address: ", mockFeeCollector.address);
+    it("Should deploy MockProtocol", async function () {
+      const MockProtocol = await ethers.getContractFactory("MockProtocol");
+      mockProtocol = await MockProtocol.deploy();
+      expect(mockProtocol.address).to.not.be.undefined;
+      feeCollectorAddress = mockProtocol.address;
+      console.log("mockFeeCollector.address: ", mockProtocol.address);
     });
 
     it("Should deploy MarketPlace", async function () {

@@ -10,7 +10,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 //import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 
-
 import "./interfaces/IGnosisSafe.sol";
 import "./MarketPlaceStorage.sol";
 
@@ -33,7 +32,7 @@ interface IYieldSourceContract {
  * @notice Contract allows deposits and Withdrawals to Yield source product
  * @dev Should be deployed per yield source pool/vault.
  */
-contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
+contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     event VaultActivated();
 
     enum Status {
@@ -72,6 +71,8 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         address _multiSig,
         address _multisigGuard
     ) public initializer {
+        __Ownable_init();
+        __Pausable_init();
         __ERC4626_init(IERC20Upgradeable(asset));
         __ERC20_init(name, symbol);
 
@@ -86,8 +87,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     /**
      * @dev Activates the vault after the required condition has been met and transfer funds to the borrower.
      */
-    function activate() external 
-    {
+    function activate() external whenNotPaused {
         _isValidState(Status.Pending);
 
         require(isReadyToActivate(), "VAULT_ACTIVATION_TERMS_NOT_MET");
@@ -105,6 +105,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         public
         virtual
         override
+        whenNotPaused
         returns (uint256)
     {
         _isValidState(Status.Active);
@@ -121,7 +122,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         uint256 assets,
         address receiver,
         address owner
-    ) public virtual override returns (uint256) {
+    ) public virtual override whenNotPaused returns (uint256) {
         _isValidState(Status.Active);
 
         beforeWithdraw(assets);
@@ -136,7 +137,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         uint256 assets,
         address receiver,
         address referral
-    ) public returns (uint256) {
+    ) public whenNotPaused returns (uint256) {
         _isValidState(Status.Active);
         require(referral != address(0), "ZERO_ADDRESS");
 
@@ -154,7 +155,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         address receiver,
         address owner,
         address referral
-    ) public returns (uint256) {
+    ) public whenNotPaused returns (uint256) {
         _isValidState(Status.Active);
         require(referral != address(0), "ZERO_ADDRESS");
 
@@ -169,7 +170,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
     //////////////////////////////////////////////////////////////*/
 
     function beforeWithdraw(uint256 amount) internal {
-       // storedTotalAssets -= amount;
+        // storedTotalAssets -= amount;
 
         IYieldSourceContract(yieldSourceVault).withdraw(asset(), amount);
     }
@@ -208,11 +209,23 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
                 .balanceOf(address(this));
     }
 
-    function maxDeposit(address) public view virtual override returns (uint256) {
+    function maxDeposit(address)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         return type(uint256).max;
     }
 
-     function maxWithdraw(address _owner) public view virtual override returns (uint256) {
+    function maxWithdraw(address _owner)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         return convertToAssets(balanceOf(_owner));
     }
 
@@ -312,5 +325,21 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable {
         returns (uint256)
     {
         return _totalValueLocked[referral];
+    }
+
+    /**
+     * @dev Pause the contract.
+     * onlyOwner
+     */
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    /**
+     * @dev Unpause the contract.
+     * onlyOwner
+     */
+    function unpause() external onlyOwner {
+        _unpause();
     }
 }

@@ -42,10 +42,7 @@ function RevenueRoyaltyInputs({ web3 }) {
           formValues?.feeCollectorContractAddress,
           formValues?.multiSigAddress,
           formValues?.feeBeneficiaryAddress,
-          utils.parseEther(formValues?.revenueProportion),
-          //utils.parseUnits(formValues?.price, process.env.PRICE_DECIMALS),
-          utils.parseUnits(formValues?.expiryAmount, process.env.PRICE_DECIMALS),
-          {},
+          utils.parseEther(formValues?.revenueProportion)
         )
       );
       const txRes = await tx?.wait();
@@ -232,16 +229,6 @@ function RevenueRoyaltyInputs({ web3 }) {
                           <dt className="text-sm font-medium text-gray-500">Revenue Proportion</dt>
                           <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                             {formValues?.revenueProportion}
-                          </dd>
-                        </div>
-                        {/* <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                          <dt className="text-sm font-medium text-gray-500">Minimum Price</dt>
-                          <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.price}</dd>
-                        </div> */}
-                        <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                          <dt className="text-sm font-medium text-gray-500">Expiry Amount</dt>
-                          <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                            {formValues?.expiryAmount}
                           </dd>
                         </div>
                         <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">

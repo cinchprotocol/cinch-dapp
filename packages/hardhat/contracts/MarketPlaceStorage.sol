@@ -15,7 +15,6 @@ contract MarketPlaceStorage {
         uint256 revenuePct;
         address payable seller;
         address payable buyer;
-        uint256 expAmount;
     }
 
     mapping(uint256 => MarketItem) internal idToMarketItem;
@@ -28,8 +27,7 @@ contract MarketPlaceStorage {
         address feeBeneficiary,
         uint256 revenuePct,
         address seller,
-        address buyer,
-        uint256 expAmount
+        address buyer
     );
 
     event ChangedFeesCollectorCutPerMillion(

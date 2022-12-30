@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Web3Consumer } from "/helpers/Web3Context";
 import { useRouter } from "next/router";
 import _ from "lodash";
-import { Select, Modal, Form, Input, message, Space, Table } from "antd";
+import { Select, Modal, Form, Input, message, Space, Table, Tooltip } from "antd";
 const { utils } = require("ethers");
 
 import { Container } from "/components/Container";
@@ -100,34 +100,18 @@ function Vault({ web3 }) {
 
                   <div className="mb-10 border-t border-gray-200">
                     <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                      {/* <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Price (USDC)</dt>
-                        <dd class="mt-1 text-2xl text-gray-900">${vaultData?.price}</dd>
-                      </div> */}
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Revenue proportion</dt>
+                     <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Revenue shared with platform partner (%)</dt>
                         <dd class="mt-1 text-2xl text-gray-900">{vaultData?.revenuePct}%</dd>
-                      </div>
+                      </div>                     
                       <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Expiry amount (USDC)</dt>
-                        <dd class="mt-1 text-2xl text-gray-900">${vaultData?.expAmount}</dd>
-                      </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Fee collector address</dt>
+                        <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
                         <dd class="mt-1 text-sm text-gray-900">{vaultData?.feeCollector.substr(0, 6) + "..." + vaultData?.feeCollector.substr(-4)}</dd>
                       </div>
                       <div class="sm:col-span-1">
                         <dt class="text-sm font-medium text-gray-500">Multi-sig address</dt>
                         <dd class="mt-1 text-sm text-gray-900">{vaultData?.multiSig.substr(0, 6) + "..." + vaultData?.multiSig.substr(-4)}</dd>
-                      </div>
-                      {/* <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Borrower</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.borrower.substr(0, 6) + "..." + vaultData?.borrower.substr(-4)}</dd>
-                      </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Lender</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.lender.substr(0, 6) + "..." + vaultData?.lender.substr(-4)}</dd>
-                      </div> */}
+                      </div>                     
                     </dl>
                   </div>
                 </div>
@@ -167,7 +151,12 @@ function Vault({ web3 }) {
                                     </span>
                                   </div>
                                   <div className="min-w-0 pt-1.5">
-                                    <p className="text-sm text-gray-500">Update the fee receiver Address to </p>
+                                    <p className="text-sm text-gray-500">Update the fee receiver Address to
+                                      <Tooltip title="Cinch has deployed a feeSplitter contract that will calculate the agreed upon revenue share. Please update your product contract or fee collector such that this new feeSplitter receives the fees generated.">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="ml-2 w-6 h-6 inline">
+                                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                        </svg></Tooltip>
+                                    </p>
                                     <p>{vaultaddress}</p>
                                   </div>
                                 </div>
@@ -201,8 +190,14 @@ function Vault({ web3 }) {
                                     </span>
                                   </div>
                                   <div className="min-w-0 pt-1.5">
-                                    <p className="text-sm text-gray-500">Add Cinch multi-sig guard to the Gnosis safe (<a href="https://help.gnosis-safe.io/en/articles/5496893-add-a-transaction-guard" class="no-underline hover:underline ..." target="_blank">Instruction</a>)</p>
-                                    <p>Guard Address: {vaultData?.multisigGuard}</p>
+                                    <p className="text-sm text-gray-500">Add Cinch multi-sig guard to the Gnosis safe
+                                      
+                                      <Tooltip title="Cinch has deployed a guard module that prevents action item #1 from being undone.">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="ml-2 w-6 h-6 inline">
+                                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                        </svg></Tooltip>
+                                    </p>
+                                    <p>Guard Address (<a href="https://help.gnosis-safe.io/en/articles/5496893-add-a-transaction-guard" class="no-underline hover:underline ..." target="_blank">Instruction</a>): {vaultData?.multisigGuard}</p>
                                   </div>
                                 </div>
                               </div>

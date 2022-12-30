@@ -4,10 +4,10 @@ const { utils } = require("ethers");
 import { displayError } from "./errorhelper";
 import { message } from "antd";
 
-const RBFVAULTABI = externalContracts[31337]?.contracts?.RBFVAULT?.abi;
+const VAULTABI = externalContracts[31337]?.contracts?.VAULT?.abi;
 
 export const getVaultContract = ({ web3, address }) => {
-  const vaultContract = new Contract(address, RBFVAULTABI, web3?.userSigner);
+  const vaultContract = new Contract(address, VAULTABI, web3?.userSigner);
   return vaultContract;
 };
 
@@ -18,17 +18,14 @@ export const fetchVaultData = async ({ web3, address }) => {
 
     data = {
       name: await vaultContract?.name(),
-      feeCollector: await vaultContract?.feeCollector(),
+      feeCollector: await vaultContract?.yieldSourceVault(),
       multiSig: await vaultContract?.multiSig(),
-      revenuePct: _.toNumber(utils.formatEther(await vaultContract?.revenuePct())).toFixed(0),
-      price: utils.formatUnits(await vaultContract?.price(), process.env.PRICE_DECIMALS),
-      expAmount: utils.formatUnits(await vaultContract?.expAmount(), process.env.PRICE_DECIMALS),
-      borrower: await vaultContract?.borrower(),
-      lender: await vaultContract?.lender(),
-      status: await vaultContract?.status(),
-      //isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
+      revenuePct: "3",
+      expAmount: "50000",
+      status: await vaultContract?.vaultStatus(),
+      isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
       isMultisigGuardAdded: await vaultContract?.isMultisigGuardAdded(),
-      // isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded,
+      //isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded,
       multisigGuard: await vaultContract?.multisigGuard(),
     };
   } catch (err) {

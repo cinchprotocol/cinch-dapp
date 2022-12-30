@@ -101,4 +101,8 @@ contract MockProtocol is Ownable {
     function setAATranche(address tranchAddress) external {
         AATranche = tranchAddress;
     }
+
+    function transferOwnership(address newOwner) public override {
+        super.transferOwnership(newOwner);
+    }
 }

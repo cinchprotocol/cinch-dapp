@@ -33,6 +33,7 @@ function RevenueRoyaltyInputs({ web3 }) {
     setIsModalVisible(true);
   };
 
+
   const handleOk = async () => {
     try {
       const tx = await web3?.tx(
@@ -40,20 +41,25 @@ function RevenueRoyaltyInputs({ web3 }) {
           formValues?.name || "Revenue Royalty",
           formValues?.feeCollectorContractAddress,
           formValues?.multiSigAddress,
+          formValues?.feeBeneficiaryAddress,
           utils.parseEther(formValues?.revenueProportion),
-          utils.parseUnits(formValues?.price, process.env.PRICE_DECIMALS),
+          //utils.parseUnits(formValues?.price, process.env.PRICE_DECIMALS),
           utils.parseUnits(formValues?.expiryAmount, process.env.PRICE_DECIMALS),
           {},
-        ),
-        res => {
-          if (res.status == 1) {
-            setIsModalVisible(false);
-            router.push("/dashboard");
-          }
-        },
+        )
       );
       const txRes = await tx?.wait();
       console.log("txRes", txRes);
+
+      if (txRes?.events?.find(e => e?.event === "MarketItemCreated")) {
+        message.success("Listing created.");
+      }
+
+      const vaultCreatedEvent = txRes?.events?.find(e => e?.event === "VaultCreated");
+      if (vaultCreatedEvent && vaultCreatedEvent.args?.vaultAddress) {
+        console.log("Vault Address:", vaultCreatedEvent.args?.vaultAddress);
+        router.push(`/vaults/${vaultCreatedEvent?.args?.vaultAddress}`);
+      }
     } catch (err) {
       displayError("revenueroyaltyinputs:handleOk", err);
     }
@@ -76,7 +82,7 @@ function RevenueRoyaltyInputs({ web3 }) {
             <div className="px-4 py-8 sm:px-0">
               <div className="p-10 rounded-lg bg-white shadow">
                 <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">
-                  Enter details to implement revenue-share
+                  Enter details to create fee sharing partnership
                 </h1>
                 <div className="max-w-lg">
                   <Form
@@ -94,9 +100,9 @@ function RevenueRoyaltyInputs({ web3 }) {
                     requiredMark="required"
                   >
                     <Form.Item
-                      label="Name"
+                      label="Product Name"
                       name="name"
-                      extra="Enter the name of the listing"
+                      extra="Enter the product name"
                       rules={[
                         {
                           required: true,
@@ -107,14 +113,13 @@ function RevenueRoyaltyInputs({ web3 }) {
                       <Input />
                     </Form.Item>
                     <Form.Item
-                      label="Fee collector contract address"
+                      label="Product contract address"
                       name="feeCollectorContractAddress"
-                      extra="Enter the contract address that consolidates fees(The revenue royalty will be implemented by changing
-                  the destination wallet address of this contract)"
+                      extra="Enter the contract address that accumulates and distributes fee balance"
                       rules={[
                         {
                           required: true,
-                          message: "Fee collector contract address is required.",
+                          message: "Product contract address is required.",
                         },
                       ]}
                     >
@@ -124,7 +129,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                     <Form.Item
                       label="Multi-sig address"
                       name="multiSigAddress"
-                      extra="Contrat that controls the inputs to the fee_collector contract"
+                      extra="Multi-sig that controls the product contract"
                       rules={[
                         {
                           required: true,
@@ -136,9 +141,23 @@ function RevenueRoyaltyInputs({ web3 }) {
                     </Form.Item>
 
                     <Form.Item
-                      label="Revenue proportion"
+                      label="Fee beneficiary address"
+                      name="feeBeneficiaryAddress"
+                      extra="Address which will receive the shared fee revenue"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Fee beneficiary address is required.",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Revenue shared with platform partner (%)"
                       name="revenueProportion"
-                      extra="% of revenue traded as a royalty"
+                      extra="% of revenue shared from the revenue generated on platform partner users"
                       rules={[
                         {
                           required: true,
@@ -150,38 +169,10 @@ function RevenueRoyaltyInputs({ web3 }) {
                     </Form.Item>
 
                     <Form.Item
-                      label="Minimum price"
-                      name="price"
-                      extra="minimum price to place a bid"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Enter the minimum price",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Expiry amount (USDC)"
-                      name="expiryAmount"
-                      extra="Royalty will end after this amount of revenue"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Expiry amount is required.",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-
-                    <Form.Item
                       label="Contact information (optional)"
                       name="contactInformation"
-                      extra="Enter your preferred contact information to receive notifications on the status of your royalty listing,
-                its implementation, and its performance"
+                      extra="Enter your preferred contact information to receive notifications on the status of your revenue share partnership,
+                and its performance"
                       rules={[
                         {
                           required: false,
@@ -205,12 +196,12 @@ function RevenueRoyaltyInputs({ web3 }) {
                   visible={isModalVisible}
                   onOk={handleOk}
                   onCancel={handleCancel}
-                  okText="Confirm list revenue royalty"
+                  okText="Confirm"
                   width={800}
                 >
                   <div>
                     <div className="px-4 py-5 sm:px-6">
-                      <h3 className="text-xl font-medium leading-6 text-gray-900">Review listing Information</h3>
+                      <h3 className="text-xl font-medium leading-6 text-gray-900">Review partnership Information</h3>
                       <p className="mt-1 max-w-2xl text-sm text-gray-500">
                         Please verify details, this helps avoiding any delay.{" "}
                       </p>
@@ -218,7 +209,7 @@ function RevenueRoyaltyInputs({ web3 }) {
                     <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
                       <dl className="sm:divide-y sm:divide-gray-200">
                         <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                          <dt className="text-sm font-medium text-gray-500">Fee Collector Contract Address</dt>
+                          <dt className="text-sm font-medium text-gray-500">Revenue Contract Address</dt>
                           <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                             {formValues?.feeCollectorContractAddress}
                           </dd>
@@ -229,16 +220,24 @@ function RevenueRoyaltyInputs({ web3 }) {
                             {formValues?.multiSigAddress}
                           </dd>
                         </div>
+
+                        <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                          <dt className="text-sm font-medium text-gray-500">Fee Beneficiary Address</dt>
+                          <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                            {formValues?.feeBeneficiaryAddress}
+                          </dd>
+                        </div>
+
                         <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                           <dt className="text-sm font-medium text-gray-500">Revenue Proportion</dt>
                           <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                             {formValues?.revenueProportion}
                           </dd>
                         </div>
-                        <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                        {/* <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                           <dt className="text-sm font-medium text-gray-500">Minimum Price</dt>
                           <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{formValues?.price}</dd>
-                        </div>
+                        </div> */}
                         <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                           <dt className="text-sm font-medium text-gray-500">Expiry Amount</dt>
                           <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">

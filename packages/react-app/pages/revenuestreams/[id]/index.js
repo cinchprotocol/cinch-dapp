@@ -263,13 +263,13 @@ function RevenueStream({ web3 }) {
     const d = await getOneRevenueStreamForSaleWith(web3, data.id);
     setData2(d);
 
-    let bds;
-    bds = await fetchBidsOfRevenueStream(web3, data.id);
-    if (isRevenueStreamOwner) {
-      setBidDatas(bds?.filter(b => b.price));
-    } else {
-      setBidDatas(bds?.filter(b => b.price && b.bidder === web3?.address));
-    }
+    // let bds;
+    // bds = await fetchBidsOfRevenueStream(web3, data.id);
+    // if (isRevenueStreamOwner) {
+    //   setBidDatas(bds?.filter(b => b.price));
+    // } else {
+    //   setBidDatas(bds?.filter(b => b.price && b.bidder === web3?.address));
+    // }
   };
 
   useEffect(() => {
@@ -525,7 +525,7 @@ function RevenueStream({ web3 }) {
               </div>
 
               {/* BIDs Received */}
-              <div className="mt-20">
+              {/* <div className="mt-20">
                 <h3 className="text-2xl font-semibold text-gray-900">
                   {isRevenueStreamOwner ? "Offers Received" : "Bids Placed"}
                 </h3>
@@ -533,7 +533,7 @@ function RevenueStream({ web3 }) {
                 <div className="bg-white shadow rounded-lg p-4 text-center mt-5">
                   <BidTable web3={web3} dataSource={bidDatas} />
                 </div>
-              </div>
+              </div> */}
 
               {/* Revenue Analytics */}
               <Tabs defaultActiveKey="1">

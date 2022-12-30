@@ -26,30 +26,29 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
-  var vault = await deploy("RBFVault", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-    args: [mockERC20.address, "CinchPx", "CPxIdleClearPool",
-    [mockProtocol.address, mockGnosisSafe.address, 10000000],
-    cinchSafeGuard.address],
-    log: true,
-  });
-
-  var mockGnosisSafeContract = await ethers.getContractAt("MockGnosisSafe", mockGnosisSafe.address);
-  // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
-  await mockGnosisSafeContract.setGuard(cinchSafeGuard.address);
-
-  var sampleProtocolContract = await ethers.getContractAt("SampleProtocol", mockProtocol.address);
-  await sampleProtocolContract.transferOwnership(mockGnosisSafe.address);
-
-  await sampleProtocolContract.setFeeReceiver(vault.address);
-
-  // await deploy("MarketPlace", {
+  // var vault = await deploy("RBFVault", {
   //   // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
   //   from: deployer,
-  //   args: [deployer, 20000, "0x5FbDB2315678afecb367f032d93F642f64180aa3"],
+  //   args: [mockERC20.address, "CinchPx", "CPxIdleClearPool",
+  //   [mockProtocol.address, mockGnosisSafe.address, 10000000],
+  //   cinchSafeGuard.address],
   //   log: true,
   // });
+
+  // var mockGnosisSafeContract = await ethers.getContractAt("MockGnosisSafe", mockGnosisSafe.address);
+  // await mockGnosisSafeContract.setGuard(cinchSafeGuard.address);
+
+  var mockProtocolContract = await ethers.getContractAt("MockProtocol", mockProtocol.address);
+  await mockProtocolContract.transferOwnership(mockGnosisSafe.address);
+
+  //await mockProtocolContract.setFeeReceiver(vault.address);
+
+  await deploy("MarketPlace", {
+    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+    from: deployer,
+    args: [deployer, 20000, mockERC20.address],
+    log: true,
+  });
 
 
 

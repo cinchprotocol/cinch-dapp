@@ -19,7 +19,7 @@ contract MockGnosisSafe is Ownable {
      * @dev Sets _guard
      * @param newGuard - address of the new guard
      */
-    function setGuard(address newGuard) external onlyOwner {
+    function setGuard(address newGuard) external {
         require(
             newGuard != address(0),
             "setGuard: INVALID_GUARD"

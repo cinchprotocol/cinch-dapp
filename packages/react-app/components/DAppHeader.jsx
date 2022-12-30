@@ -88,11 +88,11 @@ export function DAppHeader(props) {
             <Link href="#" aria-label="Home">
               <Logo className="h-10 w-auto" />
             </Link>
-            <div className="ml-10 space-x-8 sm:block md:block lg:block">
+            {/* <div className="ml-10 space-x-8 sm:block md:block lg:block">
               <NavLink href="/revenuestreamsforsale">Buy Revenue</NavLink>
-            </div>
+            </div> */}
             <div className="ml-10 space-x-8 md:block lg:block">
-              <NavLink href="/revenuesharemechanism">Sell Revenue</NavLink>
+              <NavLink href="/revenueroyaltyinputs">Create new partnership</NavLink>
             </div>
             <div className="ml-10 space-x-8 lg:block">
               <NavLink href="/dashboard">Dashboard</NavLink>

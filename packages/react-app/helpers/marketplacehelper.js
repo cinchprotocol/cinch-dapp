@@ -27,7 +27,7 @@ export const getOneRevenueStreamForSaleWith = async (web3, id) => {
     id,
     key: id,
     name: item?.name,
-    priceStr: utils.formatUnits(item?.price, process.env.PRICE_DECIMALS),
+    //priceStr: utils.formatUnits(item?.price, process.env.PRICE_DECIMALS),
     revenuePctStr: _.toNumber(utils.formatEther(item?.revenuePct)).toFixed(0),
     expAmountStr: utils.formatUnits(item?.expAmount, process.env.PRICE_DECIMALS),
     isActive: true,
@@ -60,21 +60,21 @@ export const getBidByBidderOfRevenueStream = async (web3, revenueStreamId, bidde
   }
 };
 
-export const fetchBidsOfRevenueStream = async (web3, revenueStreamId) => {
-  const marketPlaceContract = web3?.readContracts["MarketPlace"];
-  if (!marketPlaceContract || !revenueStreamId) {
-    return [];
-  }
-  const datas = [];
-  const bids = await marketPlaceContract?.fetchBidsOfItem(revenueStreamId);
-  const stream = await getOneRevenueStreamForSaleWith(web3, revenueStreamId);
-  for (const bid of bids) {
-    const data = formatBid(bid);
-    data.stream = stream;
-    datas.push(data);
-  }
-  return datas;
-};
+// export const fetchBidsOfRevenueStream = async (web3, revenueStreamId) => {
+//   const marketPlaceContract = web3?.readContracts["MarketPlace"];
+//   if (!marketPlaceContract || !revenueStreamId) {
+//     return [];
+//   }
+//   const datas = [];
+//   const bids = await marketPlaceContract?.fetchBidsOfItem(revenueStreamId);
+//   const stream = await getOneRevenueStreamForSaleWith(web3, revenueStreamId);
+//   for (const bid of bids) {
+//     const data = formatBid(bid);
+//     data.stream = stream;
+//     datas.push(data);
+//   }
+//   return datas;
+// };
 
 export const fetchBidOf = async (web3, revenueStreamId, bidId) => {
   const marketPlaceContract = web3?.readContracts["MarketPlace"];

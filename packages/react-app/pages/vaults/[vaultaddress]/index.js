@@ -282,12 +282,12 @@ function Vault({ web3 }) {
               {vaultData?.status == 1 ?
                 <div className="mt-14">
                   <h3 className="text-2xl font-semibold text-gray-900">
-                    Revenue Analytics
+                    Revenue-share dashboard
                   </h3>
                   <div className="mt-14 bg-white shadow rounded-lg">
                     <FeeCollectorDashboard
                       feeCollectorAddress={vaultData?.feeCollector}
-                      title={"Protocol revenue stream"}
+                      title={"Aggregate Revenue-share Performance"}
                     />
                   </div>
 

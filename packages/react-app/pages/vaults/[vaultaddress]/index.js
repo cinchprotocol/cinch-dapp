@@ -100,10 +100,20 @@ function Vault({ web3 }) {
 
                   <div className="mb-10 border-t border-gray-200">
                     <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                     <div class="sm:col-span-1">
+                      <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-gray-500">Underlying Asset</dt>
+                        <dd class="mt-1 text-sm font-medium text-gray-900">
+                          <img
+                            className="inline-block h-8 w-8 rounded-full"
+                            src="https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_48,q_auto/https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/network/ethereum/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48.jpg"
+                            alt=""
+                          /> USDC
+                        </dd>
+                      </div>
+                      <div class="sm:col-span-1">
                         <dt class="text-sm font-medium text-gray-500">Revenue shared with platform partner (%)</dt>
                         <dd class="mt-1 text-2xl text-gray-900">{vaultData?.revenuePct}%</dd>
-                      </div>                     
+                      </div>
                       <div class="sm:col-span-1">
                         <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
                         <dd class="mt-1 text-sm text-gray-900">{vaultData?.feeCollector.substr(0, 6) + "..." + vaultData?.feeCollector.substr(-4)}</dd>
@@ -111,7 +121,7 @@ function Vault({ web3 }) {
                       <div class="sm:col-span-1">
                         <dt class="text-sm font-medium text-gray-500">Multi-sig address</dt>
                         <dd class="mt-1 text-sm text-gray-900">{vaultData?.multiSig.substr(0, 6) + "..." + vaultData?.multiSig.substr(-4)}</dd>
-                      </div>                     
+                      </div>
                     </dl>
                   </div>
                 </div>
@@ -191,7 +201,7 @@ function Vault({ web3 }) {
                                   </div>
                                   <div className="min-w-0 pt-1.5">
                                     <p className="text-sm text-gray-500">Add Cinch multi-sig guard to the Gnosis safe
-                                      
+
                                       <Tooltip title="Cinch has deployed a guard module that prevents action item #1 from being undone.">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="ml-2 w-6 h-6 inline">
                                           <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />

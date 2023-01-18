@@ -10,7 +10,7 @@ function RevenueStreamTable({ dataSource, mode }) {
   const router = useRouter();
   const defaultColumns = [
     {
-      title: "Underlying Assets",
+      title: "Product",
       key: "name",
       render: (_, record) => {
         const { id } = record;
@@ -32,55 +32,6 @@ function RevenueStreamTable({ dataSource, mode }) {
       },
     },
     {
-      title: "Base Yield",
-      key: "baseYield",
-      render: (_, record) => {
-        return (
-          <>
-            <Row>
-              <Col span={24}>
-                <span>20%</span>
-              </Col>
-            </Row>
-          </>
-        );
-      },
-    },
-    {
-      title: "Product Revenue",
-      key: "productRevenue",
-      render: (_, record) => {
-        const _feeCollectorAddress = record?.feeCollector?.replace("0x", "");
-        return (
-          <>
-            <Row align="middle">
-              <iframe
-                src={`https://dune.com/embeds/1379159/2365292/e8a8a878-0626-429e-a3f4-0a1328356949?fee_collector_address=${_feeCollectorAddress}`}
-                height="128"
-                width="128"
-                title="stat total"
-              />
-            </Row>
-          </>
-        );
-      },
-    },
-    {
-      title: "Max. Yield",
-      key: "maxYield",
-      render: (_, record) => {
-        return (
-          <>
-            <Row>
-              <Col span={24}>
-                <span>23%</span>
-              </Col>
-            </Row>
-          </>
-        );
-      },
-    },
-    {
       title: "Revenue Share",
       dataIndex: "revenuePctStr",
       key: "revenuePctStr",
@@ -95,16 +46,6 @@ function RevenueStreamTable({ dataSource, mode }) {
           </>
         );
       },
-    },
-    {
-      title: "Expiry Amount",
-      dataIndex: "expAmountStr",
-      key: "expAmountStr",
-    },
-    {
-      title: "Price",
-      dataIndex: "priceStr",
-      key: "priceStr",
     },
     {
       title: "Seller",

@@ -99,8 +99,8 @@ export function Header() {
               <NavLink href="https://mirror.xyz/0x7352724d097517b11ccB2FED15FA4C557A42192f">Blog</NavLink>
               <NavLink href="https://docs.cinchprotocol.io/cinch-protocol-documentation/">Docs</NavLink>
             </div>
-            <Button href="https://tr61ro2oj6g.typeform.com/to/N5Oam3nb" target="blank" color="blue">
-              <span>Request Demo</span>
+            <Button href="https://tr61ro2oj6g.typeform.com/to/TzNCZG57" target="_blank" color="blue">
+              <span>Contact us</span>
             </Button>
             <div className="-mr-1 md:hidden">
               <MobileNavigation />

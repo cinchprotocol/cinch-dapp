@@ -58,29 +58,27 @@ export function About() {
         <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
           <h2>DeFi-as-a-service</h2>
           <p>
-            Our mission is to put DeFi projects in front of millions of users. Cinch Protocol is the primary
-            go-to-market tool for protocols and non-custodial investment platforms.
+            Our mission is to deliver DeFi to 100 million more users by incentivizing on-ramps. Our dApp makes it super easy for non-custodial platforms to generate revenue by offering smart contract products.
+
           </p>
           <p>
-            Apps and platforms need ways to monetize user deposits. They are incentivized to put protocols that are
-            willing to share revenue in front of their users. Cinch’s dApp provides smart contracts to implement fee
-            sharing on chain.
+            Wallet platforms need products they can monetize. Revenue-sharing is a popular way to monetize. Cinch’s dApp provides smart contracts to implement fee sharing on chain.
+
           </p>
           <p>
-            Protocols that use Cinch will be able to quickly and easily get access to millions of users via the
-            investment platforms that use our fee sharing infrastructure.
+            Protocol that uses Cinch Protocol will be able to quickly and easily get access to millions of users via the wallet platforms that already use our fee sharing infrastructure.
+
           </p>
           <p>
-            Cinch will be the one stop go-to-market tool for FinTechs and protocols, like banking-as-a-service but for
-            DeFi.
+            Cinch is a one-stop go-to-market partner for protocols and a defi-as-a-service partner for wallet platforms.
           </p>
           <div className="mt-10 sm:mt-12">
             <a
-              href="https://tr61ro2oj6g.typeform.com/to/N5Oam3nb"
+              href="https://tr61ro2oj6g.typeform.com/to/TzNCZG57"
               target="blank"
               className="inline-flex items-center px-8 py-2 border border-transparent text-lg font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Request Demo
+              Contact us
             </a>
           </div>
         </div>

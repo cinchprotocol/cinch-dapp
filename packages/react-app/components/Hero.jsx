@@ -19,7 +19,7 @@ export function Hero() {
                   <span>digital wallets</span>
                   <span>investment platforms</span>
                   <span>personal finance apps</span>
-                  <span>finTech platforms</span>
+                  <span>fintech platforms</span>
                 </TextLoop>
               </h1>
               <p className="mt-3 text-base text-slate-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">

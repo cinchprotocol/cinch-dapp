@@ -74,7 +74,7 @@ export function About() {
           </p>
           <div className="mt-10 sm:mt-12">
             <a
-              href="https://tr61ro2oj6g.typeform.com/to/N5Oam3nb"
+              href="https://tr61ro2oj6g.typeform.com/to/TzNCZG57"
               target="blank"
               className="inline-flex items-center px-8 py-2 border border-transparent text-lg font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >

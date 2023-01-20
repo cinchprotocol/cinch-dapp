@@ -1,13 +1,5 @@
-// import Image from 'next/image'
-
-import { Button } from "/components/Button";
 import { Container } from "/components/Container";
-import logoLaravel from "/images/logos/laravel.svg";
-import logoMirage from "/images/logos/mirage.svg";
-import logoStatamic from "/images/logos/statamic.svg";
-import logoStaticKit from "/images/logos/statickit.svg";
-import logoTransistor from "/images/logos/transistor.svg";
-import logoTuple from "/images/logos/tuple.svg";
+import { TextLoop } from "react-text-loop-next";
 
 export function Hero() {
   return (
@@ -17,16 +9,21 @@ export function Hero() {
           <div className="mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 sm:text-center lg:px-0 lg:text-left lg:flex lg:items-center lg:col-span-6">
             <div className="lg:py-24">
               <span className="block text-sm font-semibold tracking-wide text-slate-500 sm:text-base lg:text-md">
-                B2B FEE SHARING INFRASTRUCTURE FOR WEB3
+                REVENUE-SHARE PAYMENT INFRASTRUCTURE
               </span>
               <h1 className="mt-2 text-4xl tracking-tight font-bold sm:text-6xl sm:tracking-tight xl:text-6xl xl:tracking-tight">
                 <span className="text-slate-900">Connecting </span>
-                <span className="text-blue-500">DeFi products </span>
+                <span className="text-blue-500">DeFi </span>
                 <span className="text-slate-900">to </span>
-                <span className="text-blue-500">FinTech platforms</span>
+                <TextLoop interval={2000} className="text-blue-500">
+                  <span>digital wallets</span>
+                  <span>investment platforms</span>
+                  <span>personal finance apps</span>
+                  <span>finTech platforms</span>
+                </TextLoop>
               </h1>
               <p className="mt-3 text-base text-slate-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Delivering DeFi products to millions of people.
+                Start generating revenue today.
               </p>
               <div className="mt-10 sm:mt-12">
                 <a

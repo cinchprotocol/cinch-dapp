@@ -17,10 +17,9 @@ function DebugPage({ web3 }) {
 
       {/* Main Page Content start */}
       <div className="flex flex-1 flex-col h-screen w-full items-center">
-       
         <div className="text-center">
           <Contract
-            name="RBFVault"
+            name="Vault"
             signer={web3.userSigner}
             provider={web3.localProvider}
             address={web3.address}
@@ -37,7 +36,6 @@ function DebugPage({ web3 }) {
             contractConfig={web3.contractConfig}
           />
 
-
           <Contract
             name="MockProtocol"
             signer={web3.userSigner}
@@ -47,7 +45,7 @@ function DebugPage({ web3 }) {
             contractConfig={web3.contractConfig}
           />
 
-<Contract
+          <Contract
             name="MockGnosisSafe"
             signer={web3.userSigner}
             provider={web3.localProvider}
@@ -55,12 +53,9 @@ function DebugPage({ web3 }) {
             blockExplorer={web3.blockExplorer}
             contractConfig={web3.contractConfig}
           />
-
         </div>
       </div>
     </>
-
-
   );
 }
 

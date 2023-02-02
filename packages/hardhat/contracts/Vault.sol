@@ -95,6 +95,18 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         emit VaultActivated();
     }
 
+    //TODO: remove activateBypass
+    /**
+     * @dev Activates the vault for testing.
+     * onlyOwner
+     */
+    function activateBypass() external whenNotPaused onlyOwner {
+        _isValidState(Status.Pending);
+        vaultStatus = Status.Active;
+        vaultActivationDate = block.timestamp;
+        emit VaultActivated();
+    }
+
     /**
      * @dev openzeppelin ERC4626 deposit to include after Deposit hook
      */

@@ -117,4 +117,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   });
   */
 };
-module.exports.tags = ["YourContract", "MarketPlace"];
+module.exports.tags = ["YourContract", "MarketPlace", "Vault"];

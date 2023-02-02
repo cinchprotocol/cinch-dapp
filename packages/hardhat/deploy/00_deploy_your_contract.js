@@ -44,10 +44,13 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
       cinchSafeGuard.address,
     ],
     {
-      // gasPrice: gas,
+      from: deployer,
+      log: true,
       initializer: "initialize",
     }
   );
+  await vault.deployed();
+  await vault.activateBypass();
   console.log("Vault deployed to:", vault.address);
 
   /*

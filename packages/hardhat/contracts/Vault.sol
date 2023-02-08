@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -7,21 +7,24 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 
 import "./interfaces/IGnosisSafe.sol";
 
 interface IYieldSourceContract {
     function feeReceiver() external view returns (address);
-
-    function deposit(address tokenAddress, uint256 amount) external;
-
-    function withdraw(address tokenAddress, uint256 amount) external;
-
     function owner() external view returns (address);
 
-    function priceAA() external view returns (uint256);
+    function deposit(uint256 assets, address receiver) external returns (uint256); //https://github.com/OpenZeppelin/openzeppelin-contracts/blob/1575cc6908f0f38bfb36d459c4ce7295f0f89c49/contracts/token/ERC20/extensions/ERC4626.sol#L132
+    function redeem(uint256 shares, address receiver, address owner) external returns (uint256); //https://github.com/OpenZeppelin/openzeppelin-contracts/blob/740ce2d440766e5013640f0e47640fae57f5d1d5/contracts/token/ERC20/extensions/ERC4626.sol#L166
 
+    //Idle.finance
+    function depositAARef(uint256 _amount, address _referral) external returns (uint256); //https://github.com/Idle-Labs/idle-tranches/blob/f542cc2372530ea68ab5eb0ad3bcf805928fd6b2/contracts/IdleCDO.sol#L143
+    function withdrawAA(uint256 _amount) external returns (uint256); //https://github.com/Idle-Labs/idle-tranches/blob/f542cc2372530ea68ab5eb0ad3bcf805928fd6b2/contracts/IdleCDO.sol#L159
+    function priceAA() external view returns (uint256);
     function AATranche() external view returns (address);
+    function ONE_TRANCHE_TOKEN() external view returns (uint256);
 }
 
 /**
@@ -30,6 +33,8 @@ interface IYieldSourceContract {
  * @dev Should be deployed per yield source pool/vault.
  */
 contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
+    using MathUpgradeable for uint256;
+
     event VaultActivated();
 
     enum Status {
@@ -39,7 +44,6 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         Canceled
     }
 
-    uint256 internal constant ONE_E_6 = 1e6;
     // ERC4626 vault address of yield source
     address public yieldSourceVault;
     // Address of Gnosis multi-sig which is the owner of yield soure vault
@@ -107,57 +111,89 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         emit VaultActivated();
     }
 
-    /**
-     * @dev openzeppelin ERC4626 deposit to include after Deposit hook
-     */
-    function deposit(uint256 assets, address receiver)
-        public
-        virtual
-        override
-        whenNotPaused
-        returns (uint256)
-    {
-        _isValidState(Status.Active);
-
-        uint256 shares = super.deposit(assets, receiver);
-        afterDeposit(assets);
-        return shares;
-    }
-
-    /**
-     * @dev openzeppelin ERC4626 withdraw to include before withdraw hook
-     */
-    function withdraw(
+    /** @dev See {IERC4626-deposit}. */
+    function deposit(
         uint256 assets,
-        address receiver,
-        address owner
+        address receiver
     ) public virtual override whenNotPaused returns (uint256) {
         _isValidState(Status.Active);
+        require(assets > 0, "ZERO_ASSETS");
+        require(assets <= maxDeposit(receiver), "MAX_DEPOSIT_EXCEEDED");
 
-        beforeWithdraw(assets);
-        uint256 shares = super.withdraw(assets, receiver, owner);
+        // Transfer assets to this vault first, assuming it was approved by the sender
+        SafeERC20.safeTransferFrom(IERC20(asset()), _msgSender(), address(this), assets);
+
+        // Deposit assets to yield source vault
+        IERC20(asset()).approve(yieldSourceVault, assets);
+        uint256 shares = IYieldSourceContract(yieldSourceVault).depositAARef(assets, address(this));
+
+        // Mint the shares from this vault according to the number of shares received from yield source vault
+        _mint(receiver, shares);
+        emit Deposit(_msgSender(), receiver, assets, shares);
+
         return shares;
     }
 
     /**
-     * @dev openzeppelin ERC4626 deposit to include after Deposit hook and referral tag
+     * @dev openzeppelin ERC4626 deposit with referral tag
      */
     function depositWithReferral(
         uint256 assets,
         address receiver,
         address referral
-    ) public whenNotPaused returns (uint256) {
-        _isValidState(Status.Active);
+    ) external whenNotPaused returns (uint256) {
         require(referral != address(0), "ZERO_ADDRESS");
 
-        uint256 shares = super.deposit(assets, receiver);
-        afterDeposit(assets);
+        uint256 shares = deposit(assets, receiver);
         _totalValueLocked[referral] += assets;
         return shares;
     }
 
+    /** @dev See {IERC4626-redeem}. */
+    function redeem(
+        uint256 shares, 
+        address receiver, 
+        address owner
+    ) public virtual override whenNotPaused returns (uint256) {
+        _isValidState(Status.Active);
+        require(shares > 0, "ZERO_SHARES");
+        require(receiver != address(0) && owner != address(0), "ZERO_ADDRESS");
+        require(shares <= maxRedeem(owner), "MAX_REDEEM_EXCEEDED");
+        require(shares <= balanceOf(owner), "INSUFFICIENT_SHARES");
+
+        uint256 assets = IYieldSourceContract(yieldSourceVault).withdrawAA(shares);
+        _withdraw(_msgSender(), receiver, owner, assets, shares);
+        return assets;
+    }
+
     /**
-     * @dev openzeppelin ERC4626 withdraw to include before withdraw hook and referral tag
+     * @dev openzeppelin ERC4626 redeem with referral tag
+     */
+    function redeemWithReferral(
+        uint256 shares, 
+        address receiver, 
+        address owner,
+        address referral
+    ) public whenNotPaused returns (uint256) {
+        require(referral != address(0), "ZERO_ADDRESS");
+
+        uint256 assets = redeem(shares, receiver, owner);
+        _totalValueLocked[referral] -= assets;
+        return assets;
+    }
+
+    /** @dev See {IERC4626-withdraw}. */
+    function withdraw(
+        uint256 assets,
+        address receiver,
+        address owner
+    ) public virtual override whenNotPaused returns (uint256) {
+        uint256 shares = convertToShares(assets);
+        return redeem(shares, receiver, owner);
+    }
+
+    /**
+     * @dev openzeppelin ERC4626 withdraw with referral tag
      */
     function withdrawWithReferral(
         uint256 assets,
@@ -165,30 +201,8 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         address owner,
         address referral
     ) public whenNotPaused returns (uint256) {
-        _isValidState(Status.Active);
-        require(referral != address(0), "ZERO_ADDRESS");
-
-        beforeWithdraw(assets);
-        uint256 shares = super.withdraw(assets, receiver, owner);
-        _totalValueLocked[referral] -= assets;
-        return shares;
-    }
-
-    /*///////////////////////////////////////////////////////////////
-                         INTERNAL HOOKS LOGIC
-    //////////////////////////////////////////////////////////////*/
-
-    function beforeWithdraw(uint256 amount) internal {
-        // storedTotalAssets -= amount;
-
-        IYieldSourceContract(yieldSourceVault).withdraw(asset(), amount);
-    }
-
-    function afterDeposit(uint256 amount) internal {
-        IERC20(asset()).approve(yieldSourceVault, amount);
-        IYieldSourceContract(yieldSourceVault).deposit(asset(), amount);
-
-        //storedTotalAssets += amount;
+        uint256 shares = convertToShares(assets);
+        return redeemWithReferral(shares, receiver, owner, referral);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -198,8 +212,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     /// @notice Total amount of the underlying asset that
     /// is "managed" by Vault.
     function totalAssets() public view override returns (uint256) {
-        return
-            (getPriceOfYieldSource() * vaultBalanceAtYieldSource()) / ONE_E_6;
+        return vaultBalanceAtYieldSource().mulDiv(getPriceOfYieldSource(), IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN());
     }
 
     /**
@@ -249,8 +262,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         override
         returns (uint256)
     {
-        return ((assets * ONE_E_6) / getPriceOfYieldSource());
-        //return assets.mulDiv(ONE_E_6, getPriceOfYieldSource(), rounding);
+        return assets.mulDiv(IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN(), getPriceOfYieldSource(), rounding);
     }
 
     /**
@@ -264,7 +276,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         override
         returns (uint256)
     {
-        return (shares * getPriceOfYieldSource()) / ONE_E_6;
+        return shares.mulDiv(getPriceOfYieldSource(), IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN(), rounding);
     }
 
     /************************/
@@ -309,13 +321,6 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     function isMultisigGuardAdded() public view returns (bool) {
         return GnosisSafe(multiSig).getGuard() == multisigGuard;
     }
-
-    // /**
-    //  * @dev getVaultBalance
-    //  */
-    // function getVaultBalance() external view returns (uint256) {
-    //     return IERC20(asset).balanceOf(address(this));
-    // }
 
     /**
         @dev   Checks that the current state of the vault matches the provided state.

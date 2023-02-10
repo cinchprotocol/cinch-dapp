@@ -15,14 +15,17 @@ contract MockProtocol is Ownable {
     uint256 internal _totalValueLocked;
     uint256 public priceAA;
     address public AATranche;
+    uint256 public constant ONE_TRANCHE_TOKEN = 10**18;
+    address public tokenAddress;
 
     /**
      * @dev Constructor of the contract.
      */
-    constructor() {
+    constructor(address tokenAddress_) {
         feeReceiver = msg.sender;
         fee = 1;
-        priceAA = 1000000;
+        priceAA = ONE_TRANCHE_TOKEN;
+        tokenAddress = tokenAddress_;
     }
 
     /**
@@ -51,18 +54,36 @@ contract MockProtocol is Ownable {
      * @notice deposit tokens
      * @param _amount of the underlying token to deposit
      */
+    /*
     function deposit(address tokenAddress, uint256 _amount) external {
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), _amount);
         emit Deposited(tokenAddress, _amount);
     }
+    */
 
     /**
      * @notice withdraw tokens
      * @param _amount of the underlying token to deposit
      */
+    /* 
     function withdraw(address tokenAddress, uint256 _amount) external {
         IERC20(tokenAddress).transfer(msg.sender, _amount);
         emit Withdrawn(tokenAddress, _amount);
+    }
+    */
+
+    //https://github.com/Idle-Labs/idle-tranches/blob/f542cc2372530ea68ab5eb0ad3bcf805928fd6b2/contracts/IdleCDO.sol#L143
+    function depositAARef(uint256 _amount, address _referral) external returns (uint256) {
+        IERC20(tokenAddress).transferFrom(msg.sender, address(this), _amount);
+        emit Deposited(tokenAddress, _amount);
+        return _amount;
+    }
+
+    //https://github.com/Idle-Labs/idle-tranches/blob/f542cc2372530ea68ab5eb0ad3bcf805928fd6b2/contracts/IdleCDO.sol#L159
+    function withdrawAA(uint256 _amount) external returns (uint256) {
+        IERC20(tokenAddress).transfer(msg.sender, _amount);
+        emit Withdrawn(tokenAddress, _amount);
+        return _amount;
     }
 
     /**
@@ -89,8 +110,8 @@ contract MockProtocol is Ownable {
     /**
      * @dev Send the fee to the fee receiver address
      */
-    function releaseFee(address tokenAddress, uint256 amount) external {
-        IERC20(tokenAddress).transfer(feeReceiver, amount);
+    function releaseFee(address tokenAddress_, uint256 amount) external {
+        IERC20(tokenAddress_).transfer(feeReceiver, amount);
         emit FeeReleased(tokenAddress, amount);
     }
 

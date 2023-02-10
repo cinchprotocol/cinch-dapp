@@ -6,8 +6,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 
 import "./interfaces/IGnosisSafe.sol";
@@ -116,22 +115,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         uint256 assets,
         address receiver
     ) public virtual override whenNotPaused returns (uint256) {
-        _isValidState(Status.Active);
-        require(assets > 0, "ZERO_ASSETS");
-        require(assets <= maxDeposit(receiver), "MAX_DEPOSIT_EXCEEDED");
-
-        // Transfer assets to this vault first, assuming it was approved by the sender
-        SafeERC20.safeTransferFrom(IERC20(asset()), _msgSender(), address(this), assets);
-
-        // Deposit assets to yield source vault
-        IERC20(asset()).approve(yieldSourceVault, assets);
-        uint256 shares = IYieldSourceContract(yieldSourceVault).depositAARef(assets, address(this));
-
-        // Mint the shares from this vault according to the number of shares received from yield source vault
-        _mint(receiver, shares);
-        emit Deposit(_msgSender(), receiver, assets, shares);
-
-        return shares;
+        return depositWithReferral(assets, receiver, receiver);
     }
 
     /**
@@ -141,11 +125,24 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         uint256 assets,
         address receiver,
         address referral
-    ) external whenNotPaused returns (uint256) {
-        require(referral != address(0), "ZERO_ADDRESS");
+    ) public whenNotPaused returns (uint256) {
+        _isValidState(Status.Active);
+        require(assets > 0, "ZERO_ASSETS");
+        require(receiver != address(0) && referral != address(0), "ZERO_ADDRESS");
+        require(assets <= maxDeposit(receiver), "MAX_DEPOSIT_EXCEEDED");
 
-        uint256 shares = deposit(assets, receiver);
+        // Transfer assets to this vault first, assuming it was approved by the sender
+        SafeERC20Upgradeable.safeTransferFrom(IERC20Upgradeable(asset()), _msgSender(), address(this), assets);
+
+        // Deposit assets to yield source vault
+        IERC20Upgradeable(asset()).approve(yieldSourceVault, assets);
+        uint256 shares = IYieldSourceContract(yieldSourceVault).depositAARef(assets, address(this));
+
+        // Mint the shares from this vault according to the number of shares received from yield source vault
+        _mint(receiver, shares);
+        emit Deposit(_msgSender(), receiver, assets, shares);
         _totalValueLocked[referral] += assets;
+
         return shares;
     }
 
@@ -155,15 +152,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         address receiver, 
         address owner
     ) public virtual override whenNotPaused returns (uint256) {
-        _isValidState(Status.Active);
-        require(shares > 0, "ZERO_SHARES");
-        require(receiver != address(0) && owner != address(0), "ZERO_ADDRESS");
-        require(shares <= maxRedeem(owner), "MAX_REDEEM_EXCEEDED");
-        require(shares <= balanceOf(owner), "INSUFFICIENT_SHARES");
-
-        uint256 assets = IYieldSourceContract(yieldSourceVault).withdrawAA(shares);
-        _withdraw(_msgSender(), receiver, owner, assets, shares);
-        return assets;
+        return redeemWithReferral(shares, receiver, owner, owner);
     }
 
     /**
@@ -175,10 +164,19 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         address owner,
         address referral
     ) public whenNotPaused returns (uint256) {
-        require(referral != address(0), "ZERO_ADDRESS");
+        _isValidState(Status.Active);
+        require(shares > 0, "ZERO_SHARES");
+        require(receiver != address(0) && owner != address(0) && referral != address(0), "ZERO_ADDRESS");
+        require(shares <= maxRedeem(owner), "MAX_REDEEM_EXCEEDED");
+        require(shares <= balanceOf(owner), "INSUFFICIENT_SHARES");
 
-        uint256 assets = redeem(shares, receiver, owner);
-        _totalValueLocked[referral] -= assets;
+        uint256 assets = IYieldSourceContract(yieldSourceVault).withdrawAA(shares);
+        _withdraw(_msgSender(), receiver, owner, assets, shares);
+        if (_totalValueLocked[referral] >= assets) {
+            _totalValueLocked[referral] -= assets;
+        } else {
+            _totalValueLocked[referral] = 0;
+        }
         return assets;
     }
 
@@ -227,7 +225,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
      */
     function vaultBalanceAtYieldSource() public view returns (uint256) {
         return
-            IERC20(IYieldSourceContract(yieldSourceVault).AATranche())
+            IERC20Upgradeable(IYieldSourceContract(yieldSourceVault).AATranche())
                 .balanceOf(address(this));
     }
 

@@ -32,7 +32,7 @@ describe("FeeSplitter", function () {
 
     it("Should deploy SampleProtocol", async function () {
       const MockProtocol = await ethers.getContractFactory("MockProtocol");
-      mockProtocol = await MockProtocol.deploy();
+      mockProtocol = await MockProtocol.deploy(mockERC20.address);
       expect(mockProtocol.address).to.not.be.undefined;
     });
 

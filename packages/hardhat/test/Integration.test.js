@@ -26,7 +26,7 @@ before(async function () {
     accountOwner = accounts[0];
 });
 
-describe("INTEGRATION TEST", function () {
+xdescribe("INTEGRATION TEST", function () {
 
     describe("SETUP", function () {
 

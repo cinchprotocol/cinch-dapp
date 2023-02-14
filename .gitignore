@@ -66,5 +66,6 @@ yarn-error.log*
 .netlify
 *.tsbuildinfo
 *.stackdump
+
 packages/react-app/contracts/hardhat_contracts.json
-packages/react-app/contracts/hardhat_contracts.json
+packages/hardhat/.openzeppelin/

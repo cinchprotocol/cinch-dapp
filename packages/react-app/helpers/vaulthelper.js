@@ -9,8 +9,7 @@ import { displayError } from "./errorhelper";
 import { message } from "antd";
 
 export const getVaultContract = ({ web3, address }) => {
-  console.log("web3", web3); //!!!
-  if (!web3 || !address || !web3.chainId) return;
+  if (!web3 || !address) return;
   const vaultContract = new Contract(address, vault_json.abi, web3?.userSigner);
   return vaultContract;
 };

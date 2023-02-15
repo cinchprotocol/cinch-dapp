@@ -88,6 +88,7 @@ export function DAppHeader(props) {
             <Link href="#" aria-label="Home">
               <Logo className="h-10 w-auto" />
             </Link>
+            {/*
             <div className="ml-10 space-x-8 sm:block md:block lg:block">
               <NavLink href="/revenuestreamsforsale">Buy Revenue</NavLink>
             </div>
@@ -97,6 +98,7 @@ export function DAppHeader(props) {
             <div className="ml-10 space-x-8 lg:block">
               <NavLink href="/dashboard">Dashboard</NavLink>
             </div>
+           */}
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <Account {...props?.web3} />

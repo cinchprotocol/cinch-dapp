@@ -13,6 +13,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     log: true,
+    args: [mockERC20.address],
   });
 
   const mockGnosisSafe = await deploy("MockGnosisSafe", {

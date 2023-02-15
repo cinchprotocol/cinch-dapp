@@ -1,13 +1,17 @@
-import externalContracts from "../contracts/external_contracts";
+//import externalContracts from "../contracts/external_contracts";
+import hardhat_contracts from "../contracts/hardhat_contracts";
+//because vault upgradeable proxy was not deployed using hardhat-deploy, so its metadata is not exported to hardhat_contracts.json
+//so import from the artifact instead
+import vault_json from "../../hardhat/artifacts/contracts/Vault.sol/Vault";
 import { Contract } from "@ethersproject/contracts";
 const { utils } = require("ethers");
 import { displayError } from "./errorhelper";
 import { message } from "antd";
 
-const RBFVAULTABI = externalContracts[31337]?.contracts?.RBFVAULT?.abi;
-
 export const getVaultContract = ({ web3, address }) => {
-  const vaultContract = new Contract(address, RBFVAULTABI, web3?.userSigner);
+  console.log("web3", web3); //!!!
+  if (!web3 || !address || !web3.chainId) return;
+  const vaultContract = new Contract(address, vault_json.abi, web3?.userSigner);
   return vaultContract;
 };
 
@@ -18,14 +22,14 @@ export const fetchVaultData = async ({ web3, address }) => {
 
     data = {
       name: await vaultContract?.name(),
-      feeCollector: await vaultContract?.feeCollector(),
-      multiSig: await vaultContract?.multiSig(),
-      revenuePct: _.toNumber(utils.formatEther(await vaultContract?.revenuePct())).toFixed(0),
-      price: utils.formatUnits(await vaultContract?.price(), process.env.PRICE_DECIMALS),
-      expAmount: utils.formatUnits(await vaultContract?.expAmount(), process.env.PRICE_DECIMALS),
-      borrower: await vaultContract?.borrower(),
-      lender: await vaultContract?.lender(),
-      status: await vaultContract?.status(),
+      //feeCollector: await vaultContract?.feeCollector(),
+      //multiSig: await vaultContract?.multiSig(),
+      //revenuePct: _.toNumber(utils.formatEther(await vaultContract?.revenuePct())).toFixed(0),
+      //price: utils.formatUnits(await vaultContract?.price(), process.env.PRICE_DECIMALS),
+      //expAmount: utils.formatUnits(await vaultContract?.expAmount(), process.env.PRICE_DECIMALS),
+      //borrower: await vaultContract?.borrower(),
+      //lender: await vaultContract?.lender(),
+      vaultStatus: await vaultContract?.vaultStatus(),
       //isFeeCollectorUpdated: await vaultContract?.isFeeCollectorUpdated(),
       isMultisigGuardAdded: await vaultContract?.isMultisigGuardAdded(),
       // isReadyToActivate: isFeeCollectorUpdated && isMultisigGuardAdded,

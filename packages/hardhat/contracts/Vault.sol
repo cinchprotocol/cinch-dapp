@@ -53,6 +53,8 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     address public feeSplitter;
     // Partner referral -> Total value locked
     mapping(address => uint256) internal _totalValueLocked;
+    // User -> Partner referral -> Total value locked
+    mapping(address => mapping(address => uint256)) internal _totalValueLockedByUserReferral;
 
     Status public vaultStatus;
     uint256 public vaultActivationDate;
@@ -148,8 +150,9 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
 
         // Mint the shares from this vault according to the number of shares received from yield source vault
         _mint(receiver, shares);
+        _totalValueLocked[referral] += shares;
+        _totalValueLockedByUserReferral[receiver][referral] += shares;
         emit Deposit(_msgSender(), receiver, assets, shares);
-        _totalValueLocked[referral] += assets;
 
         return shares;
     }
@@ -177,14 +180,12 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         require(receiver != address(0) && owner != address(0) && referral != address(0), "ZERO_ADDRESS");
         require(shares <= maxRedeem(owner), "MAX_REDEEM_EXCEEDED");
         require(shares <= balanceOf(owner), "INSUFFICIENT_SHARES");
+        require(shares <= _totalValueLockedByUserReferral[owner][referral], "INSUFFICIENT_SHARES_BY_REFERRAL");
 
         uint256 assets = IYieldSourceContract(yieldSourceVault).withdrawAA(shares);
         _withdraw(_msgSender(), receiver, owner, assets, shares);
-        if (_totalValueLocked[referral] >= assets) {
-            _totalValueLocked[referral] -= assets;
-        } else {
-            _totalValueLocked[referral] = 0;
-        }
+        _totalValueLocked[referral] -= shares;
+        _totalValueLockedByUserReferral[owner][referral] -= shares;
         return assets;
     }
 

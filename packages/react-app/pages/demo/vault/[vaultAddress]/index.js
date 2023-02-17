@@ -25,7 +25,7 @@ import { HeaderText01 } from "/components/HeaderText";
 import Web3Statistic from "../../../../components/Web3/Statistic";
 
 function Vault({ web3 }) {
-  console.log("web3", web3); //!!!
+  //console.log("web3", web3);
 
   return (
     <>

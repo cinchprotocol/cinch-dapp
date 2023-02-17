@@ -34,6 +34,7 @@ interface IYieldSourceContract {
 contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     using MathUpgradeable for uint256;
 
+    event FeeSplitterUpdated(address feeSplitter_);
     event VaultActivated();
 
     enum Status {
@@ -48,6 +49,8 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     // Address of Gnosis multi-sig which is the owner of yield soure vault
     address public multiSig;
     address public multisigGuard;
+    // Target feeSplitter address that the protocol should be updated to
+    address public feeSplitter;
     // Partner referral -> Total value locked
     mapping(address => uint256) internal _totalValueLocked;
 
@@ -82,6 +85,11 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
 
         vaultStatus = Status.Pending;
         vaultDeployDate = block.timestamp;
+    }
+
+    function setFeeSplitter(address feeSplitter_) external onlyOwner {
+        feeSplitter = feeSplitter_;
+        emit FeeSplitterUpdated(feeSplitter);
     }
 
     /**
@@ -301,9 +309,9 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
      * @dev Check if the fee collector is updated
      */
     function isFeeCollectorUpdated() public view returns (bool) {
+        require(feeSplitter != address(0), "FEE_SPLITTER_NOT_SET");
         return
-            IYieldSourceContract(yieldSourceVault).feeReceiver() ==
-            address(this);
+            IYieldSourceContract(yieldSourceVault).feeReceiver() == feeSplitter;
     }
 
     /**

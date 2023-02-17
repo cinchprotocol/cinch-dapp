@@ -171,6 +171,13 @@ contract FeeSplitter is FeeSplitterStorage, Initializable, ContextUpgradeable, O
             //update _totalProcessed
             _totalProcessed[token] += unProcessedBalance;
             emit TotalProcessedUpdated(token, _totalProcessed[token]);
+        } else {
+            //update the _lastCinchPxTVL of each cinchPxPayee
+            address[] memory cinchPxPayees = _cinchPxPayeeSet.values();
+            for (uint256 i = 0; i < cinchPxPayees.length; i++) {
+                address payee = cinchPxPayees[i];
+                _lastCinchPxTVL[payee] = _getCinchPxTVL(payee);
+            }
         }
     }
 

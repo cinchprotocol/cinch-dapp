@@ -22,6 +22,7 @@ let cinchSafeGuard;
 let vault;
 let mockERC20;
 let mockERC20Decimals = 6;
+let feeSplitterAddress;
 
 before(async function () {
   // get accounts from hardhat
@@ -80,6 +81,12 @@ describe("Vault tests", function () {
       expect(vault.address).to.not.be.undefined;
       console.log("vault.address: ", vault.address);
     });
+
+    it("Should update vault feeSplitter", async function () {
+      feeSplitterAddress = vault.address;
+      const tx0 = await vault.setFeeSplitter(feeSplitterAddress);
+      expect(tx0).to.emit(vault, "FeeSplitterUpdated");
+    });
   });
 
   describe("activate", function () {
@@ -89,7 +96,7 @@ describe("Vault tests", function () {
     });
 
     it("feeReceiver should be updated", async function () {
-      const tx = await mockProtocol.setFeeReceiver(vault.address);
+      const tx = await mockProtocol.setFeeReceiver(feeSplitterAddress);
       expect(tx).to.emit(mockProtocol, "FeeReceiverUpdated");
     });
 

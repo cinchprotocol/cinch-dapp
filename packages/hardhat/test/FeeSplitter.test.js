@@ -150,7 +150,7 @@ describe("FeeSplitter", function () {
         const tx = feeSplitter.processFeeSplit();
         await expect(tx).to.be.revertedWith("protocolTVL is zero");
       });
-      it("should not work when protocolTVL is positive", async () => {
+      it("should work when protocolTVL is positive", async () => {
         await mockProtocol.setTotalValueLocked(1000);
         const tx = await feeSplitter.processFeeSplit();
         expect(tx).to.emit(feeSplitter, "FeeSplitProcessed");

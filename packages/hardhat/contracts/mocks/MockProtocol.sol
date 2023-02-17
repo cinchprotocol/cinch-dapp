@@ -51,17 +51,6 @@ contract MockProtocol is Ownable {
     }
 
     /**
-     * @notice deposit tokens
-     * @param _amount of the underlying token to deposit
-     */
-    /*
-    function deposit(address tokenAddress, uint256 _amount) external {
-        IERC20(tokenAddress).transferFrom(msg.sender, address(this), _amount);
-        emit Deposited(tokenAddress, _amount);
-    }
-    */
-
-    /**
      * @notice withdraw tokens
      * @param _amount of the underlying token to deposit
      */
@@ -75,6 +64,17 @@ contract MockProtocol is Ownable {
     //https://github.com/Idle-Labs/idle-tranches/blob/f542cc2372530ea68ab5eb0ad3bcf805928fd6b2/contracts/IdleCDO.sol#L143
     function depositAARef(uint256 _amount, address _referral) external returns (uint256) {
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), _amount);
+        _totalValueLocked += _amount;
+        emit Deposited(tokenAddress, _amount);
+        return _amount;
+    }
+
+    /**
+     * @param _amount of the underlying token to deposit
+     */
+    function deposit(uint256 _amount) external returns (uint256) {
+        IERC20(tokenAddress).transferFrom(msg.sender, address(this), _amount);
+        _totalValueLocked += _amount;
         emit Deposited(tokenAddress, _amount);
         return _amount;
     }
@@ -82,6 +82,7 @@ contract MockProtocol is Ownable {
     //https://github.com/Idle-Labs/idle-tranches/blob/f542cc2372530ea68ab5eb0ad3bcf805928fd6b2/contracts/IdleCDO.sol#L159
     function withdrawAA(uint256 _amount) external returns (uint256) {
         IERC20(tokenAddress).transfer(msg.sender, _amount);
+        _totalValueLocked -= _amount;
         emit Withdrawn(tokenAddress, _amount);
         return _amount;
     }

@@ -54,6 +54,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   await vault.activateBypass();
   console.log("Vault deployed to:", vault.address);
 
+  // TODO: deploy feeSplitter and update vault
+
   /*
   const sampleProtocolContract = await ethers.getContractAt(
     "SampleProtocol",

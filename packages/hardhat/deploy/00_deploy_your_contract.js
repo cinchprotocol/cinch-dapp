@@ -54,35 +54,34 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   await vault.activateBypass();
   console.log("Vault deployed to:", vault.address);
 
-  // TODO: deploy feeSplitter and update vault
+  const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
+  const cinchVaultPayee = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
+  const FeeSplitter = await ethers.getContractFactory("FeeSplitter");
+  const feeSplitter = await upgrades.deployProxy(
+    FeeSplitter,
+    [
+      vault.address,
+      mockProtocol.address,
+      [mockERC20.address],
+      protocolPayee,
+      [cinchVaultPayee],
+    ],
+    {
+      from: deployer,
+      log: true,
+      initializer: "initialize",
+    }
+  );
+  await feeSplitter.deployed();
+  console.log("FeeSplitter deployed to:", feeSplitter.address);
 
-  /*
-  const sampleProtocolContract = await ethers.getContractAt(
-    "SampleProtocol",
+  await vault.setFeeSplitter(feeSplitter.address);
+
+  const mockProtocol0 = await ethers.getContractAt(
+    "MockProtocol",
     mockProtocol.address
   );
-  await sampleProtocolContract.transferOwnership(mockGnosisSafe.address);
-
-  await sampleProtocolContract.setFeeReceiver(vault.address);
-  */
-
-  // await deploy("MarketPlace", {
-  //   // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-  //   from: deployer,
-  //   args: [deployer, 20000, "0x5FbDB2315678afecb367f032d93F642f64180aa3"],
-  //   log: true,
-  // });
-
-  // await deploy("MockCinchPx", {
-  //   from: deployer,
-  //   log: true,
-  // });
-
-  // const marketPlaceContract = await ethers.getContract("MarketPlace", deployer);
-  // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
-
-  // const tokenContract = await ethers.getContractAt("TestToken", "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570");
-  // await tokenContract.faucet('0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F', 5000 * 10**18);
+  await mockProtocol0.setFeeReceiver(feeSplitter.address);
 
   /*
     // Getting a previously deployed contract

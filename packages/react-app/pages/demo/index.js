@@ -45,6 +45,13 @@ function Vault({ web3 }) {
       />
       <Web3Statistic
         web3={web3}
+        contractName="MockProtocol"
+        getFuncName="getTotalValueLocked"
+        title="Protocol TVL"
+        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+      />
+      <Web3Statistic
+        web3={web3}
         contractName="MockERC20"
         getFuncName="balanceOf"
         args={[web3?.address]}
@@ -69,6 +76,29 @@ function Vault({ web3 }) {
         dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
       />
       <VaultDepositForm web3={web3} referralAddress={referralAddress} />
+      <Button
+        onClick={async () => {
+          const feeReleaseAmountA = ethers.utils.parseUnits("100", mockERC20Decimals);
+          await web3?.tx(web3?.writeContracts?.FeeSplitter?.processFeeSplit());
+          await web3?.tx(
+            web3?.writeContracts?.MockERC20?.faucet(web3?.readContracts?.MockProtocol?.address, feeReleaseAmountA),
+          );
+          await web3?.tx(
+            web3?.writeContracts?.MockProtocol?.releaseFee(web3?.readContracts?.MockERC20?.address, feeReleaseAmountA),
+          );
+          await web3?.tx(web3?.writeContracts?.FeeSplitter?.processFeeSplit());
+        }}
+      >
+        Protocol gain revenue and release to Fee Splitter (4 transactions)
+      </Button>
+      <Web3Statistic
+        web3={web3}
+        contractName="MockERC20"
+        getFuncName="balanceOf"
+        args={[web3?.readContracts?.FeeSplitter?.address]}
+        title="Fee Splitter Asset Balance"
+        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+      />
       <Web3Statistic
         web3={web3}
         contractName="FeeSplitter"
@@ -95,11 +125,21 @@ function Vault({ web3 }) {
       />
       <Button
         onClick={() => {
-          web3?.tx(web3?.writeContracts?.FeeSplitter?.processFeeSplit());
+          web3?.tx(
+            web3?.writeContracts?.FeeSplitter?.release(web3?.readContracts?.MockERC20?.address, referralAddress),
+          );
         }}
       >
-        Process Fee Split
+        Release revenue share to Referral account
       </Button>
+      <Web3Statistic
+        web3={web3}
+        contractName="MockERC20"
+        getFuncName="balanceOf"
+        args={[referralAddress]}
+        title="Referral Asset Balance"
+        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+      />
     </>
   );
 }

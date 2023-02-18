@@ -15,7 +15,6 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
   const approveAsset = async values => {
     const { depositAmount } = values;
     if (!web3 || !depositAmount) return;
-    console.log("vaultAddress", web3?.writeContracts?.Vault?.address);
     await web3?.tx(
       web3?.writeContracts?.MockERC20?.approve(
         web3?.writeContracts?.Vault?.address,

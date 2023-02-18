@@ -59,13 +59,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const FeeSplitter = await ethers.getContractFactory("FeeSplitter");
   const feeSplitter = await upgrades.deployProxy(
     FeeSplitter,
-    [
-      vault.address,
-      mockProtocol.address,
-      [mockERC20.address],
-      protocolPayee,
-      [cinchVaultPayee],
-    ],
+    [vault.address, [mockERC20.address], protocolPayee, [cinchVaultPayee]],
     {
       from: deployer,
       log: true,

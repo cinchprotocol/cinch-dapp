@@ -7,14 +7,9 @@ use(solidity);
 
 let accounts;
 let owner;
-let user1;
 let user2;
 let initAmount0;
-let depositAmount1;
-let depositAmount1Plus;
 let depositAmount2;
-let depositAmount1Half;
-let depositAmount2Half;
 let feeReleaseAmountA;
 let protocolTVLAmount0;
 
@@ -32,14 +27,9 @@ before(async function () {
   // get accounts from hardhat
   accounts = await ethers.getSigners();
   owner = accounts[0];
-  user1 = accounts[1];
   user2 = accounts[2];
   initAmount0 = ethers.utils.parseUnits("1000", mockERC20Decimals);
-  depositAmount1 = ethers.utils.parseUnits("500", mockERC20Decimals);
-  depositAmount1Plus = ethers.utils.parseUnits("501", mockERC20Decimals);
-  depositAmount1Half = depositAmount1.div(2);
   depositAmount2 = ethers.utils.parseUnits("1000", mockERC20Decimals);
-  depositAmount2Half = depositAmount2.div(2);
   cinchVaultPayee2 = accounts[2];
   protocolPayee3 = accounts[3];
   feeReleaseAmountA = ethers.utils.parseUnits("1000", mockERC20Decimals);
@@ -94,7 +84,6 @@ describe("Integration tests", function () {
       const FeeSplitter = await ethers.getContractFactory("FeeSplitter", owner);
       feeSplitter = await upgrades.deployProxy(FeeSplitter, [
         vault.address,
-        mockProtocol.address,
         [mockERC20.address],
         protocolPayee3.address,
         [cinchVaultPayee2.address],

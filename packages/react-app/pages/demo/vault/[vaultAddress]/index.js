@@ -22,13 +22,14 @@ import { Button } from "/components/Button";
 import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
 
-import Web3Statistic from "../../../../components/Web3/Statistic";
-import VaultDepositForm from "../../../../components/Web3/VaultDepositForm";
+import Web3Statistic from "/components/Web3/Statistic";
+import VaultDepositForm from "/components/Web3/VaultDepositForm";
 
 function Vault({ web3 }) {
   //console.log("web3", web3);
   const mockERC20Decimals = 6;
   const referralAddress = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
+  const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
 
   return (
     <>
@@ -68,6 +69,37 @@ function Vault({ web3 }) {
         dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
       />
       <VaultDepositForm web3={web3} referralAddress={referralAddress} />
+      <Web3Statistic
+        web3={web3}
+        contractName="FeeSplitter"
+        getFuncName="getInternalBalance"
+        args={[web3?.readContracts?.MockERC20?.address, referralAddress]}
+        title="Fee Splitter Balance for Referral"
+        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+      />
+      <Web3Statistic
+        web3={web3}
+        contractName="FeeSplitter"
+        getFuncName="getInternalBalance"
+        args={[web3?.readContracts?.MockERC20?.address, protocolPayee]}
+        title="Fee Splitter Balance for Protocol"
+        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+      />
+      <Web3Statistic
+        web3={web3}
+        contractName="FeeSplitter"
+        getFuncName="getTotalProcessed"
+        args={[web3?.readContracts?.MockERC20?.address]}
+        title="Fee Splitter total processed"
+        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+      />
+      <Button
+        onClick={() => {
+          web3?.tx(web3?.writeContracts?.FeeSplitter?.processFeeSplit());
+        }}
+      >
+        Process Fee Split
+      </Button>
     </>
   );
 }

@@ -7,7 +7,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 
 contract FeeSplitterStorage {
     address internal _cinchPxAddress;
-    address internal _protocolAddress;
     EnumerableSetUpgradeable.AddressSet internal _supportedERC20Set;
     address internal _protocolPayee;
     EnumerableSetUpgradeable.AddressSet internal _cinchPxPayeeSet;

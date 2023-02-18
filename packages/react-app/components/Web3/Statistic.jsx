@@ -1,10 +1,10 @@
 import React from "react";
-import { Col, Row, Statistic } from "antd";
+import { Col, Row, Statistic, Card } from "antd";
 import CountUp from "react-countup";
 import { useContractReader } from "eth-hooks";
 const { ethers } = require("ethers");
 
-const formatter = value => <CountUp end={value} separator="," />;
+const countUpFormatter = value => <CountUp end={value} separator="," />;
 
 const Web3Statistic = ({
   web3,
@@ -13,13 +13,17 @@ const Web3Statistic = ({
   args = [],
   title = "",
   dataTransform = ethers.utils.formatUnits,
+  formatter = countUpFormatter,
+  pollTime = 500,
 }) => {
-  const data = useContractReader(web3?.readContracts, contractName, getFuncName, args);
+  const data = useContractReader(web3.readContracts, contractName, getFuncName, args, pollTime);
 
   return (
     <Row gutter={16}>
-      <Col span={12}>
-        <Statistic title={title} value={data ? dataTransform(data) : 0} formatter={formatter} />
+      <Col span={8}>
+        <Card>
+          <Statistic title={title} value={data ? dataTransform(data) : 0} formatter={formatter} />
+        </Card>
       </Col>
     </Row>
   );

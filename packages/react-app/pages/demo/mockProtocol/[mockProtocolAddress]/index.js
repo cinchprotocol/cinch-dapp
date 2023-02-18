@@ -23,12 +23,9 @@ import { Footer } from "/components/Footer";
 import { HeaderText01 } from "/components/HeaderText";
 
 import Web3Statistic from "../../../../components/Web3/Statistic";
-import VaultDepositForm from "../../../../components/Web3/VaultDepositForm";
 
-function Vault({ web3 }) {
-  //console.log("web3", web3);
+function MockProtocol({ web3 }) {
   const mockERC20Decimals = 6;
-  const referralAddress = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
 
   return (
     <>
@@ -36,40 +33,23 @@ function Vault({ web3 }) {
       <DAppHeader web3={web3} />
       <Web3Statistic
         web3={web3}
-        contractName="Vault"
+        contractName="MockProtocol"
         getFuncName="getTotalValueLocked"
-        args={[referralAddress]}
-        title="Vault TVL by Referral"
+        title="Protocol TVL"
         dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
       />
+      {/*
       <Web3Statistic
         web3={web3}
-        contractName="MockERC20"
-        getFuncName="balanceOf"
-        args={[web3?.address]}
-        title="Your Asset Balance"
-        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
-      />
-      <Button
-        onClick={() => {
-          web3?.tx(
-            web3?.writeContracts?.MockERC20?.faucet(web3?.address, ethers.utils.parseUnits("1000", mockERC20Decimals)),
-          );
-        }}
-      >
-        Get asset from faucet
-      </Button>
-      <Web3Statistic
-        web3={web3}
-        contractName="Vault"
-        getFuncName="balanceOf"
-        args={[web3?.address]}
-        title="Your Vault Share Balance"
-        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
-      />
-      <VaultDepositForm web3={web3} referralAddress={referralAddress} />
+        contractName="MockProtocol"
+        getFuncName="feeReceiver"
+        title="Fee Receiver address"
+        dataTransform={data => data}
+        formatter={null}
+          />
+        */}
     </>
   );
 }
 
-export default Web3Consumer(Vault);
+export default Web3Consumer(MockProtocol);

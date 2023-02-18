@@ -1196,8 +1196,434 @@
       "name": "localhost",
       "chainId": "31337",
       "contracts": {
+        "FeeSplitter": {
+          "address": "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
+          "abi": [
+            {
+              "inputs": [],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "cinchPxPayee",
+                  "type": "address"
+                }
+              ],
+              "name": "CinchPxPayeeAdded",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "contract IERC20Upgradeable",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "to",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "ERC20PaymentReleased",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "from",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "ETHPaymentReceived",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "protocolTVL",
+                  "type": "uint256"
+                }
+              ],
+              "name": "FeeSplitProcessed",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "version",
+                  "type": "uint8"
+                }
+              ],
+              "name": "Initialized",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "contract IERC20Upgradeable",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "payee",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "balance",
+                  "type": "uint256"
+                }
+              ],
+              "name": "InternalBalanceUpdated",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "previousOwner",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "OwnershipTransferred",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                }
+              ],
+              "name": "Paused",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                }
+              ],
+              "name": "SupportedERC20Added",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "contract IERC20Upgradeable",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "totalProcessed",
+                  "type": "uint256"
+                }
+              ],
+              "name": "TotalProcessedUpdated",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                }
+              ],
+              "name": "Unpaused",
+              "type": "event"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "cinchPxPayee",
+                  "type": "address"
+                }
+              ],
+              "name": "addCinchPxPayee",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getCinchPxPayeeSet",
+              "outputs": [
+                {
+                  "internalType": "address[]",
+                  "name": "payees",
+                  "type": "address[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "payee",
+                  "type": "address"
+                }
+              ],
+              "name": "getInternalBalance",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getProtocolPayee",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getSupportedERC20Set",
+              "outputs": [
+                {
+                  "internalType": "address[]",
+                  "name": "tokenAddresses",
+                  "type": "address[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                }
+              ],
+              "name": "getTotalProcessed",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                }
+              ],
+              "name": "getTotalReleased",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "cinchPxAddress",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address[]",
+                  "name": "supportedERC20Addresses",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "address",
+                  "name": "protocolPayee",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address[]",
+                  "name": "cinchPxPayees",
+                  "type": "address[]"
+                }
+              ],
+              "name": "initialize",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "owner",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "pause",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "paused",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "processFeeSplit",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "payee",
+                  "type": "address"
+                }
+              ],
+              "name": "release",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "transferOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "unpause",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "stateMutability": "payable",
+              "type": "receive"
+            }
+          ]
+        },
         "Vault": {
-          "address": "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
+          "address": "0x4826533B4897376654Bb4d4AD88B7faFD0C98528",
           "abi": [
             {
               "anonymous": false,
@@ -1651,6 +2077,19 @@
                 }
               ],
               "name": "getTotalValueLocked",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getYieldSourceVaultTotalShares",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -2345,437 +2784,6 @@
               ],
               "stateMutability": "view",
               "type": "function"
-            }
-          ]
-        },
-        "FeeSplitter": {
-          "address": "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
-          "abi": [
-            {
-              "inputs": [],
-              "stateMutability": "nonpayable",
-              "type": "constructor"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "cinchPxPayee",
-                  "type": "address"
-                }
-              ],
-              "name": "CinchPxPayeeAdded",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": true,
-                  "internalType": "contract IERC20Upgradeable",
-                  "name": "token",
-                  "type": "address"
-                },
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-                },
-                {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                }
-              ],
-              "name": "ERC20PaymentReleased",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-                },
-                {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                }
-              ],
-              "name": "ETHPaymentReceived",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "protocolTVL",
-                  "type": "uint256"
-                }
-              ],
-              "name": "FeeSplitProcessed",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "uint8",
-                  "name": "version",
-                  "type": "uint8"
-                }
-              ],
-              "name": "Initialized",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": true,
-                  "internalType": "contract IERC20Upgradeable",
-                  "name": "token",
-                  "type": "address"
-                },
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "payee",
-                  "type": "address"
-                },
-                {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "balance",
-                  "type": "uint256"
-                }
-              ],
-              "name": "InternalBalanceUpdated",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "previousOwner",
-                  "type": "address"
-                },
-                {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "newOwner",
-                  "type": "address"
-                }
-              ],
-              "name": "OwnershipTransferred",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "account",
-                  "type": "address"
-                }
-              ],
-              "name": "Paused",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "tokenAddress",
-                  "type": "address"
-                }
-              ],
-              "name": "SupportedERC20Added",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": true,
-                  "internalType": "contract IERC20Upgradeable",
-                  "name": "token",
-                  "type": "address"
-                },
-                {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "totalProcessed",
-                  "type": "uint256"
-                }
-              ],
-              "name": "TotalProcessedUpdated",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "account",
-                  "type": "address"
-                }
-              ],
-              "name": "Unpaused",
-              "type": "event"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "cinchPxPayee",
-                  "type": "address"
-                }
-              ],
-              "name": "addCinchPxPayee",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "getCinchPxPayeeSet",
-              "outputs": [
-                {
-                  "internalType": "address[]",
-                  "name": "payees",
-                  "type": "address[]"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "tokenAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "payee",
-                  "type": "address"
-                }
-              ],
-              "name": "getInternalBalance",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "getProtocolPayee",
-              "outputs": [
-                {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "getSupportedERC20Set",
-              "outputs": [
-                {
-                  "internalType": "address[]",
-                  "name": "tokenAddresses",
-                  "type": "address[]"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "tokenAddress",
-                  "type": "address"
-                }
-              ],
-              "name": "getTotalProcessed",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "tokenAddress",
-                  "type": "address"
-                }
-              ],
-              "name": "getTotalReleased",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "cinchPxAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "protocolAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address[]",
-                  "name": "supportedERC20Addresses",
-                  "type": "address[]"
-                },
-                {
-                  "internalType": "address",
-                  "name": "protocolPayee",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address[]",
-                  "name": "cinchPxPayees",
-                  "type": "address[]"
-                }
-              ],
-              "name": "initialize",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "owner",
-              "outputs": [
-                {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "pause",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "paused",
-              "outputs": [
-                {
-                  "internalType": "bool",
-                  "name": "",
-                  "type": "bool"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "processFeeSplit",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "tokenAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "payee",
-                  "type": "address"
-                }
-              ],
-              "name": "release",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "renounceOwnership",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "newOwner",
-                  "type": "address"
-                }
-              ],
-              "name": "transferOwnership",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "unpause",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "stateMutability": "payable",
-              "type": "receive"
             }
           ]
         },

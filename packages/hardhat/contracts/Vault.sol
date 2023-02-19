@@ -41,6 +41,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     mapping(address => uint256) internal _totalValueLocked;
     // User -> Partner referral -> Total value locked
     mapping(address => mapping(address => uint256)) internal _totalValueLockedByUserReferral;
+    uint256 public totalAssetDepositProcessed;
 
     Status public vaultStatus;
     uint256 public vaultActivationDate;
@@ -138,6 +139,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         _mint(receiver, shares);
         _totalValueLocked[referral] += shares;
         _totalValueLockedByUserReferral[receiver][referral] += shares;
+        totalAssetDepositProcessed += assets;
         emit Deposit(_msgSender(), receiver, assets, shares);
 
         return shares;

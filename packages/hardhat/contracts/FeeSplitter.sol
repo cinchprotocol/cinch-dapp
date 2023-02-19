@@ -155,13 +155,13 @@ contract FeeSplitter is FeeSplitterStorage, Initializable, ContextUpgradeable, O
                 uint256 balanceToAdd = (unProcessedBalance * lastCinchPxTVL / (lastProtocolTVL + lastProtocolTVL)) + (unProcessedBalance * cinchPxTVL / (protocolTVL + protocolTVL));
                 _internalBalance[token][payee] = _internalBalance[token][payee] + balanceToAdd;
                 totalCinchPxBalanceAdded += balanceToAdd;
-
-                //emit InternalBalanceUpdated(token, payee, _internalBalance[token][payee]);
+                _totalSplittedTo[token][payee] += balanceToAdd;
             }
 
             //update the internal balance of the protocolPayee
             uint256 protocolBalanceToAdd = unProcessedBalance - totalCinchPxBalanceAdded;
             _internalBalance[token][_protocolPayee] = _internalBalance[token][_protocolPayee] + protocolBalanceToAdd;
+            _totalSplittedTo[token][_protocolPayee] += protocolBalanceToAdd;
             emit InternalBalanceUpdated(token, _protocolPayee, _internalBalance[token][_protocolPayee]);
 
             //update _totalProcessed
@@ -232,6 +232,15 @@ contract FeeSplitter is FeeSplitterStorage, Initializable, ContextUpgradeable, O
      */
     function getTotalProcessed(address tokenAddress) external view returns (uint256) {
         return _totalProcessed[IERC20Upgradeable(tokenAddress)];
+    }
+
+    /**
+     * @dev Getter for the totalSplittedTo. 
+     * @param tokenAddress ERC20 token address.
+     * @param payee The address of the payee.
+     */
+    function getTotalSplittedTo(address tokenAddress, address payee) external view returns (uint256) {
+        return _totalSplittedTo[IERC20Upgradeable(tokenAddress)][payee];
     }
 
     /**

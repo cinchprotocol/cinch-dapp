@@ -16,5 +16,6 @@ contract FeeSplitterStorage {
     mapping(IERC20Upgradeable => uint256) internal _lastFeeSplitterBalance; // token => lastFeeSplitterBalance
     mapping(IERC20Upgradeable => mapping(address => uint256)) internal _internalBalance; // token => (payee => internalBalance)
     mapping(IERC20Upgradeable => uint256) internal _totalProcessed; // token => totalProcessed
+    mapping(IERC20Upgradeable => mapping(address => uint256)) internal _totalSplittedTo; // token => (payee => totalSplittedTo)
     mapping(IERC20Upgradeable => uint256) internal _totalReleased; // token => totalReleased
 }

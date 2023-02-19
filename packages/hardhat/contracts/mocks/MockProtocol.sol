@@ -4,6 +4,14 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+interface IMockERC20 {
+    function faucet(address to, uint256 amount) external;
+}
+
+interface IFeeSplitter {
+    function processFeeSplit() external;
+}
+
 contract MockProtocol is Ownable {
     event FeeReceiverUpdated(address indexed feeReceiver);
     event Deposited(address indexed token, uint256 amount);
@@ -111,7 +119,7 @@ contract MockProtocol is Ownable {
     /**
      * @dev Send the fee to the fee receiver address
      */
-    function releaseFee(address tokenAddress_, uint256 amount) external {
+    function releaseFee(address tokenAddress_, uint256 amount) public {
         IERC20(tokenAddress_).transfer(feeReceiver, amount);
         emit FeeReleased(tokenAddress, amount);
     }
@@ -122,5 +130,12 @@ contract MockProtocol is Ownable {
 
     function setAATranche(address tranchAddress) external {
         AATranche = tranchAddress;
+    }
+
+    function gainRevenueAndRelease(address tokenAddress_, uint256 amount_) external {
+        IFeeSplitter(feeReceiver).processFeeSplit();
+        IMockERC20(tokenAddress_).faucet(address(this), amount_);
+        releaseFee(tokenAddress_, amount_);
+        IFeeSplitter(feeReceiver).processFeeSplit();
     }
 }

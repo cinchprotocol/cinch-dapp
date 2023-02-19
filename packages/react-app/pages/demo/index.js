@@ -82,7 +82,7 @@ function Vault({ web3 }) {
               contractName="Vault"
               getFuncName="getTotalValueLocked"
               args={[referralAddress]}
-              title="Vault TVL by Referral"
+              title="Vault TVL By Referral"
               dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
             />
             <Web3Statistic
@@ -91,6 +91,13 @@ function Vault({ web3 }) {
               getFuncName="balanceOf"
               args={[web3?.address]}
               title="Your Vault Share Balance"
+              dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+            />
+            <Web3Statistic
+              web3={web3}
+              contractName="Vault"
+              getFuncName="totalAssetDepositProcessed"
+              title="Total Deposit Processed"
               dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
             />
             <div style={{ marginTop: 16 }}>
@@ -158,7 +165,7 @@ function Vault({ web3 }) {
               contractName="FeeSplitter"
               getFuncName="getInternalBalance"
               args={[web3?.readContracts?.MockERC20?.address, protocolPayee]}
-              title="Fee Splitter Balance for Protocol"
+              title="Fee Splitter Balance For Protocol"
               dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
             />
             <Web3Statistic
@@ -166,7 +173,7 @@ function Vault({ web3 }) {
               contractName="FeeSplitter"
               getFuncName="getTotalProcessed"
               args={[web3?.readContracts?.MockERC20?.address]}
-              title="Fee Splitter total processed"
+              title="Fee Splitter Total Processed"
               dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
             />
             <div style={{ textAlign: "center", padding: 32 }}>
@@ -190,12 +197,19 @@ function Vault({ web3 }) {
             <Web3Statistic
               web3={web3}
               contractName="FeeSplitter"
-              getFuncName="getInternalBalance"
+              getFuncName="getTotalSplittedTo"
               args={[web3?.readContracts?.MockERC20?.address, referralAddress]}
-              title="Fee Splitter Balance for Referral"
+              title="Total Splitted To Referral"
               dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
             />
-
+            <Web3Statistic
+              web3={web3}
+              contractName="FeeSplitter"
+              getFuncName="getInternalBalance"
+              args={[web3?.readContracts?.MockERC20?.address, referralAddress]}
+              title="Fee Splitter Balance For Referral"
+              dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+            />
             <Web3Statistic
               web3={web3}
               contractName="MockERC20"

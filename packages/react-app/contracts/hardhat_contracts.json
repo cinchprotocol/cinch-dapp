@@ -2457,7 +2457,7 @@
           ]
         },
         "Vault": {
-          "address": "0xC9a43158891282A2B1475592D5719c001986Aaec",
+          "address": "0xc0F115A19107322cFBf1cDBC7ea011C19EbDB4F8",
           "abi": [
             {
               "anonymous": false,
@@ -3394,6 +3394,19 @@
             },
             {
               "inputs": [],
+              "name": "totalAssetDepositProcessed",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "totalAssets",
               "outputs": [
                 {
@@ -3622,7 +3635,7 @@
           ]
         },
         "FeeSplitter": {
-          "address": "0x4C2F7092C2aE51D986bEFEe378e50BD4dB99C901",
+          "address": "0xD0141E899a65C95a556fE2B27e5982A6DE7fDD7A",
           "abi": [
             {
               "inputs": [],
@@ -3918,6 +3931,30 @@
                 }
               ],
               "name": "getTotalReleased",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "payee",
+                  "type": "address"
+                }
+              ],
+              "name": "getTotalSplittedTo",
               "outputs": [
                 {
                   "internalType": "uint256",

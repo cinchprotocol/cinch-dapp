@@ -6,43 +6,37 @@ const { ethers } = require("ethers");
 
 import { Button } from "../Button";
 
-const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
+const VaultRedeemForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
   const [formValues, setFormValues] = useState(null);
   const mockERC20ApprovalEvents = useEventListener(web3?.readContracts, "MockERC20", "Approval");
   console.log("mockERC20ApprovalEvents", mockERC20ApprovalEvents);
 
-  const approveAsset = async values => {
-    const { depositAmount } = values;
-    if (!web3 || !depositAmount) return;
-    await web3?.tx(
-      web3?.writeContracts?.MockERC20?.approve(
-        web3?.writeContracts?.Vault?.address,
-        ethers.utils.parseUnits(depositAmount, mockERC20Decimals),
-      ),
-    );
-  };
-
-  const depositAsset = async values => {
-    const { depositAmount, referralEnabled } = values;
-    if (!web3 || !depositAmount || !referralAddress) return;
+  const redeemAsset = async values => {
+    const { redeemAmount, referralEnabled } = values;
+    if (!web3 || !redeemAmount || !referralAddress) return;
     if (referralEnabled) {
       await web3?.tx(
-        web3?.writeContracts?.Vault?.depositWithReferral(
-          ethers.utils.parseUnits(depositAmount, mockERC20Decimals),
+        web3?.writeContracts?.Vault?.redeemWithReferral(
+          ethers.utils.parseUnits(redeemAmount, mockERC20Decimals),
+          web3?.address,
           web3?.address,
           referralAddress,
         ),
       );
     } else {
       await web3?.tx(
-        web3?.writeContracts?.Vault?.deposit(ethers.utils.parseUnits(depositAmount, mockERC20Decimals), web3?.address),
+        web3?.writeContracts?.Vault?.redeem(
+          ethers.utils.parseUnits(redeemAmount, mockERC20Decimals),
+          web3?.address,
+          web3?.address,
+        ),
       );
     }
   };
 
   const onFinish = async values => {
     console.log("onFinish:", values);
-    await approveAsset(values);
+    await redeemAsset(values);
     setFormValues(values);
   };
 
@@ -53,21 +47,21 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
   return (
     <Row gutter={16}>
       <Col span={24}>
-        <Card title="Deposit into Cinch Vault">
+        <Card title="Redeem from Cinch Vault">
           <Form
             name="basic"
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: 600 }}
-            initialValues={{ referralEnabled: true, depositAmount: "1000" }}
+            initialValues={{ referralEnabled: true, redeemAmount: "1000" }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
-              label="Deposit Amount"
-              name="depositAmount"
-              rules={[{ required: true, message: "Please input the Deposit Amount!" }]}
+              label="Redeem Amount"
+              name="redeemAmount"
+              rules={[{ required: true, message: "Please input the Redeem Amount!" }]}
             >
               <Input />
             </Form.Item>
@@ -79,16 +73,7 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Space>
                 <Button type="primary" htmlType="submit">
-                  2. Approve
-                </Button>
-                <Button
-                  type="primary"
-                  disabled={formValues == null}
-                  onClick={() => {
-                    depositAsset(formValues);
-                  }}
-                >
-                  3. Deposit
+                  6. Redeem
                 </Button>
               </Space>
             </Form.Item>
@@ -99,4 +84,4 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
   );
 };
 
-export default VaultDepositForm;
+export default VaultRedeemForm;

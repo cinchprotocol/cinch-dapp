@@ -20,8 +20,8 @@ const Web3Statistic = ({
 
   return (
     <Row gutter={16}>
-      <Col span={8}>
-        <Card>
+      <Col span={24}>
+        <Card style={{ marginTop: 16 }}>
           <Statistic title={title} value={data ? dataTransform(data) : 0} formatter={formatter} />
         </Card>
       </Col>

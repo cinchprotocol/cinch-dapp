@@ -218,9 +218,11 @@ export function Web3Provider({ children, ...props }) {
   const mainnetContracts = useContractLoader(mainnetProvider, contractConfig);
 
   // If you want to call a function on a new block
+  /*
   useOnBlock(mainnetProvider, () => {
     console.log(`⛓ A new mainnet block is here: ${mainnetProvider._lastBlockNumber}`);
   });
+  */
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");

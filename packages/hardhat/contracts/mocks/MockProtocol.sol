@@ -4,6 +4,14 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+interface IMockERC20 {
+    function faucet(address to, uint256 amount) external;
+}
+
+interface IFeeSplitter {
+    function processFeeSplit() external;
+}
+
 contract MockProtocol is Ownable {
     event FeeReceiverUpdated(address indexed feeReceiver);
     event Deposited(address indexed token, uint256 amount);
@@ -51,17 +59,6 @@ contract MockProtocol is Ownable {
     }
 
     /**
-     * @notice deposit tokens
-     * @param _amount of the underlying token to deposit
-     */
-    /*
-    function deposit(address tokenAddress, uint256 _amount) external {
-        IERC20(tokenAddress).transferFrom(msg.sender, address(this), _amount);
-        emit Deposited(tokenAddress, _amount);
-    }
-    */
-
-    /**
      * @notice withdraw tokens
      * @param _amount of the underlying token to deposit
      */
@@ -75,6 +72,17 @@ contract MockProtocol is Ownable {
     //https://github.com/Idle-Labs/idle-tranches/blob/f542cc2372530ea68ab5eb0ad3bcf805928fd6b2/contracts/IdleCDO.sol#L143
     function depositAARef(uint256 _amount, address _referral) external returns (uint256) {
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), _amount);
+        _totalValueLocked += _amount;
+        emit Deposited(tokenAddress, _amount);
+        return _amount;
+    }
+
+    /**
+     * @param _amount of the underlying token to deposit
+     */
+    function deposit(uint256 _amount) external returns (uint256) {
+        IERC20(tokenAddress).transferFrom(msg.sender, address(this), _amount);
+        _totalValueLocked += _amount;
         emit Deposited(tokenAddress, _amount);
         return _amount;
     }
@@ -82,6 +90,7 @@ contract MockProtocol is Ownable {
     //https://github.com/Idle-Labs/idle-tranches/blob/f542cc2372530ea68ab5eb0ad3bcf805928fd6b2/contracts/IdleCDO.sol#L159
     function withdrawAA(uint256 _amount) external returns (uint256) {
         IERC20(tokenAddress).transfer(msg.sender, _amount);
+        _totalValueLocked -= _amount;
         emit Withdrawn(tokenAddress, _amount);
         return _amount;
     }
@@ -110,7 +119,7 @@ contract MockProtocol is Ownable {
     /**
      * @dev Send the fee to the fee receiver address
      */
-    function releaseFee(address tokenAddress_, uint256 amount) external {
+    function releaseFee(address tokenAddress_, uint256 amount) public {
         IERC20(tokenAddress_).transfer(feeReceiver, amount);
         emit FeeReleased(tokenAddress, amount);
     }
@@ -121,5 +130,12 @@ contract MockProtocol is Ownable {
 
     function setAATranche(address tranchAddress) external {
         AATranche = tranchAddress;
+    }
+
+    function gainRevenueAndRelease(address tokenAddress_, uint256 amount_) external {
+        IFeeSplitter(feeReceiver).processFeeSplit();
+        IMockERC20(tokenAddress_).faucet(address(this), amount_);
+        releaseFee(tokenAddress_, amount_);
+        IFeeSplitter(feeReceiver).processFeeSplit();
     }
 }

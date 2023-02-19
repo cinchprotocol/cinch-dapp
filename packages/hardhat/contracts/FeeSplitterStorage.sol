@@ -7,7 +7,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 
 contract FeeSplitterStorage {
     address internal _cinchPxAddress;
-    address internal _protocolAddress;
     EnumerableSetUpgradeable.AddressSet internal _supportedERC20Set;
     address internal _protocolPayee;
     EnumerableSetUpgradeable.AddressSet internal _cinchPxPayeeSet;
@@ -17,5 +16,6 @@ contract FeeSplitterStorage {
     mapping(IERC20Upgradeable => uint256) internal _lastFeeSplitterBalance; // token => lastFeeSplitterBalance
     mapping(IERC20Upgradeable => mapping(address => uint256)) internal _internalBalance; // token => (payee => internalBalance)
     mapping(IERC20Upgradeable => uint256) internal _totalProcessed; // token => totalProcessed
+    mapping(IERC20Upgradeable => mapping(address => uint256)) internal _totalSplittedTo; // token => (payee => totalSplittedTo)
     mapping(IERC20Upgradeable => uint256) internal _totalReleased; // token => totalReleased
 }

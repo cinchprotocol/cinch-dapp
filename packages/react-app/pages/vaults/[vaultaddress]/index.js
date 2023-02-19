@@ -38,7 +38,6 @@ function Vault({ web3 }) {
     }
   };
 
-
   useEffect(() => {
     if (web3) {
       reloadData();
@@ -58,9 +57,9 @@ function Vault({ web3 }) {
         <main>
           <div>
             <Container>
-              <div class="md:flex md:items-center md:justify-between md:space-x-5">
-                <div class="flex items-center space-x-5">
-                  <div class="flex-shrink-0">
+              <div className="md:flex md:items-center md:justify-between md:space-x-5">
+                <div className="flex items-center space-x-5">
+                  <div className="flex-shrink-0">
                     {/* <div class="relative">
                       <img class="h-16 w-16 rounded-full" src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80" alt=""/>
                         <span class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></span>
@@ -68,8 +67,16 @@ function Vault({ web3 }) {
                   </div>
                   <div>
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                      {vaultData?.name} {vaultData?.status == 1 ? <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">Active</span>
-                        : <span class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-0.5 text-sm font-medium text-yellow-800">Pending</span>}
+                      {vaultData?.name}{" "}
+                      {vaultData?.status == 1 ? (
+                        <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
+                          Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-3 py-0.5 text-sm font-medium text-yellow-800">
+                          Pending
+                        </span>
+                      )}
                     </h1>
                     {/* <p class="text-sm font-medium text-gray-500">Vault created on <time datetime="2020-08-25">August 25, 2020</time></p> */}
                   </div>
@@ -84,39 +91,47 @@ function Vault({ web3 }) {
               <div className="mb-10 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr]">
                 <div className="p-6 lg:mr-4 lg:col-span-2 bg-white rounded-2xl shadow">
                   <div className="">
-                    <h3 class="text-lg font-medium leading-6 text-gray-900">Listing Information</h3>
-                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Protocol details and terms.</p>
+                    <h3 className="text-lg font-medium leading-6 text-gray-900">Listing Information</h3>
+                    <p className="mt-1 max-w-2xl text-sm text-gray-500">Protocol details and terms.</p>
                   </div>
 
                   <div className="mb-10 border-t border-gray-200">
-                    <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Price (USDC)</dt>
-                        <dd class="mt-1 text-2xl text-gray-900">${vaultData?.price}</dd>
+                    <dl className="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Price (USDC)</dt>
+                        <dd className="mt-1 text-2xl text-gray-900">${vaultData?.price}</dd>
                       </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Revenue proportion</dt>
-                        <dd class="mt-1 text-2xl text-gray-900">{vaultData?.revenuePct}%</dd>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Revenue proportion</dt>
+                        <dd className="mt-1 text-2xl text-gray-900">{vaultData?.revenuePct}%</dd>
                       </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Expiry amount (USDC)</dt>
-                        <dd class="mt-1 text-2xl text-gray-900">${vaultData?.expAmount}</dd>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Expiry amount (USDC)</dt>
+                        <dd className="mt-1 text-2xl text-gray-900">${vaultData?.expAmount}</dd>
                       </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Fee collector address</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.feeCollector.substr(0, 6) + "..." + vaultData?.feeCollector.substr(-4)}</dd>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Fee collector address</dt>
+                        <dd className="mt-1 text-sm text-gray-900">
+                          {vaultData?.feeCollector?.substr(0, 6) + "..." + vaultData?.feeCollector.substr(-4)}
+                        </dd>
                       </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Multi-sig address</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.multiSig.substr(0, 6) + "..." + vaultData?.multiSig.substr(-4)}</dd>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Multi-sig address</dt>
+                        <dd className="mt-1 text-sm text-gray-900">
+                          {vaultData?.multiSig?.substr(0, 6) + "..." + vaultData?.multiSig.substr(-4)}
+                        </dd>
                       </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Borrower</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.borrower.substr(0, 6) + "..." + vaultData?.borrower.substr(-4)}</dd>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Borrower</dt>
+                        <dd className="mt-1 text-sm text-gray-900">
+                          {vaultData?.borrower?.substr(0, 6) + "..." + vaultData?.borrower.substr(-4)}
+                        </dd>
                       </div>
-                      <div class="sm:col-span-1">
-                        <dt class="text-sm font-medium text-gray-500">Lender</dt>
-                        <dd class="mt-1 text-sm text-gray-900">{vaultData?.lender.substr(0, 6) + "..." + vaultData?.lender.substr(-4)}</dd>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Lender</dt>
+                        <dd className="mt-1 text-sm text-gray-900">
+                          {vaultData?.lender?.substr(0, 6) + "..." + vaultData?.lender.substr(-4)}
+                        </dd>
                       </div>
                     </dl>
                   </div>
@@ -125,117 +140,127 @@ function Vault({ web3 }) {
                 {/* Actions */}
                 <>
                   <div className="px-6 py-8 bg-white rounded-2xl shadow">
-                    {vaultData?.status == 0 ? <div>
-                      <h3 className="text-xl text-center font-semibold text-gray-900">Pending Action Items</h3>
-                      <div className="flow-root mt-10">
-                        <ul role="list" className="-mb-8">
-                          <li>
-                            <div className="relative pb-8">
-                              <span
-                                className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                                aria-hidden="true"
-                              ></span>
-                              <div className="relative flex space-x-3">
-                                <div>
-                                  <span
-                                    className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${classNameIsFeeCollectorUpdated}`}
-                                  >
-                                    <svg
-                                      className="h-5 w-5 text-white"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                      aria-hidden="true"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  </span>
-                                </div>
-                                <div className="min-w-0 pt-1.5">
-                                  <p className="text-sm text-gray-500">Updated the fee receiver Address to </p>
-                                  <p>{vaultaddress}</p>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-
-                          <li>
-                            <div className="relative pb-8">
-                              <span
-                                className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                                aria-hidden="true"
-                              ></span>
-                              <div className="relative flex space-x-3">
-                                <div>
-                                  <span
-                                    className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${classNameIsMultisigGuardAdded}`}
-                                  >
-                                    <svg
-                                      className="h-5 w-5 text-white"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                      aria-hidden="true"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  </span>
-                                </div>
-                                <div className="min-w-0 pt-1.5">
-                                  <p className="text-sm text-gray-500">Added Cinch multi-sig guard to the Gnosis safe (<a href="https://help.gnosis-safe.io/en/articles/5496893-add-a-transaction-guard" class="no-underline hover:underline ..." target="_blank">Instruction</a>)</p>
-                                  <p>Guard Address: {vaultData?.multisigGuard}</p>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-
-                          <li>
-                            <div className="relative pb-8">
-                              <div className="relative flex space-x-3">
-                                <div>
-                                  <span
-                                    className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${classNameIsReadyToActivate}`}
-                                  >
-                                    <svg
-                                      className="h-5 w-5 text-white"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                      aria-hidden="true"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  </span>
-                                </div>
-                                <div className="min-w-0 pt-1.5">
-                                  <p className="text-sm text-gray-500">Ready to deploy the funds.</p>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
+                    {vaultData?.status == 0 ? (
                       <div>
-                        <Button className="w-full mt-12" onClick={handleActivateVault}>
-                          Transfer Funds
-                        </Button>
+                        <h3 className="text-xl text-center font-semibold text-gray-900">Pending Action Items</h3>
+                        <div className="flow-root mt-10">
+                          <ul role="list" className="-mb-8">
+                            <li>
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                ></span>
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${classNameIsFeeCollectorUpdated}`}
+                                    >
+                                      <svg
+                                        className="h-5 w-5 text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 pt-1.5">
+                                    <p className="text-sm text-gray-500">Updated the fee receiver Address to </p>
+                                    <p>{vaultaddress}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </li>
+
+                            <li>
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                ></span>
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${classNameIsMultisigGuardAdded}`}
+                                    >
+                                      <svg
+                                        className="h-5 w-5 text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 pt-1.5">
+                                    <p className="text-sm text-gray-500">
+                                      Added Cinch multi-sig guard to the Gnosis safe (
+                                      <a
+                                        href="https://help.gnosis-safe.io/en/articles/5496893-add-a-transaction-guard"
+                                        className="no-underline hover:underline ..."
+                                        target="_blank"
+                                        rel="noreferrer"
+                                      >
+                                        Instruction
+                                      </a>
+                                      )
+                                    </p>
+                                    <p>Guard Address: {vaultData?.multisigGuard}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </li>
+
+                            <li>
+                              <div className="relative pb-8">
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${classNameIsReadyToActivate}`}
+                                    >
+                                      <svg
+                                        className="h-5 w-5 text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 pt-1.5">
+                                    <p className="text-sm text-gray-500">Ready to deploy the funds.</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                        <div>
+                          <Button className="w-full mt-12" onClick={handleActivateVault}>
+                            Transfer Funds
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-
-                      :
-
+                    ) : (
                       <div>
                         <h3 className="text-xl text-center font-semibold text-gray-900">Action Items</h3>
                         <div>
@@ -244,22 +269,16 @@ function Vault({ web3 }) {
                           </Button>
                         </div>
                       </div>
-                    }
-
-
+                    )}
                   </div>
                 </>
               </div>
 
               {/* Transaction */}
               <div className="mt-14">
-                <h3 className="text-2xl font-semibold text-gray-900">
-                  Transaction History
-                </h3>
+                <h3 className="text-2xl font-semibold text-gray-900">Transaction History</h3>
 
-                <div className="text-center mt-5">
-                  {/* <BidTable web3={web3} dataSource={bidDatas} /> */}
-                </div>
+                <div className="text-center mt-5">{/* <BidTable web3={web3} dataSource={bidDatas} /> */}</div>
               </div>
             </Container>
           </div>

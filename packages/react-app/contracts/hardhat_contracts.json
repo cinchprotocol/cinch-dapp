@@ -1265,7 +1265,7 @@
           ]
         },
         "Vault": {
-          "address": "0x3c88bEc2d5739E9897507A990bb79F6D61D6Fa11",
+          "address": "0x78B847BC3501f1b6a58552Dc4490b6D7e35440e3",
           "abi": [
             {
               "anonymous": false,
@@ -2443,7 +2443,7 @@
           ]
         },
         "FeeSplitter": {
-          "address": "0x54734b5649B2DfB37b044cF79f05f4A649dF2729",
+          "address": "0x9E38DaeE559Fb913FA8e055665C4Dd428E2f0d69",
           "abi": [
             {
               "inputs": [],

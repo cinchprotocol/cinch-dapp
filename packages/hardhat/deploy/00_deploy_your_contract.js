@@ -71,11 +71,26 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   await vault.setFeeSplitter(feeSplitter.address);
 
-  const mockProtocol0 = await ethers.getContractAt(
+  const mockProtocolContract = await ethers.getContractAt(
     "MockProtocol",
     mockProtocol.address
   );
-  await mockProtocol0.setFeeReceiver(feeSplitter.address);
+  await mockProtocolContract.setFeeReceiver(feeSplitter.address);
+
+  // deposit initial TVL (non-referral) to protocol
+  const mockERC20Contract = await ethers.getContractAt(
+    "MockERC20",
+    mockERC20.address
+  );
+  const mockERC20Decimals = 6;
+  const initProtocolTVLAmount = ethers.utils.parseUnits(
+    "1000",
+    mockERC20Decimals
+  );
+  await mockERC20Contract.faucet(deployer, initProtocolTVLAmount);
+  await mockERC20Contract.approve(vault.address, initProtocolTVLAmount);
+  await vault.deposit(initProtocolTVLAmount, deployer);
+  console.log("deposited initial TVL to protocol", initProtocolTVLAmount);
 
   /*
     // Getting a previously deployed contract

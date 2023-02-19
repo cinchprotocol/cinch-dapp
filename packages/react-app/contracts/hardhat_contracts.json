@@ -2052,7 +2052,7 @@
           ]
         },
         "MockProtocol": {
-          "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+          "address": "0xD84379CEae14AA33C123Af12424A37803F885889",
           "abi": [
             {
               "inputs": [
@@ -2250,6 +2250,24 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "tokenAddress_",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount_",
+                  "type": "uint256"
+                }
+              ],
+              "name": "gainRevenueAndRelease",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "getContractValue",
               "outputs": [
@@ -2439,7 +2457,7 @@
           ]
         },
         "Vault": {
-          "address": "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
+          "address": "0xC9a43158891282A2B1475592D5719c001986Aaec",
           "abi": [
             {
               "anonymous": false,
@@ -3604,7 +3622,7 @@
           ]
         },
         "FeeSplitter": {
-          "address": "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02",
+          "address": "0x4C2F7092C2aE51D986bEFEe378e50BD4dB99C901",
           "abi": [
             {
               "inputs": [],

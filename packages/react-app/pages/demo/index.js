@@ -114,6 +114,7 @@ function Vault({ web3 }) {
               <Button
                 onClick={async () => {
                   const feeReleaseAmountA = ethers.utils.parseUnits("100", mockERC20Decimals);
+                  /*
                   await web3?.tx(web3?.writeContracts?.FeeSplitter?.processFeeSplit());
                   await web3?.tx(
                     web3?.writeContracts?.MockERC20?.faucet(
@@ -128,9 +129,16 @@ function Vault({ web3 }) {
                     ),
                   );
                   await web3?.tx(web3?.writeContracts?.FeeSplitter?.processFeeSplit());
+                  */
+                  await web3?.tx(
+                    web3?.writeContracts?.MockProtocol?.gainRevenueAndRelease(
+                      web3?.readContracts?.MockERC20?.address,
+                      feeReleaseAmountA,
+                    ),
+                  );
                 }}
               >
-                4. Gain revenue and release to Fee Splitter (4 transactions)
+                4. Gain revenue and release to Fee Splitter
               </Button>
             </div>
           </Card>

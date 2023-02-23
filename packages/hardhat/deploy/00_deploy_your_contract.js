@@ -4,6 +4,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
+  /*
   const mockERC20 = await deploy("MockERC20", {
     from: deployer,
     log: true,
@@ -32,17 +33,23 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   );
   // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
   await mockGnosisSafeContract.setGuard(cinchSafeGuard.address);
+  */
+
+  // https://etherscan.io/address/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+  const assetAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+  // https://docs.idle.finance/developers/perpetual-yield-tranches/deployed-contracts
+  const protocolAddress = "0xF5a3d259bFE7288284Bd41823eC5C8327a314054";
 
   const Vault = await ethers.getContractFactory("Vault");
   const vault = await upgrades.deployProxy(
     Vault,
     [
-      mockERC20.address,
-      "CinchPx",
-      "CPxMock",
-      mockProtocol.address,
-      mockGnosisSafe.address,
-      cinchSafeGuard.address,
+      assetAddress,
+      "CinchIdleEulerUSDC",
+      "cieUSDC",
+      protocolAddress,
+      protocolAddress, // mockGnosisSafe.address,
+      protocolAddress, // cinchSafeGuard.address,
     ],
     {
       from: deployer,
@@ -51,9 +58,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     }
   );
   await vault.deployed();
-  await vault.activateBypass();
+  // await vault.activateBypass();
   console.log("Vault deployed to:", vault.address);
 
+  /*
   const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
   const cinchVaultPayee = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
   const FeeSplitter = await ethers.getContractFactory("FeeSplitter");
@@ -91,6 +99,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   await mockERC20Contract.approve(vault.address, initProtocolTVLAmount);
   await vault.deposit(initProtocolTVLAmount, deployer);
   console.log("deposited initial TVL to protocol", initProtocolTVLAmount);
+  */
 
   /*
     // Getting a previously deployed contract

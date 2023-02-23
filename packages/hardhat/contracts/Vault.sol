@@ -72,8 +72,9 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         multiSig = _multiSig;
         multisigGuard = _multisigGuard;
 
-        vaultStatus = Status.Pending;
+        vaultStatus = Status.Active; //TODO: change to Pending after Idle test
         vaultDeployDate = block.timestamp;
+        vaultActivationDate = block.timestamp; //TODO: remove this line after Idle test
     }
 
     function setFeeSplitter(address feeSplitter_) external onlyOwner {
@@ -100,12 +101,14 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
      * @dev Activates the vault for testing.
      * onlyOwner
      */
+    /*
     function activateBypass() external whenNotPaused onlyOwner {
         _isValidState(Status.Pending);
         vaultStatus = Status.Active;
         vaultActivationDate = block.timestamp;
         emit VaultActivated();
     }
+    */
 
     /** @dev See {IERC4626-deposit}. */
     function deposit(
@@ -344,8 +347,8 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         view
         returns (uint256)
     {
-        //TODO: //return IdleCDOTranche(_tranche).totalSupply() // this should be used for the idle integration
-        return IYieldSourceContract(yieldSourceVault).getTotalValueLocked();
+        return IERC20Upgradeable(IYieldSourceContract(yieldSourceVault).AATranche()).totalSupply(); //idle integration
+        //return IYieldSourceContract(yieldSourceVault).getTotalValueLocked();
     }
 
     /**

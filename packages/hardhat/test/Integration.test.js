@@ -122,7 +122,7 @@ describe("Integration tests", function () {
       expect(tx).to.emit(mockProtocol, "OwnershipTransferred");
     });
 
-    it("should be activated", async function () {
+    xit("should be activated", async function () {
       const tx01 = mockERC20.connect(owner).faucet(vault.address, initAmount0);
       await expect(tx01).not.to.be.revertedWith();
       const tx03 = await vault.activate();
@@ -222,7 +222,7 @@ describe("Integration tests", function () {
       );
     });
 
-    it("feeSpliter should split 10% fee to cinchPxPayee", async () => {
+    xit("feeSpliter should split 10% fee to cinchPxPayee", async () => {
       const protocolTVL = await mockProtocol.getTotalValueLocked();
       const tx = await feeSplitter.processFeeSplit();
       expect(tx).to.emit(feeSplitter, "FeeSplitProcessed");

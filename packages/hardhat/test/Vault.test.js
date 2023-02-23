@@ -89,7 +89,7 @@ describe("Vault tests", function () {
     });
   });
 
-  describe("activate", function () {
+  xdescribe("activate", function () {
     it("should revert if FEE_COLLECTOR_RECEIVER_NOT_UPDATED", async function () {
       const tx = vault.activate();
       await expect(tx).to.be.revertedWith("FEE_COLLECTOR_RECEIVER_NOT_UPDATED");

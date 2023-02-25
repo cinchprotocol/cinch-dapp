@@ -18,6 +18,10 @@ const Web3Statistic = ({
 }) => {
   const data = useContractReader(web3.readContracts, contractName, getFuncName, args, pollTime);
 
+  // example for loading external contract
+  // const mainnetStreamReaderContract = useExternalContractLoader(mainnetProvider, mainStreamReader_ADDRESS, mainStreamReader_ABI)
+  // const streamReadResult = useContractReader({"StreamReader":mainnetStreamReaderContract},"StreamReader", "readStreams", [streams])
+
   return (
     <Row gutter={16}>
       <Col span={24}>

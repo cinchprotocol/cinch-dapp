@@ -19,6 +19,15 @@ function DebugPage({ web3 }) {
       <div className="flex flex-1 flex-col h-screen w-full items-center">
         <div className="text-center">
           <Contract
+            name="Vault"
+            signer={web3.userSigner}
+            provider={web3.mainnetProvider}
+            address={web3.address}
+            blockExplorer={web3.blockExplorer}
+            contractConfig={web3.contractConfig}
+          />
+          {/*
+          <Contract
             name="MockERC20"
             signer={web3.userSigner}
             provider={web3.localProvider}
@@ -53,6 +62,7 @@ function DebugPage({ web3 }) {
             blockExplorer={web3.blockExplorer}
             contractConfig={web3.contractConfig}
           />
+          */}
         </div>
       </div>
     </>

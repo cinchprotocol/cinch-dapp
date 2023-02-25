@@ -6,10 +6,10 @@ const { ethers } = require("ethers");
 
 import { Button } from "../Button";
 
-const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
+const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress, defaultDepositAmountStr = "1000" }) => {
   const [formValues, setFormValues] = useState(null);
   const [isReferralEnabled, setIsReferralEnabled] = useState(true);
-  const [depositAmountStr, setDepositAmountStr] = useState("1000");
+  const [depositAmountStr, setDepositAmountStr] = useState(defaultDepositAmountStr);
   const mockERC20ApprovalEvents = useEventListener(web3?.readContracts, "MockERC20", "Approval");
   console.log("mockERC20ApprovalEvents", mockERC20ApprovalEvents);
 
@@ -74,7 +74,7 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: 600 }}
-            initialValues={{ referralEnabled: true, depositAmount: "1000" }}
+            initialValues={{ referralEnabled: true, depositAmount: defaultDepositAmountStr }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"

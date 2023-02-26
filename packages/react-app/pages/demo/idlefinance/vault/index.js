@@ -31,9 +31,10 @@ import demo01 from "/images/demo/cinch_demo_01.png";
 
 function CinchVaultForIdle({ web3 }) {
   const mockERC20Decimals = 6;
+  const vaultShareDecimals = 18;
   const referralAddress = "0x15bc81b35a8498cee37E2C7B857538B006CeCAa5"; //dev02
   const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
-  console.log("web3", web3);
+
   return (
     <>
       <CommonHead />
@@ -55,10 +56,20 @@ function CinchVaultForIdle({ web3 }) {
               dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
             />
             <div style={{ marginTop: 32 }}>
-              <VaultDepositForm web3={web3} referralAddress={referralAddress} defaultDepositAmountStr={"10"} />
+              <VaultDepositForm
+                web3={web3}
+                referralAddress={referralAddress}
+                defaultDepositAmountStr={"10"}
+                assetDecimals={mockERC20Decimals}
+              />
             </div>
             <div style={{ marginTop: 32 }}>
-              <VaultRedeemForm web3={web3} referralAddress={referralAddress} defaultRedeemAmountStr={"10"} />
+              <VaultRedeemForm
+                web3={web3}
+                referralAddress={referralAddress}
+                defaultRedeemAmountStr={"9.89"}
+                shareDecimals={vaultShareDecimals}
+              />
             </div>
           </Card>
         </Col>
@@ -70,7 +81,7 @@ function CinchVaultForIdle({ web3 }) {
               getFuncName="getTotalValueLocked"
               args={[referralAddress]}
               title="Vault TVL By Referral"
-              dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+              dataTransform={data => ethers.utils.formatUnits(data, vaultShareDecimals)}
             />
             <Web3Statistic
               web3={web3}
@@ -78,7 +89,11 @@ function CinchVaultForIdle({ web3 }) {
               getFuncName="balanceOf"
               args={[web3?.address]}
               title="Your Vault Share Balance"
-              dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+              dataTransform={data => {
+                const vaultShareBalance = ethers.utils.formatUnits(data, vaultShareDecimals);
+                console.log("vaultShareBalance", vaultShareBalance);
+                return vaultShareBalance;
+              }}
             />
             <Web3Statistic
               web3={web3}
@@ -88,30 +103,21 @@ function CinchVaultForIdle({ web3 }) {
               dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
             />
             <div style={{ marginTop: 16 }}>
-              <VaultDepositEventList web3={web3} mockERC20Decimals={mockERC20Decimals} />
+              <VaultDepositEventList web3={web3} assetDecimals={mockERC20Decimals} shareDecimals={vaultShareDecimals} />
             </div>
             <div style={{ marginTop: 16 }}>
-              <VaultRedeemEventList web3={web3} mockERC20Decimals={mockERC20Decimals} />
+              <VaultRedeemEventList web3={web3} assetDecimals={mockERC20Decimals} shareDecimals={vaultShareDecimals} />
             </div>
           </Card>
         </Col>
         <Col span={8}>
           <Card title="Protocol" bordered={false}>
-            {/*
             <Web3Statistic
               web3={web3}
               contractName="Vault"
               getFuncName="getYieldSourceVaultTotalShares"
               title="Protocol Total Shares"
-              dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
-            />
-            */}
-            <Web3Statistic
-              web3={web3}
-              contractName="Vault"
-              getFuncName="vaultStatus"
-              title="vaultStatus"
-              dataTransform={data => data}
+              dataTransform={data => ethers.utils.formatUnits(data, vaultShareDecimals)}
             />
           </Card>
         </Col>

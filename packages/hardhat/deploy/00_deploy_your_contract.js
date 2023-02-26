@@ -39,6 +39,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const assetAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
   // https://docs.idle.finance/developers/perpetual-yield-tranches/deployed-contracts
   const protocolAddress = "0xF5a3d259bFE7288284Bd41823eC5C8327a314054";
+  // https://etherscan.io/address/0xf615a552c000B114DdAa09636BBF4205De49333c
 
   const Vault = await ethers.getContractFactory("Vault");
   const vault = await upgrades.deployProxy(

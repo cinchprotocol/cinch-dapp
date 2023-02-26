@@ -6,7 +6,7 @@ const { ethers } = require("ethers");
 
 import { Button } from "../Button";
 
-const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress, defaultDepositAmountStr = "1000" }) => {
+const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDepositAmountStr = "1000" }) => {
   const [formValues, setFormValues] = useState(null);
   const [isReferralEnabled, setIsReferralEnabled] = useState(true);
   const [depositAmountStr, setDepositAmountStr] = useState(defaultDepositAmountStr);
@@ -19,7 +19,7 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress, defaul
     await web3?.tx(
       web3?.writeContracts?.MockERC20?.approve(
         web3?.writeContracts?.Vault?.address,
-        ethers.utils.parseUnits(depositAmount, mockERC20Decimals),
+        ethers.utils.parseUnits(depositAmount, assetDecimals),
       ),
     );
   };
@@ -30,17 +30,14 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress, defaul
     if (isReferralEnabled) {
       await web3?.tx(
         web3?.writeContracts?.Vault?.depositWithReferral(
-          ethers.utils.parseUnits(depositAmountStr, mockERC20Decimals),
+          ethers.utils.parseUnits(depositAmountStr, assetDecimals),
           web3?.address,
           referralAddress,
         ),
       );
     } else {
       await web3?.tx(
-        web3?.writeContracts?.Vault?.deposit(
-          ethers.utils.parseUnits(depositAmountStr, mockERC20Decimals),
-          web3?.address,
-        ),
+        web3?.writeContracts?.Vault?.deposit(ethers.utils.parseUnits(depositAmountStr, assetDecimals), web3?.address),
       );
     }
   };

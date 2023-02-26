@@ -16,7 +16,7 @@ const VaultDepositEventList = ({ web3, assetDecimals = 6, shareDecimals = 6 }) =
       dataSource={vaultDepositEvents}
       renderItem={item => {
         return (
-          <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber + "_" + item.args[2].toNumber()}>
+          <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber}>
             <Address address={item.args[0]} ensProvider={web3?.mainnetProvider} fontSize={16} />
             <span style={{ fontSize: 16, marginRight: 8 }}>
               {"Assets:" + ethers.utils.formatUnits(item?.args[2], assetDecimals)}

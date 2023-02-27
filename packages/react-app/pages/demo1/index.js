@@ -102,6 +102,7 @@ function Vault({ web3 }) {
 
 
                     <div>
+                      <h3 class="text-lg font-medium leading-6 text-gray-900">Simulate contract interactions</h3>
                       <Tabs defaultActiveKey="1" centered>
                         <TabPane tab="Deposit" key="1">
                           <div style={{ padding: 10 }}>
@@ -155,7 +156,7 @@ function Vault({ web3 }) {
                                 );
                               }}
                             >
-                              4. Harvest revenue
+                              4. Harvest revenue (100 USDC)
                             </Button>
 
 

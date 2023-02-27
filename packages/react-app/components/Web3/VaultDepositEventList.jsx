@@ -11,7 +11,7 @@ const VaultDepositEventList = ({ web3, mockERC20Decimals = 6 }) => {
 
   return (
     <List
-      header={<div>Vault Deposit Events</div>}
+      header={<div>Platform partner deposits</div>}
       bordered
       dataSource={vaultDepositEvents}
       renderItem={item => {

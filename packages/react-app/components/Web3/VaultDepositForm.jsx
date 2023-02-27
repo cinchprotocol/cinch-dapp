@@ -68,11 +68,11 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
   return (
     <Row gutter={16}>
       <Col span={24}>
-        <Card title="Deposit into Cinch Vault">
+        <Card title="Deposit into Idle Clearpool">
           <Form
             name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            labelCol={{ span: 11 }}
+            wrapperCol={{ span: 13 }}
             style={{ maxWidth: 600 }}
             initialValues={{ referralEnabled: true, depositAmount: "1000" }}
             onFinish={onFinish}
@@ -80,20 +80,20 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
             autoComplete="off"
           >
             <Form.Item
-              label="Deposit Amount"
+              label="Deposit Amount (USDC)"
               name="depositAmount"
               rules={[{ required: true, message: "Please input the Deposit Amount!" }]}
             >
               <Input onChange={onInputChange} />
             </Form.Item>
 
-            <Form.Item name="referralEnabled" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
+            <Form.Item name="referralEnabled" valuePropName="checked" wrapperCol={{ span: 16 }}>
               <Checkbox checked={isReferralEnabled} onChange={onCheckBoxChange}>
-                With Referral
+                Include platform referral code
               </Checkbox>
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Form.Item wrapperCol={{ offset: 8,}}>
               <Space>
                 <Button type="primary" htmlType="submit">
                   2. Approve

@@ -66,8 +66,8 @@ const VaultRedeemForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
               <Input />
             </Form.Item>
 
-            <Form.Item name="referralEnabled" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
-              <Checkbox>with Referral</Checkbox>
+            <Form.Item name="referralEnabled" valuePropName="checked" wrapperCol={{ span: 16 }}>
+              <Checkbox>Include platform referral code</Checkbox>
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

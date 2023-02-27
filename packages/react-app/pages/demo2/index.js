@@ -124,6 +124,16 @@ function Vault({ web3 }) {
                         <TabPane tab="Revenue-share" key="2">
                           <div style={{ marginTop: 32 }}>
 
+
+                            <Web3Statistic
+                              web3={web3}
+                              contractName="MockERC20"
+                              getFuncName="balanceOf"
+                              args={[web3?.readContracts?.FeeSplitter?.address]}
+                              title="Fee Splitter USDC Balance"
+                              dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
+                            />
+
                             <Web3Statistic
                               web3={web3}
                               contractName="FeeSplitter"
@@ -133,7 +143,7 @@ function Vault({ web3 }) {
                               dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
                             />
 
-                            <Button className="mt-10 mb-10"
+                            <Button className="mt-10 mb-10 mr-5"
                               onClick={async () => {
                                 const feeReleaseAmountA = ethers.utils.parseUnits("100", mockERC20Decimals);
 
@@ -145,7 +155,7 @@ function Vault({ web3 }) {
                                 );
                               }}
                             >
-                              4. Gain revenue and release to Fee Splitter
+                              4. Harvest revenue
                             </Button>
 
 
@@ -160,7 +170,7 @@ function Vault({ web3 }) {
                                 );
                               }}
                             >
-                              5. Release revenue share to Referral account
+                              5. Claim revenue to platform wallet
                             </Button>
                           </div>
                         </TabPane>
@@ -246,7 +256,7 @@ function Vault({ web3 }) {
                         contractName="Vault"
                         getFuncName="balanceOf"
                         args={[web3?.address]}
-                        title="TVL from platform (%)"
+                        title="Your Vault share balance"
                         dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
                       />
 

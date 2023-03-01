@@ -6,10 +6,10 @@ const { ethers } = require("ethers");
 
 import { Button } from "../Button";
 
-const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
+const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDepositAmountStr = "1000" }) => {
   const [formValues, setFormValues] = useState(null);
   const [isReferralEnabled, setIsReferralEnabled] = useState(true);
-  const [depositAmountStr, setDepositAmountStr] = useState("1000");
+  const [depositAmountStr, setDepositAmountStr] = useState(defaultDepositAmountStr);
   const mockERC20ApprovalEvents = useEventListener(web3?.readContracts, "MockERC20", "Approval");
   console.log("mockERC20ApprovalEvents", mockERC20ApprovalEvents);
 
@@ -19,7 +19,7 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
     await web3?.tx(
       web3?.writeContracts?.MockERC20?.approve(
         web3?.writeContracts?.Vault?.address,
-        ethers.utils.parseUnits(depositAmount, mockERC20Decimals),
+        ethers.utils.parseUnits(depositAmount, assetDecimals),
       ),
     );
   };
@@ -30,17 +30,14 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
     if (isReferralEnabled) {
       await web3?.tx(
         web3?.writeContracts?.Vault?.depositWithReferral(
-          ethers.utils.parseUnits(depositAmountStr, mockERC20Decimals),
+          ethers.utils.parseUnits(depositAmountStr, assetDecimals),
           web3?.address,
           referralAddress,
         ),
       );
     } else {
       await web3?.tx(
-        web3?.writeContracts?.Vault?.deposit(
-          ethers.utils.parseUnits(depositAmountStr, mockERC20Decimals),
-          web3?.address,
-        ),
+        web3?.writeContracts?.Vault?.deposit(ethers.utils.parseUnits(depositAmountStr, assetDecimals), web3?.address),
       );
     }
   };
@@ -74,7 +71,7 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
             labelCol={{ span: 11 }}
             wrapperCol={{ span: 13 }}
             style={{ maxWidth: 600 }}
-            initialValues={{ referralEnabled: true, depositAmount: "1000" }}
+            initialValues={{ referralEnabled: true, depositAmount: defaultDepositAmountStr }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
@@ -93,7 +90,7 @@ const VaultDepositForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
               </Checkbox>
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 8,}}>
+            <Form.Item wrapperCol={{ offset: 8 }}>
               <Space>
                 <Button type="primary" htmlType="submit">
                   2. Approve

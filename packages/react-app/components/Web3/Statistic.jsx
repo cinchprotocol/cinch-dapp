@@ -4,7 +4,7 @@ import CountUp from "react-countup";
 import { useContractReader } from "eth-hooks";
 const { ethers } = require("ethers");
 
-const countUpFormatter = value => <CountUp end={value} separator="," />;
+const countUpFormatter = value => <CountUp end={value} separator="," decimals={4} />;
 
 const Web3Statistic = ({
   web3,

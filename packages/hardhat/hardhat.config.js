@@ -11,6 +11,7 @@ require("hardhat-deploy");
 require("@eth-optimism/hardhat-ovm");
 require("@nomiclabs/hardhat-ethers");
 require("@openzeppelin/hardhat-upgrades");
+require("hardhat-gas-reporter");
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 

@@ -34,6 +34,7 @@ contract MockProtocol is Ownable {
         fee = 1;
         priceAA = ONE_TRANCHE_TOKEN;
         tokenAddress = tokenAddress_;
+        AATranche = tokenAddress_;
     }
 
     /**

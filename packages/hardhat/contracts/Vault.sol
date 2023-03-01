@@ -57,8 +57,8 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     /// @param _multiSig Address of Gnosis multi-sig which is the owner of yield soure vault
     function initialize(
         address asset,
-        string memory name,
-        string memory symbol,
+        string calldata name,
+        string calldata symbol,
         address _yieldSourceVault,
         address _multiSig,
         address _multisigGuard
@@ -344,7 +344,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         view
         returns (uint256)
     {
-        //TODO: //return IdleCDOTranche(_tranche).totalSupply() // this should be used for the idle integration
+        //IERC20Upgradeable(IYieldSourceContract(yieldSourceVault).AATranche()).totalSupply(); //for idle integration
         return IYieldSourceContract(yieldSourceVault).getTotalValueLocked();
     }
 

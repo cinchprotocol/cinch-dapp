@@ -6,7 +6,7 @@ const { ethers } = require("ethers");
 
 import { Button } from "../Button";
 
-const VaultRedeemForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
+const VaultRedeemForm = ({ web3, shareDecimals = 6, referralAddress, defaultRedeemAmountStr = "1000" }) => {
   const [formValues, setFormValues] = useState(null);
   const mockERC20ApprovalEvents = useEventListener(web3?.readContracts, "MockERC20", "Approval");
   console.log("mockERC20ApprovalEvents", mockERC20ApprovalEvents);
@@ -17,7 +17,7 @@ const VaultRedeemForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
     if (referralEnabled) {
       await web3?.tx(
         web3?.writeContracts?.Vault?.redeemWithReferral(
-          ethers.utils.parseUnits(redeemAmount, mockERC20Decimals),
+          ethers.utils.parseUnits(redeemAmount, shareDecimals),
           web3?.address,
           web3?.address,
           referralAddress,
@@ -26,7 +26,7 @@ const VaultRedeemForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
     } else {
       await web3?.tx(
         web3?.writeContracts?.Vault?.redeem(
-          ethers.utils.parseUnits(redeemAmount, mockERC20Decimals),
+          ethers.utils.parseUnits(redeemAmount, shareDecimals),
           web3?.address,
           web3?.address,
         ),
@@ -53,7 +53,7 @@ const VaultRedeemForm = ({ web3, mockERC20Decimals = 6, referralAddress }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: 600 }}
-            initialValues={{ referralEnabled: true, redeemAmount: "1000" }}
+            initialValues={{ referralEnabled: true, redeemAmount: defaultRedeemAmountStr }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"

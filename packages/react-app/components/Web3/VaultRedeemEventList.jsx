@@ -6,7 +6,7 @@ import { useEventListener } from "eth-hooks/events/useEventListener";
 
 import Address from "../Address";
 
-const VaultRedeemEventList = ({ web3, mockERC20Decimals = 6 }) => {
+const VaultRedeemEventList = ({ web3, assetDecimals = 6, shareDecimals = 6 }) => {
   //emit Withdraw(caller, receiver, owner, assets, shares);
   const vaultRedeemEvents = useEventListener(web3?.readContracts, "Vault", "Withdraw");
 
@@ -17,13 +17,13 @@ const VaultRedeemEventList = ({ web3, mockERC20Decimals = 6 }) => {
       dataSource={vaultRedeemEvents}
       renderItem={item => {
         return (
-          <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber + "_" + item.args[4].toNumber()}>
+          <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber}>
             <Address address={item.args[0]} ensProvider={web3?.mainnetProvider} fontSize={16} />
             <span style={{ fontSize: 16, marginRight: 8 }}>
-              {"Assets:" + ethers.utils.formatUnits(item?.args[3], mockERC20Decimals)}
+              {"Assets:" + ethers.utils.formatUnits(item?.args[3], assetDecimals)}
             </span>
             <span style={{ fontSize: 16, marginRight: 8 }}>
-              {"Shares:" + ethers.utils.formatUnits(item?.args[4], mockERC20Decimals)}
+              {"Shares:" + ethers.utils.formatUnits(item?.args[4], shareDecimals)}
             </span>
           </List.Item>
         );

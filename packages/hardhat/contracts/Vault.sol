@@ -15,14 +15,18 @@ import "./interfaces/IYieldSourceContract.sol";
 /**
  * @title Vault
  * @notice Contract allows deposits and Withdrawals to Yield source product
- * @dev Should be deployed per yield source pool/vault.
+ * @dev Should be deployed per yield source pool/vault
+ * @dev ERC4626 based vault
  */
 contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     using MathUpgradeable for uint256;
 
+    // Event when the feeSplitter address is updated
     event FeeSplitterUpdated(address feeSplitter_);
+    // Event when the vault is activated
     event VaultActivated();
 
+    // Status type of the vault
     enum Status {
         Pending,
         Active,
@@ -34,27 +38,32 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     address public yieldSourceVault;
     // Address of Gnosis multi-sig which is the owner of yield soure vault
     address public multiSig;
+    // Adderss of multisigGuard contract
     address public multisigGuard;
-    // Target feeSplitter address that the protocol should be updated to
+    // Target feeSplitter address that the protocol should be forwarding its revenue to
     address public feeSplitter;
-    // Partner referral -> Total value locked
+    // Partner referral address -> Total value locked
     mapping(address => uint256) internal _totalValueLocked;
-    // User -> Partner referral -> Total value locked
+    // User address -> Partner referral address -> Total value locked
     mapping(address => mapping(address => uint256)) internal _totalValueLockedByUserReferral;
+    // Total asset deposit processed
     uint256 public totalAssetDepositProcessed;
 
+    // Vault status tracking if it is activated or not
     Status public vaultStatus;
+    // Vault activation date, for off-chain revenue chain calculation
     uint256 public vaultActivationDate;
+    // Vault deploy date, for off-chain revenue chain calculation
     uint256 public vaultDeployDate;
 
-    uint256 internal storedTotalAssets;
-
-    /// @notice vault initializer
-    /// @param asset vault asset
-    /// @param name ERC20 name of the vault shares token
-    /// @param symbol ERC20 symbol of the vault shares token
-    /// @param _yieldSourceVault vault address of yield source
-    /// @param _multiSig Address of Gnosis multi-sig which is the owner of yield soure vault
+    /**
+     * @notice vault initializer
+     * @param asset underneath asset, which should match the asset of the yield source vault
+     * @param name ERC20 name of the vault shares token
+     * @param symbol ERC20 symbol of the vault shares token
+     * @param _yieldSourceVault vault address of yield source
+     * @param _multiSig Address of Gnosis multi-sig which is the owner of yield soure vault
+     */
     function initialize(
         address asset,
         string calldata name,
@@ -76,13 +85,21 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         vaultDeployDate = block.timestamp;
     }
 
+    /**
+     * @notice setter of FeeSplitter
+     * @dev onlyOwner
+     * @dev emit FeeSplitterUpdated
+     * @param feeSplitter_ address of feeSplitter to be updated to
+     */
     function setFeeSplitter(address feeSplitter_) external onlyOwner {
         feeSplitter = feeSplitter_;
         emit FeeSplitterUpdated(feeSplitter);
     }
 
     /**
-     * @dev Activates the vault after the required condition has been met and transfer funds to the borrower.
+     * @notice Validate conditions for vault activation, and activate the vault if all requirements were passed
+     * @dev whenNotPaused
+     * @dev emit VaultActivated
      */
     function activate() external whenNotPaused {
         _isValidState(Status.Pending);
@@ -95,10 +112,10 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         emit VaultActivated();
     }
 
-    //TODO: remove activateBypass
     /**
-     * @dev Activates the vault for testing.
-     * onlyOwner
+     * @notice Force vault activation by owner, in case the on-chain feeSplitter integration is not in place
+     * @dev whenNotPaused onlyOwner
+     * @dev emit VaultActivated
      */
     function activateBypass() external whenNotPaused onlyOwner {
         _isValidState(Status.Pending);
@@ -107,7 +124,14 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         emit VaultActivated();
     }
 
-    /** @dev See {IERC4626-deposit}. */
+    /**
+     * @notice Deposit assets to the vault
+     * @dev See {IERC4626-deposit}
+     * @dev whenNotPaused
+     * @dev depositWithReferral(assets, receiver, receiver)
+     * @param assets amount of assets to deposit
+     * @param receiver address to receive the shares
+     */
     function deposit(
         uint256 assets,
         address receiver
@@ -116,7 +140,15 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
-     * @dev openzeppelin ERC4626 deposit with referral tag
+     * @notice Deposit assets to the vault with referral
+     * @dev Transfer assets to this contract, then deposit into yield source vault, and mint shares to receiver
+     * @dev See {IERC4626-deposit}
+     * @dev whenNotPaused
+     * @dev emit Deposit
+     * @param assets amount of assets to deposit
+     * @param receiver address to receive the shares
+     * @param referral address of the partner referral
+     * @return shares amount of shares received
      */
     function depositWithReferral(
         uint256 assets,
@@ -145,7 +177,16 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         return shares;
     }
 
-    /** @dev See {IERC4626-redeem}. */
+    /**
+     * @notice Redeem assets with vault shares
+     * @dev See {IERC4626-redeem}
+     * @dev whenNotPaused
+     * @dev redeemWithReferral
+     * @param shares amount of shares to burn and redeem assets
+     * @param receiver address to receive the assets
+     * @param owner address of the owner of the shares to be consumed
+     * @return assets amount of assets received
+     */
     function redeem(
         uint256 shares, 
         address receiver, 
@@ -155,7 +196,14 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
-     * @dev openzeppelin ERC4626 redeem with referral tag
+     * @notice Redeem assets with vault shares and referral
+     * @dev See {IERC4626-redeem}
+     * @dev whenNotPaused
+     * @param shares amount of shares to burn and redeem assets
+     * @param receiver address to receive the assets
+     * @param owner address of the owner of the shares to be consumed
+     * @param referral address of the partner referral
+     * @return assets amount of assets received
      */
     function redeemWithReferral(
         uint256 shares, 
@@ -177,7 +225,16 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         return assets;
     }
 
-    /** @dev See {IERC4626-withdraw}. */
+    /**
+     * @notice Withdraw a specific amount of assets to be redeemed with vault shares
+     * @dev See {IERC4626-withdraw}
+     * @dev whenNotPaused
+     * @dev redeem
+     * @param assets target amount of assets to be withdrawn
+     * @param receiver address to receive the assets
+     * @param owner address of the owner of the shares to be consumed
+     * @return assets amount of assets received
+     */
     function withdraw(
         uint256 assets,
         address receiver,
@@ -188,7 +245,14 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
-     * @dev openzeppelin ERC4626 withdraw with referral tag
+     * @notice Withdraw a specific amount of assets to be redeemed with vault shares and referral
+     * @dev See {IERC4626-withdraw}
+     * @dev whenNotPaused
+     * @param assets target amount of assets to be withdrawn 
+     * @param receiver address to receive the assets
+     * @param owner address of the owner of the shares to be consumed
+     * @param referral address of the partner referral
+     * @return assets amount of assets received
      */
     function withdrawWithReferral(
         uint256 assets,
@@ -204,21 +268,22 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
                             ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice Total amount of the underlying asset that
-    /// is "managed" by Vault.
+    /**
+     * @return assets total amount of the underlying asset managed by this vault
+     */
     function totalAssets() public view override returns (uint256) {
         return vaultBalanceAtYieldSource().mulDiv(getPriceOfYieldSource(), IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN());
     }
 
     /**
-     * @dev Returns the price of yield source token in underlyings
+     * @return price price of yield source shares
      */
     function getPriceOfYieldSource() public view returns (uint256) {
         return IYieldSourceContract(yieldSourceVault).priceAA();
     }
 
     /**
-     * @dev Returns the vault balance at yield source
+     * @return shares yield source share balance of this vault
      */
     function vaultBalanceAtYieldSource() public view returns (uint256) {
         return
@@ -226,6 +291,9 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
                 .balanceOf(address(this));
     }
 
+    /**
+     * @return assets maximum asset amounts that can be deposited
+     */
     function maxDeposit(address)
         public
         view
@@ -236,6 +304,9 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         return type(uint256).max;
     }
 
+    /**
+     * @return assets maximum asset amounts that can be withdrawn
+     */
     function maxWithdraw(address _owner)
         public
         view
@@ -247,9 +318,12 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
-     * @dev Returns the amount of shares that the Vault would exchange for the amount of assets provided, in an ideal
-     * scenario where all the conditions are met.
-     */
+     * @notice Returns the amount of shares that the Vault would exchange for the amount of assets provided, in an ideal scenario where all the conditions are met
+     * @dev See {@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol}
+     * @param assets amount of assets to be converted to shares
+     * @param rounding rounding mode
+     * @return shares amount of shares that would be converted from assets
+     */     
     function _convertToShares(uint256 assets, MathUpgradeable.Rounding rounding)
         internal
         view
@@ -261,9 +335,12 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
-     * @dev Returns the amount of assets that the Vault would exchange for the amount of shares provided, in an ideal
-     * scenario where all the conditions are met.
-     */
+     * @notice Returns the amount of assets that the Vault would exchange for the amount of shares provided, in an ideal scenario where all the conditions are met
+     * @dev See {@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol}
+     * @param shares amount of shares to be converted to assets
+     * @param rounding rounding mode
+     * @return assets amount of assets that would be converted from shares
+     */     
     function _convertToAssets(uint256 shares, MathUpgradeable.Rounding rounding)
         internal
         view
@@ -279,8 +356,8 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     /************************/
 
     /**
-     * @dev Check if the vault is ready to be activated
-     */
+     * @return isReadyToActivate true if all requirements met and vault is ready to be activated
+     */   
     function isReadyToActivate() public view returns (bool) {
         require(isFeeCollectorUpdated(), "FEE_COLLECTOR_RECEIVER_NOT_UPDATED");
 
@@ -295,8 +372,8 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
-     * @dev Check if the fee collector is updated
-     */
+     * @return isFeeCollectorUpdated true if the yield source feeReceiver address is set to the target feeSplitter address
+     */        
     function isFeeCollectorUpdated() public view returns (bool) {
         require(feeSplitter != address(0), "FEE_SPLITTER_NOT_SET");
         return
@@ -304,30 +381,31 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
-     * @dev Check if the provided multi-sig address is the revenue contract owner
-     */
+     * @return isMultisigOwnsTheRevenueContract true if the yield source owner address is set to the multiSig address
+     */        
     function isMultisigOwnsTheRevenueContract() public view returns (bool) {
         return IYieldSourceContract(yieldSourceVault).owner() == multiSig;
     }
 
     /**
-     * @dev Check if cinch multi-sig guard is added
-     */
+     * @return isMultisigGuardAdded true if the multiSig's guard is set to the target multisigGuard address
+     */        
     function isMultisigGuardAdded() public view returns (bool) {
         return GnosisSafe(multiSig).getGuard() == multisigGuard;
     }
 
     /**
-        @dev   Checks that the current state of the vault matches the provided state.
-        @param _status Enum of desired vault status.
-    */
+     * @dev check if vault status matches the provided state
+     * @param _status target vault status to check against
+     */        
     function _isValidState(Status _status) internal view {
         require(vaultStatus == _status, "INVALID_STATE");
     }
 
     /**
-     * @dev Getter of _totalValueLocked
-     */
+     * @param referral target referral address
+     * @return totalValueLocked total value locked in this vault by the target referral
+     */        
     function getTotalValueLocked(address referral)
         external
         view
@@ -337,8 +415,9 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
-     * @dev return the total supply of shares in the yield source vault
-     */
+     * @dev to be used for calculating the revenue share ratio
+     * @return yieldSourceTotalShares total yield source shares supply
+     */        
     function getYieldSourceVaultTotalShares()
         external
         view
@@ -349,16 +428,16 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
-     * @dev Pause the contract.
-     * onlyOwner
+     * @notice Pause the contract.
+     * @dev onlyOwner
      */
     function pause() external onlyOwner {
         _pause();
     }
 
     /**
-     * @dev Unpause the contract.
-     * onlyOwner
+     * @notice Unpause the contract.
+     * @dev onlyOwner
      */
     function unpause() external onlyOwner {
         _unpause();

@@ -23,10 +23,12 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
 
     // Event when the feeSplitter address is updated
     event FeeSplitterUpdated(address feeSplitter_);
+    // Event when the yieldSourceVault address is updated
+    event YieldSourceVaultUpdated(address yieldSourceVault_);
     // Event when the vault is activated
     event VaultActivated();
 
-    // Status type of the vault
+    // Vault status enum
     enum Status {
         Pending,
         Active,
@@ -94,6 +96,17 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     function setFeeSplitter(address feeSplitter_) external onlyOwner {
         feeSplitter = feeSplitter_;
         emit FeeSplitterUpdated(feeSplitter);
+    }
+
+    /**
+     * @notice setter of yieldSourceVault
+     * @dev onlyOwner
+     * @dev emit YieldSourceVaultUpdated
+     * @param yieldSourceVault_ address of yieldSourceVault to be updated to
+     */
+    function setYieldSourceVault(address yieldSourceVault_) external onlyOwner {
+        yieldSourceVault = yieldSourceVault_;
+        emit YieldSourceVaultUpdated(yieldSourceVault);
     }
 
     /**
@@ -216,7 +229,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         require(shares <= balanceOf(owner), "INSUFFICIENT_SHARES");
         require(shares <= _totalValueLockedByUserReferral[owner][referral], "INSUFFICIENT_SHARES_BY_REFERRAL");
 
-        //take out the shares from the user first to avoid reentrancy
+        //take out the shares from the user first to avoid reentrancy hack
         _totalValueLockedByUserReferral[owner][referral] -= shares;
         _totalValueLocked[referral] -= shares;
 

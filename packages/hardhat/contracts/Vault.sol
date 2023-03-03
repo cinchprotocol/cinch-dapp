@@ -103,12 +103,10 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
      */
     function activate() external whenNotPaused {
         _isValidState(Status.Pending);
-
         require(isReadyToActivate(), "VAULT_ACTIVATION_TERMS_NOT_MET");
 
         vaultStatus = Status.Active;
         vaultActivationDate = block.timestamp;
-
         emit VaultActivated();
     }
 
@@ -218,10 +216,12 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         require(shares <= balanceOf(owner), "INSUFFICIENT_SHARES");
         require(shares <= _totalValueLockedByUserReferral[owner][referral], "INSUFFICIENT_SHARES_BY_REFERRAL");
 
+        //take out the shares from the user first to avoid reentrancy
+        _totalValueLockedByUserReferral[owner][referral] -= shares;
+        _totalValueLocked[referral] -= shares;
+
         uint256 assets = IYieldSourceContract(yieldSourceVault).withdrawAA(shares);
         _withdraw(_msgSender(), receiver, owner, assets, shares);
-        _totalValueLocked[referral] -= shares;
-        _totalValueLockedByUserReferral[owner][referral] -= shares;
         return assets;
     }
 
@@ -360,9 +360,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
      */   
     function isReadyToActivate() public view returns (bool) {
         require(isFeeCollectorUpdated(), "FEE_COLLECTOR_RECEIVER_NOT_UPDATED");
-
         require(isMultisigGuardAdded(), "MULTISIG_GUARD_NOT_IN_PLACE");
-
         require(
             isMultisigOwnsTheRevenueContract(),
             "REVENUE_CONTRACT_NOT_OWNED_BY_PROVIDED_MULTISIG"

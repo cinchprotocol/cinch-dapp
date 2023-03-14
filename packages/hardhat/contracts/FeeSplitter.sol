@@ -11,7 +11,6 @@ import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeab
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "./FeeSplitterStorage.sol";
-import "./interfaces/ISampleProtocol.sol";
 import "./interfaces/ICinchPx.sol";
 
 /**
@@ -51,25 +50,22 @@ contract FeeSplitter is FeeSplitterStorage, Initializable, ContextUpgradeable, O
     /**
      * @dev Initialize an instance of `FeeSplitter`
      * @param cinchPxAddress The address of the target CinchPx contract.
-     * @param protocolAddress The address of the target protocol contract.
      * @param supportedERC20Addresses Array of ERC20 token address to be supported.
      * @param protocolPayee The wallet address of the target protocol where funds will be splitted to.
      * @param cinchPxPayees Array of wallet addresses of the target payee (besides protocolPayee) where funds will be splitted to. Can be updated with addCinchPxPayee by contract owner.
      */
-    function initialize(address cinchPxAddress, address protocolAddress, address[] memory supportedERC20Addresses, address protocolPayee, address[] memory cinchPxPayees) public initializer {
+    function initialize(address cinchPxAddress, address[] memory supportedERC20Addresses, address protocolPayee, address[] memory cinchPxPayees) public initializer {
         __Context_init();
         __Ownable_init();
         __Pausable_init();
         __ReentrancyGuard_init();
 
         require(cinchPxAddress != address(0), "cinchPxAddress is zero");
-        require(protocolAddress != address(0), "protocolAddress is zero");
         require(supportedERC20Addresses.length > 0, "supportedERC20Addresses is empty");
         require(protocolPayee != address(0), "protocolPayee_ is zero");
         require(cinchPxPayees.length > 0, "cinchPxPayees is empty");
 
         _cinchPxAddress = cinchPxAddress;
-        _protocolAddress = protocolAddress;
         _lastProtocolTVL = _getProtocolTVL();
         for (uint256 i = 0; i < supportedERC20Addresses.length; i++) {
             _addSupportedERC20(supportedERC20Addresses[i]);
@@ -159,18 +155,25 @@ contract FeeSplitter is FeeSplitterStorage, Initializable, ContextUpgradeable, O
                 uint256 balanceToAdd = (unProcessedBalance * lastCinchPxTVL / (lastProtocolTVL + lastProtocolTVL)) + (unProcessedBalance * cinchPxTVL / (protocolTVL + protocolTVL));
                 _internalBalance[token][payee] = _internalBalance[token][payee] + balanceToAdd;
                 totalCinchPxBalanceAdded += balanceToAdd;
-
-                //emit InternalBalanceUpdated(token, payee, _internalBalance[token][payee]);
+                _totalSplittedTo[token][payee] += balanceToAdd;
             }
 
             //update the internal balance of the protocolPayee
             uint256 protocolBalanceToAdd = unProcessedBalance - totalCinchPxBalanceAdded;
             _internalBalance[token][_protocolPayee] = _internalBalance[token][_protocolPayee] + protocolBalanceToAdd;
+            _totalSplittedTo[token][_protocolPayee] += protocolBalanceToAdd;
             emit InternalBalanceUpdated(token, _protocolPayee, _internalBalance[token][_protocolPayee]);
 
             //update _totalProcessed
             _totalProcessed[token] += unProcessedBalance;
             emit TotalProcessedUpdated(token, _totalProcessed[token]);
+        } else {
+            //update the _lastCinchPxTVL of each cinchPxPayee
+            address[] memory cinchPxPayees = _cinchPxPayeeSet.values();
+            for (uint256 i = 0; i < cinchPxPayees.length; i++) {
+                address payee = cinchPxPayees[i];
+                _lastCinchPxTVL[payee] = _getCinchPxTVL(payee);
+            }
         }
     }
 
@@ -178,7 +181,7 @@ contract FeeSplitter is FeeSplitterStorage, Initializable, ContextUpgradeable, O
      * @dev Get the updated protocol TVL from the target protocol contract address.
      */
     function _getProtocolTVL() private view returns (uint256) {
-        return ISampleProtocol(_protocolAddress).getContractValue();
+        return ICinchPx(_cinchPxAddress).getYieldSourceVaultTotalShares();
     }
 
     /**
@@ -229,6 +232,15 @@ contract FeeSplitter is FeeSplitterStorage, Initializable, ContextUpgradeable, O
      */
     function getTotalProcessed(address tokenAddress) external view returns (uint256) {
         return _totalProcessed[IERC20Upgradeable(tokenAddress)];
+    }
+
+    /**
+     * @dev Getter for the totalSplittedTo. 
+     * @param tokenAddress ERC20 token address.
+     * @param payee The address of the payee.
+     */
+    function getTotalSplittedTo(address tokenAddress, address payee) external view returns (uint256) {
+        return _totalSplittedTo[IERC20Upgradeable(tokenAddress)][payee];
     }
 
     /**

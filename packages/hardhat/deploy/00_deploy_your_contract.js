@@ -1,69 +1,96 @@
-const { ethers } = require("hardhat");
+const { ethers, upgrades } = require("hardhat");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  var mockERC20 = await deploy("MockERC20", {
+  const mockERC20 = await deploy("MockERC20", {
     from: deployer,
     log: true,
   });
 
-
-  var mockProtocol = await deploy("MockProtocol", {
+  const mockProtocol = await deploy("MockProtocol", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     log: true,
+    args: [mockERC20.address],
   });
 
-  var mockGnosisSafe = await deploy("MockGnosisSafe", {
+  const mockGnosisSafe = await deploy("MockGnosisSafe", {
     from: deployer,
     log: true,
   });
 
-  var cinchSafeGuard = await deploy("CinchSafeGuard", {
+  const cinchSafeGuard = await deploy("CinchSafeGuard", {
     from: deployer,
     log: true,
   });
 
-  var vault = await deploy("RBFVault", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-    args: [mockERC20.address, "CinchPx", "CPxIdleClearPool",
-    [mockProtocol.address, mockGnosisSafe.address, 10000000],
-    cinchSafeGuard.address],
-    log: true,
-  });
-
-  var mockGnosisSafeContract = await ethers.getContractAt("MockGnosisSafe", mockGnosisSafe.address);
+  const mockGnosisSafeContract = await ethers.getContractAt(
+    "MockGnosisSafe",
+    mockGnosisSafe.address
+  );
   // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
   await mockGnosisSafeContract.setGuard(cinchSafeGuard.address);
 
-  var sampleProtocolContract = await ethers.getContractAt("SampleProtocol", mockProtocol.address);
-  await sampleProtocolContract.transferOwnership(mockGnosisSafe.address);
+  const Vault = await ethers.getContractFactory("Vault");
+  const vault = await upgrades.deployProxy(
+    Vault,
+    [
+      mockERC20.address,
+      "CinchPx",
+      "CPxMock",
+      mockProtocol.address,
+      mockGnosisSafe.address,
+      cinchSafeGuard.address,
+    ],
+    {
+      from: deployer,
+      log: true,
+      initializer: "initialize",
+    }
+  );
+  await vault.deployed();
+  await vault.activateBypass();
+  console.log("Vault deployed to:", vault.address);
 
-  await sampleProtocolContract.setFeeReceiver(vault.address);
+  const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
+  const cinchVaultPayee = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
+  const FeeSplitter = await ethers.getContractFactory("FeeSplitter");
+  const feeSplitter = await upgrades.deployProxy(
+    FeeSplitter,
+    [vault.address, [mockERC20.address], protocolPayee, [cinchVaultPayee]],
+    {
+      from: deployer,
+      log: true,
+      initializer: "initialize",
+    }
+  );
+  await feeSplitter.deployed();
+  console.log("FeeSplitter deployed to:", feeSplitter.address);
 
-  // await deploy("MarketPlace", {
-  //   // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-  //   from: deployer,
-  //   args: [deployer, 20000, "0x5FbDB2315678afecb367f032d93F642f64180aa3"],
-  //   log: true,
-  // });
+  await vault.setFeeSplitter(feeSplitter.address);
 
+  const mockProtocolContract = await ethers.getContractAt(
+    "MockProtocol",
+    mockProtocol.address
+  );
+  await mockProtocolContract.setFeeReceiver(feeSplitter.address);
 
-
-  // await deploy("MockCinchPx", {
-  //   from: deployer,
-  //   log: true,
-  // });
-
-  // const marketPlaceContract = await ethers.getContract("MarketPlace", deployer);
-  // await marketPlaceContract.transferOwnership('0x3CbFF2aE1581f9c2303e8e820cAFB990FC6b390F');
-
-  // const tokenContract = await ethers.getContractAt("TestToken", "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570");
-  // await tokenContract.faucet('0x78CaF994Ae726Dca14DC20687aAe072DcCf1996F', 5000 * 10**18);
-
+  // deposit initial TVL (non-referral) to protocol
+  const mockERC20Contract = await ethers.getContractAt(
+    "MockERC20",
+    mockERC20.address
+  );
+  const mockERC20Decimals = 6;
+  const initProtocolTVLAmount = ethers.utils.parseUnits(
+    "1000",
+    mockERC20Decimals
+  );
+  await mockERC20Contract.faucet(deployer, initProtocolTVLAmount);
+  await mockERC20Contract.approve(vault.address, initProtocolTVLAmount);
+  await vault.deposit(initProtocolTVLAmount, deployer);
+  console.log("deposited initial TVL to protocol", initProtocolTVLAmount);
 
   /*
     // Getting a previously deployed contract
@@ -101,4 +128,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   });
   */
 };
-module.exports.tags = ["YourContract", "MarketPlace"];
+module.exports.tags = ["YourContract", "MarketPlace", "Vault"];

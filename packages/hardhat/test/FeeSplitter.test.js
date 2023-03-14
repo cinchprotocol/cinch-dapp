@@ -14,6 +14,7 @@ let accountOwner;
 const accountIndexProtocolPayee = 1;
 const accountIndexCinchPxPayee = 2;
 const accountIndexCinchPxPayee02 = 3;
+const mockERC20Decimals = 6;
 
 before(async function () {
   // get accounts from hardhat
@@ -30,15 +31,15 @@ describe("FeeSplitter", function () {
       expect(mockERC20.address).to.not.be.undefined;
     });
 
-    it("Should deploy SampleProtocol", async function () {
+    it("Should deploy MockProtocol", async function () {
       const MockProtocol = await ethers.getContractFactory("MockProtocol");
-      mockProtocol = await MockProtocol.deploy();
+      mockProtocol = await MockProtocol.deploy(mockERC20.address);
       expect(mockProtocol.address).to.not.be.undefined;
     });
 
     it("Should deploy MockCinchPx", async function () {
       const MockCinchPx = await ethers.getContractFactory("MockCinchPx");
-      mockCinchPx = await MockCinchPx.deploy();
+      mockCinchPx = await MockCinchPx.deploy(mockProtocol.address);
       expect(mockCinchPx.address).to.not.be.undefined;
     });
 
@@ -48,25 +49,14 @@ describe("FeeSplitter", function () {
 
       const tx01 = feeSplitterX.initialize(
         ethers.constants.AddressZero,
-        mockProtocol.address,
         [mockERC20.address],
         accounts[accountIndexProtocolPayee].address,
         [accounts[accountIndexCinchPxPayee].address]
       );
       await expect(tx01).to.be.revertedWith("cinchPxAddress is zero");
 
-      const tx02 = feeSplitterX.initialize(
-        mockCinchPx.address,
-        ethers.constants.AddressZero,
-        [mockERC20.address],
-        accounts[accountIndexProtocolPayee].address,
-        [accounts[accountIndexCinchPxPayee].address]
-      );
-      await expect(tx02).to.be.revertedWith("protocolAddress is zero");
-
       const tx03 = feeSplitterX.initialize(
         mockCinchPx.address,
-        mockProtocol.address,
         [ethers.constants.AddressZero],
         accounts[accountIndexProtocolPayee].address,
         [accounts[accountIndexCinchPxPayee].address]
@@ -75,7 +65,6 @@ describe("FeeSplitter", function () {
 
       const tx04 = feeSplitterX.initialize(
         mockCinchPx.address,
-        mockProtocol.address,
         [mockERC20.address],
         ethers.constants.AddressZero,
         [accounts[accountIndexCinchPxPayee].address]
@@ -84,7 +73,6 @@ describe("FeeSplitter", function () {
 
       const tx05 = feeSplitterX.initialize(
         mockCinchPx.address,
-        mockProtocol.address,
         [mockERC20.address],
         accounts[accountIndexProtocolPayee].address,
         [ethers.constants.AddressZero]
@@ -99,7 +87,6 @@ describe("FeeSplitter", function () {
       );
       feeSplitter = await upgrades.deployProxy(FeeSplitter, [
         mockCinchPx.address,
-        mockProtocol.address,
         [mockERC20.address],
         accounts[accountIndexProtocolPayee].address,
         [accounts[accountIndexCinchPxPayee].address],
@@ -150,7 +137,7 @@ describe("FeeSplitter", function () {
         const tx = feeSplitter.processFeeSplit();
         await expect(tx).to.be.revertedWith("protocolTVL is zero");
       });
-      it("should not work when protocolTVL is positive", async () => {
+      it("should work when protocolTVL is positive", async () => {
         await mockProtocol.setTotalValueLocked(1000);
         const tx = await feeSplitter.processFeeSplit();
         expect(tx).to.emit(feeSplitter, "FeeSplitProcessed");

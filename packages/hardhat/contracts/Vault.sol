@@ -11,6 +11,7 @@ import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 
 import "./interfaces/IGnosisSafe.sol";
 import "./interfaces/IYieldSourceContract.sol";
+import "./yieldsourceadapters/DHedgeYieldSourceAdapter.sol";
 
 /**
  * @title Vault
@@ -18,13 +19,11 @@ import "./interfaces/IYieldSourceContract.sol";
  * @dev Should be deployed per yield source pool/vault
  * @dev ERC4626 based vault
  */
-contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
+contract Vault is YieldSourceAdapter, ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     using MathUpgradeable for uint256;
 
     // Event when the feeSplitter address is updated
     event FeeSplitterUpdated(address feeSplitter_);
-    // Event when the yieldSourceVault address is updated
-    event YieldSourceVaultUpdated(address yieldSourceVault_);
     // Event when the vault is activated
     event VaultActivated();
 
@@ -36,18 +35,16 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         Canceled
     }
 
-    // ERC4626 vault address of yield source
-    address public yieldSourceVault;
     // Address of Gnosis multi-sig which is the owner of yield soure vault
     address public multiSig;
     // Adderss of multisigGuard contract
     address public multisigGuard;
     // Target feeSplitter address that the protocol should be forwarding its revenue to
     address public feeSplitter;
-    // Partner referral address -> Total value locked
-    mapping(address => uint256) internal _totalValueLocked;
-    // User address -> Partner referral address -> Total value locked
-    mapping(address => mapping(address => uint256)) internal _totalValueLockedByUserReferral;
+    // Partner referral address -> Total shares
+    mapping(address => uint256) internal _totalSharesByReferral;
+    // User address -> Partner referral address -> Total shares
+    mapping(address => mapping(address => uint256)) internal _totalSharesByUserReferral;
     // Total asset deposit processed
     uint256 public totalAssetDepositProcessed;
 
@@ -79,7 +76,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         __ERC4626_init(IERC20Upgradeable(asset));
         __ERC20_init(name, symbol);
 
-        yieldSourceVault = _yieldSourceVault;
+        __YieldSourceAdapter_init(_yieldSourceVault);
         multiSig = _multiSig;
         multisigGuard = _multisigGuard;
 
@@ -175,13 +172,12 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         SafeERC20Upgradeable.safeTransferFrom(IERC20Upgradeable(asset()), _msgSender(), address(this), assets);
 
         // Deposit assets to yield source vault
-        IERC20Upgradeable(asset()).approve(yieldSourceVault, assets);
-        uint256 shares = IYieldSourceContract(yieldSourceVault).depositAARef(assets, address(this));
+        uint256 shares = __deposit(asset(), assets);
 
         // Mint the shares from this vault according to the number of shares received from yield source vault
         _mint(receiver, shares);
-        _totalValueLocked[referral] += shares;
-        _totalValueLockedByUserReferral[receiver][referral] += shares;
+        _totalSharesByReferral[referral] += shares;
+        _totalSharesByUserReferral[receiver][referral] += shares;
         totalAssetDepositProcessed += assets;
         emit Deposit(_msgSender(), receiver, assets, shares);
 
@@ -227,13 +223,13 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         require(receiver != address(0) && owner != address(0) && referral != address(0), "ZERO_ADDRESS");
         require(shares <= maxRedeem(owner), "MAX_REDEEM_EXCEEDED");
         require(shares <= balanceOf(owner), "INSUFFICIENT_SHARES");
-        require(shares <= _totalValueLockedByUserReferral[owner][referral], "INSUFFICIENT_SHARES_BY_REFERRAL");
+        require(shares <= _totalSharesByUserReferral[owner][referral], "INSUFFICIENT_SHARES_BY_REFERRAL");
 
         //take out the shares from the user first to avoid reentrancy hack
-        _totalValueLockedByUserReferral[owner][referral] -= shares;
-        _totalValueLocked[referral] -= shares;
+        _totalSharesByUserReferral[owner][referral] -= shares;
+        _totalSharesByReferral[referral] -= shares;
 
-        uint256 assets = IYieldSourceContract(yieldSourceVault).withdrawAA(shares);
+        uint256 assets = __redeem(shares);
         _withdraw(_msgSender(), receiver, owner, assets, shares);
         return assets;
     }
@@ -285,23 +281,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
      * @return assets total amount of the underlying asset managed by this vault
      */
     function totalAssets() public view override returns (uint256) {
-        return vaultBalanceAtYieldSource().mulDiv(getPriceOfYieldSource(), IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN());
-    }
-
-    /**
-     * @return price price of yield source shares
-     */
-    function getPriceOfYieldSource() public view returns (uint256) {
-        return IYieldSourceContract(yieldSourceVault).priceAA();
-    }
-
-    /**
-     * @return shares yield source share balance of this vault
-     */
-    function vaultBalanceAtYieldSource() public view returns (uint256) {
-        return
-            IERC20Upgradeable(IYieldSourceContract(yieldSourceVault).AATranche())
-                .balanceOf(address(this));
+        return __totalAssets();
     }
 
     /**
@@ -344,7 +324,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         override
         returns (uint256)
     {
-        return assets.mulDiv(IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN(), getPriceOfYieldSource(), rounding);
+        return __convertToShares(assets, rounding);
     }
 
     /**
@@ -361,7 +341,7 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         override
         returns (uint256)
     {
-        return shares.mulDiv(getPriceOfYieldSource(), IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN(), rounding);
+        return __convertToAssets(shares, rounding);
     }
 
     /************************/
@@ -387,15 +367,14 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
      */        
     function isFeeCollectorUpdated() public view returns (bool) {
         require(feeSplitter != address(0), "FEE_SPLITTER_NOT_SET");
-        return
-            IYieldSourceContract(yieldSourceVault).feeReceiver() == feeSplitter;
+        return getYieldSourceVaultFeeReceiver() == feeSplitter;
     }
 
     /**
      * @return isMultisigOwnsTheRevenueContract true if the yield source owner address is set to the multiSig address
      */        
     function isMultisigOwnsTheRevenueContract() public view returns (bool) {
-        return IYieldSourceContract(yieldSourceVault).owner() == multiSig;
+        return getYieldSourceVaultOwner() == multiSig;
     }
 
     /**
@@ -417,25 +396,12 @@ contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
      * @param referral target referral address
      * @return totalValueLocked total value locked in this vault by the target referral
      */        
-    function getTotalValueLocked(address referral)
+    function getTotalValueLocked(address referral) //TODO: rename
         external
         view
         returns (uint256)
     {
-        return _totalValueLocked[referral];
-    }
-
-    /**
-     * @dev to be used for calculating the revenue share ratio
-     * @return yieldSourceTotalShares total yield source shares supply
-     */        
-    function getYieldSourceVaultTotalShares()
-        external
-        view
-        returns (uint256)
-    {
-        //IERC20Upgradeable(IYieldSourceContract(yieldSourceVault).AATranche()).totalSupply(); //for idle integration
-        return IYieldSourceContract(yieldSourceVault).getTotalValueLocked();
+        return _totalSharesByReferral[referral];
     }
 
     /**

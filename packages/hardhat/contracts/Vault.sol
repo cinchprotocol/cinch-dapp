@@ -11,7 +11,7 @@ import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 
 import "./interfaces/IGnosisSafe.sol";
 import "./interfaces/IYieldSourceContract.sol";
-import "./yieldsourceadapters/DHedgeYieldSourceAdapter.sol";
+import "./yieldsourceadapters/GeneralYieldSourceAdapter.sol";
 
 /**
  * @title Vault
@@ -19,7 +19,7 @@ import "./yieldsourceadapters/DHedgeYieldSourceAdapter.sol";
  * @dev Should be deployed per yield source pool/vault
  * @dev ERC4626 based vault
  */
-contract Vault is YieldSourceAdapter, ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable {
+contract Vault is ERC4626Upgradeable, GeneralYieldSourceAdapter, OwnableUpgradeable, PausableUpgradeable {
     using MathUpgradeable for uint256;
 
     // Event when the feeSplitter address is updated
@@ -41,6 +41,8 @@ contract Vault is YieldSourceAdapter, ERC4626Upgradeable, OwnableUpgradeable, Pa
     address public multisigGuard;
     // Target feeSplitter address that the protocol should be forwarding its revenue to
     address public feeSplitter;
+    // Partner referral address -> isEnabled
+    //mapping(address => bool) internal _isEnabledByReferral;
     // Partner referral address -> Total shares
     mapping(address => uint256) internal _totalSharesByReferral;
     // User address -> Partner referral address -> Total shares
@@ -76,7 +78,7 @@ contract Vault is YieldSourceAdapter, ERC4626Upgradeable, OwnableUpgradeable, Pa
         __ERC4626_init(IERC20Upgradeable(asset));
         __ERC20_init(name, symbol);
 
-        __YieldSourceAdapter_init(_yieldSourceVault);
+        __GeneralYieldSourceAdapter_init(_yieldSourceVault);
         multiSig = _multiSig;
         multisigGuard = _multisigGuard;
 
@@ -172,7 +174,7 @@ contract Vault is YieldSourceAdapter, ERC4626Upgradeable, OwnableUpgradeable, Pa
         SafeERC20Upgradeable.safeTransferFrom(IERC20Upgradeable(asset()), _msgSender(), address(this), assets);
 
         // Deposit assets to yield source vault
-        uint256 shares = __deposit(asset(), assets);
+        uint256 shares = _depositToYieldSourceVault(asset(), assets);
 
         // Mint the shares from this vault according to the number of shares received from yield source vault
         _mint(receiver, shares);
@@ -229,7 +231,7 @@ contract Vault is YieldSourceAdapter, ERC4626Upgradeable, OwnableUpgradeable, Pa
         _totalSharesByUserReferral[owner][referral] -= shares;
         _totalSharesByReferral[referral] -= shares;
 
-        uint256 assets = __redeem(shares);
+        uint256 assets = _redeemFromYieldSourceVault(shares);
         _withdraw(_msgSender(), receiver, owner, assets, shares);
         return assets;
     }
@@ -277,11 +279,12 @@ contract Vault is YieldSourceAdapter, ERC4626Upgradeable, OwnableUpgradeable, Pa
                             ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    //TODO: is this part of 4626, if not and not used, we can remove it
     /**
      * @return assets total amount of the underlying asset managed by this vault
      */
     function totalAssets() public view override returns (uint256) {
-        return __totalAssets();
+        return _totalAssetsOfYieldSourceVault();
     }
 
     /**
@@ -324,7 +327,7 @@ contract Vault is YieldSourceAdapter, ERC4626Upgradeable, OwnableUpgradeable, Pa
         override
         returns (uint256)
     {
-        return __convertToShares(assets, rounding);
+        return _convertAssetsToYieldSourceShares(assets, rounding);
     }
 
     /**
@@ -341,12 +344,40 @@ contract Vault is YieldSourceAdapter, ERC4626Upgradeable, OwnableUpgradeable, Pa
         override
         returns (uint256)
     {
-        return __convertToAssets(shares, rounding);
+        return _convertYieldSourceSharesToAssets(shares, rounding);
     }
 
-    /************************/
-    /*** Helper Functions ***/
-    /************************/
+    /*//////////////////////////////////////////////////////////////
+                            YIELD SOURCE ADAPTER
+    //////////////////////////////////////////////////////////////*/
+
+    /*//////////////////////////////////////////////////////////////
+                            REVENUE SHARE LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+/*
+    function setReferralEnabled(address referral, bool enabled) external onlyOwner {
+        _isEnabledByReferral[referral] = enabled;
+    }
+*/
+    /**
+     * @notice Deposit assets to the revenue share balance, which will be made claimable to referrals
+     * @param assets amount of assets to be deposited
+     * @return assets amount of assets that would be converted from shares
+     */     
+/*
+    function depositToRevenueShare(
+        uint256 assets
+    ) external whenNotPaused returns (uint256) {
+        require(assets > 0, "ZERO_ASSETS");
+
+        return depositToRevenueShareWithReferral(amount, receiver, owner, owner);
+    }
+*/
+
+    /*//////////////////////////////////////////////////////////////
+                            HELPER FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @return isReadyToActivate true if all requirements met and vault is ready to be activated

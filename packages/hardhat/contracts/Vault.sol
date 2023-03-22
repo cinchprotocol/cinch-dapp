@@ -10,8 +10,8 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 
 import "./interfaces/IGnosisSafe.sol";
-import "./interfaces/IYieldSourceContract.sol";
 import "./yieldsourceadapters/GeneralYieldSourceAdapter.sol";
+import "./revenueshares/GeneralRevenueShare.sol";
 
 /**
  * @title Vault
@@ -19,7 +19,7 @@ import "./yieldsourceadapters/GeneralYieldSourceAdapter.sol";
  * @dev Should be deployed per yield source pool/vault
  * @dev ERC4626 based vault
  */
-contract Vault is ERC4626Upgradeable, GeneralYieldSourceAdapter, OwnableUpgradeable, PausableUpgradeable {
+contract Vault is ERC4626Upgradeable, OwnableUpgradeable, PausableUpgradeable, GeneralYieldSourceAdapter, GeneralRevenueShare {
     using MathUpgradeable for uint256;
 
     // Event when the feeSplitter address is updated
@@ -41,12 +41,6 @@ contract Vault is ERC4626Upgradeable, GeneralYieldSourceAdapter, OwnableUpgradea
     address public multisigGuard;
     // Target feeSplitter address that the protocol should be forwarding its revenue to
     address public feeSplitter;
-    // Partner referral address -> isEnabled
-    //mapping(address => bool) internal _isEnabledByReferral;
-    // Partner referral address -> Total shares
-    mapping(address => uint256) internal _totalSharesByReferral;
-    // User address -> Partner referral address -> Total shares
-    mapping(address => mapping(address => uint256)) internal _totalSharesByUserReferral;
     // Total asset deposit processed
     uint256 public totalAssetDepositProcessed;
 
@@ -62,77 +56,34 @@ contract Vault is ERC4626Upgradeable, GeneralYieldSourceAdapter, OwnableUpgradea
      * @param asset underneath asset, which should match the asset of the yield source vault
      * @param name ERC20 name of the vault shares token
      * @param symbol ERC20 symbol of the vault shares token
-     * @param _yieldSourceVault vault address of yield source
-     * @param _multiSig Address of Gnosis multi-sig which is the owner of yield soure vault
+     * @param yieldSourceVault_ vault address of yield source
+     * @param multiSig_ Address of Gnosis multi-sig which is the owner of yield soure vault
+     * @param multisigGuard_ Address of Gnosis multi-sig guard
      */
     function initialize(
         address asset,
         string calldata name,
         string calldata symbol,
-        address _yieldSourceVault,
-        address _multiSig,
-        address _multisigGuard
+        address yieldSourceVault_,
+        address multiSig_,
+        address multisigGuard_
     ) public initializer {
         __Ownable_init();
         __Pausable_init();
         __ERC4626_init(IERC20Upgradeable(asset));
         __ERC20_init(name, symbol);
 
-        __GeneralYieldSourceAdapter_init(_yieldSourceVault);
-        multiSig = _multiSig;
-        multisigGuard = _multisigGuard;
+        __GeneralYieldSourceAdapter_init(yieldSourceVault_);
+        multiSig = multiSig_;
+        multisigGuard = multisigGuard_;
 
         vaultStatus = Status.Pending;
         vaultDeployDate = block.timestamp;
     }
 
-    /**
-     * @notice setter of FeeSplitter
-     * @dev onlyOwner
-     * @dev emit FeeSplitterUpdated
-     * @param feeSplitter_ address of feeSplitter to be updated to
-     */
-    function setFeeSplitter(address feeSplitter_) external onlyOwner {
-        feeSplitter = feeSplitter_;
-        emit FeeSplitterUpdated(feeSplitter);
-    }
-
-    /**
-     * @notice setter of yieldSourceVault
-     * @dev onlyOwner
-     * @dev emit YieldSourceVaultUpdated
-     * @param yieldSourceVault_ address of yieldSourceVault to be updated to
-     */
-    function setYieldSourceVault(address yieldSourceVault_) external onlyOwner {
-        yieldSourceVault = yieldSourceVault_;
-        emit YieldSourceVaultUpdated(yieldSourceVault);
-    }
-
-    /**
-     * @notice Validate conditions for vault activation, and activate the vault if all requirements were passed
-     * @dev whenNotPaused
-     * @dev emit VaultActivated
-     */
-    function activate() external whenNotPaused {
-        _isValidState(Status.Pending);
-        require(isReadyToActivate(), "VAULT_ACTIVATION_TERMS_NOT_MET");
-
-        vaultStatus = Status.Active;
-        vaultActivationDate = block.timestamp;
-        emit VaultActivated();
-    }
-
-    /**
-     * @notice Force vault activation by owner, in case the on-chain feeSplitter integration is not in place
-     * @dev whenNotPaused onlyOwner
-     * @dev emit VaultActivated
-     */
-    function activateBypass() external whenNotPaused onlyOwner {
-        _isValidState(Status.Pending);
-        vaultStatus = Status.Active;
-        vaultActivationDate = block.timestamp;
-        emit VaultActivated();
-    }
+    /*//////////////////////////////////////////////////////////////
+                            ERC4626 LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Deposit assets to the vault
@@ -178,8 +129,7 @@ contract Vault is ERC4626Upgradeable, GeneralYieldSourceAdapter, OwnableUpgradea
 
         // Mint the shares from this vault according to the number of shares received from yield source vault
         _mint(receiver, shares);
-        _totalSharesByReferral[referral] += shares;
-        _totalSharesByUserReferral[receiver][referral] += shares;
+        _trackSharesInReferralAdded(receiver, referral, shares);
         totalAssetDepositProcessed += assets;
         emit Deposit(_msgSender(), receiver, assets, shares);
 
@@ -190,49 +140,48 @@ contract Vault is ERC4626Upgradeable, GeneralYieldSourceAdapter, OwnableUpgradea
      * @notice Redeem assets with vault shares
      * @dev See {IERC4626-redeem}
      * @dev whenNotPaused
-     * @dev redeemWithReferral
+     * @dev for better security, require _msgSender() == sharesOwner
      * @param shares amount of shares to burn and redeem assets
      * @param receiver address to receive the assets
-     * @param owner address of the owner of the shares to be consumed
+     * @param sharesOwner address of the owner of the shares to be consumed
      * @return assets amount of assets received
      */
     function redeem(
         uint256 shares, 
         address receiver, 
-        address owner
+        address sharesOwner
     ) public virtual override whenNotPaused returns (uint256) {
-        return redeemWithReferral(shares, receiver, owner, owner);
+        require(sharesOwner == _msgSender(), "CALLER_NOT_SHARES_OWNER");
+        return redeemWithReferral(shares, receiver, sharesOwner);
     }
 
     /**
      * @notice Redeem assets with vault shares and referral
      * @dev See {IERC4626-redeem}
      * @dev whenNotPaused
+     * @dev if _msgSender() != sharesOwner, then the sharesOwner must have approved this contract to spend the shares (checked inside the _withdraw call)
      * @param shares amount of shares to burn and redeem assets
      * @param receiver address to receive the assets
-     * @param owner address of the owner of the shares to be consumed
      * @param referral address of the partner referral
      * @return assets amount of assets received
      */
     function redeemWithReferral(
         uint256 shares, 
         address receiver, 
-        address owner,
         address referral
     ) public whenNotPaused returns (uint256) {
         _isValidState(Status.Active);
         require(shares > 0, "ZERO_SHARES");
-        require(receiver != address(0) && owner != address(0) && referral != address(0), "ZERO_ADDRESS");
-        require(shares <= maxRedeem(owner), "MAX_REDEEM_EXCEEDED");
-        require(shares <= balanceOf(owner), "INSUFFICIENT_SHARES");
-        require(shares <= _totalSharesByUserReferral[owner][referral], "INSUFFICIENT_SHARES_BY_REFERRAL");
+        require(receiver != address(0) && referral != address(0), "ZERO_ADDRESS");
+        require(shares <= maxRedeem(_msgSender()), "MAX_REDEEM_EXCEEDED");
+        require(shares <= balanceOf(_msgSender()), "INSUFFICIENT_SHARES");
+        require(shares <= totalSharesByUserReferral[_msgSender()][referral], "INSUFFICIENT_SHARES_BY_REFERRAL");
 
-        //take out the shares from the user first to avoid reentrancy hack
-        _totalSharesByUserReferral[owner][referral] -= shares;
-        _totalSharesByReferral[referral] -= shares;
+        //remove the shares from the user first to avoid reentrancy attack
+        _trackSharesInReferralRemoved(_msgSender(), referral, shares);
 
         uint256 assets = _redeemFromYieldSourceVault(shares);
-        _withdraw(_msgSender(), receiver, owner, assets, shares);
+        _withdraw(_msgSender(), receiver, _msgSender(), assets, shares);
         return assets;
     }
 
@@ -243,16 +192,16 @@ contract Vault is ERC4626Upgradeable, GeneralYieldSourceAdapter, OwnableUpgradea
      * @dev redeem
      * @param assets target amount of assets to be withdrawn
      * @param receiver address to receive the assets
-     * @param owner address of the owner of the shares to be consumed
+     * @param sharesOwner address of the owner of the shares to be consumed
      * @return assets amount of assets received
      */
     function withdraw(
         uint256 assets,
         address receiver,
-        address owner
+        address sharesOwner
     ) public virtual override whenNotPaused returns (uint256) {
         uint256 shares = convertToShares(assets);
-        return redeem(shares, receiver, owner);
+        return redeem(shares, receiver, sharesOwner);
     }
 
     /**
@@ -261,30 +210,24 @@ contract Vault is ERC4626Upgradeable, GeneralYieldSourceAdapter, OwnableUpgradea
      * @dev whenNotPaused
      * @param assets target amount of assets to be withdrawn 
      * @param receiver address to receive the assets
-     * @param owner address of the owner of the shares to be consumed
      * @param referral address of the partner referral
      * @return assets amount of assets received
      */
     function withdrawWithReferral(
         uint256 assets,
         address receiver,
-        address owner,
         address referral
     ) public whenNotPaused returns (uint256) {
         uint256 shares = convertToShares(assets);
-        return redeemWithReferral(shares, receiver, owner, referral);
+        return redeemWithReferral(shares, receiver, referral);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                            ACCOUNTING LOGIC
-    //////////////////////////////////////////////////////////////*/
-
-    //TODO: is this part of 4626, if not and not used, we can remove it
     /**
+     * @dev See {IERC4626-totalAssets}
      * @return assets total amount of the underlying asset managed by this vault
      */
     function totalAssets() public view override returns (uint256) {
-        return _totalAssetsOfYieldSourceVault();
+        return assetBalanceAtYieldSource();
     }
 
     /**
@@ -348,36 +291,58 @@ contract Vault is ERC4626Upgradeable, GeneralYieldSourceAdapter, OwnableUpgradea
     }
 
     /*//////////////////////////////////////////////////////////////
-                            YIELD SOURCE ADAPTER
+                            YIELD SOURCE
     //////////////////////////////////////////////////////////////*/
 
-    /*//////////////////////////////////////////////////////////////
-                            REVENUE SHARE LOGIC
-    //////////////////////////////////////////////////////////////*/
-
-/*
-    function setReferralEnabled(address referral, bool enabled) external onlyOwner {
-        _isEnabledByReferral[referral] = enabled;
-    }
-*/
     /**
-     * @notice Deposit assets to the revenue share balance, which will be made claimable to referrals
-     * @param assets amount of assets to be deposited
-     * @return assets amount of assets that would be converted from shares
-     */     
-/*
-    function depositToRevenueShare(
-        uint256 assets
-    ) external whenNotPaused returns (uint256) {
-        require(assets > 0, "ZERO_ASSETS");
-
-        return depositToRevenueShareWithReferral(amount, receiver, owner, owner);
+     * @param user target user address
+     * @param referral target referral address
+     * @return assets amount of assets that the user has deposited to the vault
+     */
+    function assetBalanceAtYieldSourceOf(address user, address referral) public virtual view returns (uint256) {
+        return _convertYieldSourceSharesToAssets(totalSharesByUserReferral[user][referral], MathUpgradeable.Rounding.Down);
     }
-*/
 
     /*//////////////////////////////////////////////////////////////
-                            HELPER FUNCTIONS
+                            VAULT STATUS
     //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice setter of FeeSplitter
+     * @dev onlyOwner
+     * @dev emit FeeSplitterUpdated
+     * @param feeSplitter_ address of feeSplitter to be updated to
+     */
+    function setFeeSplitter(address feeSplitter_) external onlyOwner {
+        feeSplitter = feeSplitter_;
+        emit FeeSplitterUpdated(feeSplitter);
+    }
+
+    /**
+     * @notice Validate conditions for vault activation, and activate the vault if all requirements were passed
+     * @dev whenNotPaused
+     * @dev emit VaultActivated
+     */
+    function activate() external whenNotPaused {
+        _isValidState(Status.Pending);
+        require(isReadyToActivate(), "VAULT_ACTIVATION_TERMS_NOT_MET");
+
+        vaultStatus = Status.Active;
+        vaultActivationDate = block.timestamp;
+        emit VaultActivated();
+    }
+
+    /**
+     * @notice Force vault activation by owner, in case the on-chain feeSplitter integration is not in place
+     * @dev whenNotPaused onlyOwner
+     * @dev emit VaultActivated
+     */
+    function activateBypass() external whenNotPaused onlyOwner {
+        _isValidState(Status.Pending);
+        vaultStatus = Status.Active;
+        vaultActivationDate = block.timestamp;
+        emit VaultActivated();
+    }
 
     /**
      * @return isReadyToActivate true if all requirements met and vault is ready to be activated
@@ -423,17 +388,9 @@ contract Vault is ERC4626Upgradeable, GeneralYieldSourceAdapter, OwnableUpgradea
         require(vaultStatus == _status, "INVALID_STATE");
     }
 
-    /**
-     * @param referral target referral address
-     * @return totalValueLocked total value locked in this vault by the target referral
-     */        
-    function getTotalValueLocked(address referral) //TODO: rename
-        external
-        view
-        returns (uint256)
-    {
-        return _totalSharesByReferral[referral];
-    }
+    /*//////////////////////////////////////////////////////////////
+                            HELPER FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Pause the contract.

@@ -19,7 +19,6 @@ const VaultRedeemForm = ({ web3, shareDecimals = 6, referralAddress, defaultRede
         web3?.writeContracts?.Vault?.redeemWithReferral(
           ethers.utils.parseUnits(redeemAmount, shareDecimals),
           web3?.address,
-          web3?.address,
           referralAddress,
         ),
       );

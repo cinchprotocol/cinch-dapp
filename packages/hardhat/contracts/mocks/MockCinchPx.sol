@@ -19,7 +19,7 @@ contract MockCinchPx is Ownable {
     /**
      * @dev Getter of _totalValueLocked
      */
-    function getTotalValueLocked(address cinchPxPayee) external view returns (uint256) {
+    function totalSharesByReferral(address cinchPxPayee) external view returns (uint256) {
         return _totalValueLocked[cinchPxPayee];
     }
 
@@ -39,6 +39,6 @@ contract MockCinchPx is Ownable {
         returns (uint256)
     {
         //return IdleCDOTranche(_tranche).totalSupply() // this should be used for the idle integration
-        return IYieldSourceContract(yieldSourceVault).getTotalValueLocked();
+        return IYieldSourceContract(yieldSourceVault).getTotalShares();
     }
 }

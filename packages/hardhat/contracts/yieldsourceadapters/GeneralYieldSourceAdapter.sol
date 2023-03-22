@@ -2,12 +2,17 @@
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 
 import "../interfaces/IYieldSourceContract.sol";
 
-contract GeneralYieldSourceAdapter is Initializable {
+/**
+ * @title GeneralYieldSourceAdapter
+ * @dev sub-contract of Cinch Vault serve as the Yield Source Adapter
+ */
+contract GeneralYieldSourceAdapter is Initializable, OwnableUpgradeable {
      using MathUpgradeable for uint256;
 
     // Event when the yieldSourceVault address is updated
@@ -18,12 +23,23 @@ contract GeneralYieldSourceAdapter is Initializable {
 
     /**
      * @notice GeneralYieldSourceAdapter initializer
-     * @param _yieldSourceVault vault address of yield source
+     * @param yieldSourceVault_ vault address of yield source
      */
     function __GeneralYieldSourceAdapter_init(
-        address _yieldSourceVault
+        address yieldSourceVault_
     ) internal virtual initializer {
-        yieldSourceVault = _yieldSourceVault;
+        yieldSourceVault = yieldSourceVault_;
+    }
+
+    /**
+     * @notice setter of yieldSourceVault
+     * @dev onlyOwner
+     * @dev emit YieldSourceVaultUpdated
+     * @param yieldSourceVault_ address of yieldSourceVault to be updated to
+     */
+    function setYieldSourceVault(address yieldSourceVault_) external onlyOwner {
+        yieldSourceVault = yieldSourceVault_;
+        emit YieldSourceVaultUpdated(yieldSourceVault);
     }
 
     /**
@@ -48,29 +64,11 @@ contract GeneralYieldSourceAdapter is Initializable {
         return IYieldSourceContract(yieldSourceVault).withdrawAA(shares);
     }
 
-    //TODO: can be removed if not used
     /**
-     * @return assets total amount of the underlying asset managed by this vault
+     * @return price share price of yield source vault
      */
-    function _totalAssetsOfYieldSourceVault() internal virtual view returns (uint256) {
-        return vaultBalanceAtYieldSource().mulDiv(getPriceOfYieldSource(), IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN());
-    }
-
-    //TODO: can be removed if not used
-    /**
-     * @return price price of yield source shares
-     */
-    function getPriceOfYieldSource() public virtual view returns (uint256) {
+    function sharePriceOfYieldSource() public virtual view returns (uint256) {
         return IYieldSourceContract(yieldSourceVault).priceAA();
-    }
-
-    /**
-     * @return shares yield source share balance of this vault
-     */
-    function vaultBalanceAtYieldSource() public virtual view returns (uint256) {
-        return
-            IERC20Upgradeable(IYieldSourceContract(yieldSourceVault).AATranche())
-                .balanceOf(address(this));
     }
 
     /**
@@ -82,11 +80,11 @@ contract GeneralYieldSourceAdapter is Initializable {
      */     
     function _convertAssetsToYieldSourceShares(uint256 assets, MathUpgradeable.Rounding rounding)
         internal
-        view
         virtual
+        view
         returns (uint256)
     {
-        return assets.mulDiv(IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN(), getPriceOfYieldSource(), rounding);
+        return assets.mulDiv(IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN(), sharePriceOfYieldSource(), rounding);
     }
 
     /**
@@ -98,37 +96,51 @@ contract GeneralYieldSourceAdapter is Initializable {
      */     
     function _convertYieldSourceSharesToAssets(uint256 shares, MathUpgradeable.Rounding rounding)
         internal
-        view
         virtual
+        view
         returns (uint256)
     {
-        return shares.mulDiv(getPriceOfYieldSource(), IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN(), rounding);
+        return shares.mulDiv(sharePriceOfYieldSource(), IYieldSourceContract(yieldSourceVault).ONE_TRANCHE_TOKEN(), rounding);
+    }
+
+    /**
+     * @return shares yield source share balance of this vault
+     */
+    function shareBalanceAtYieldSource() public virtual view returns (uint256) {
+        return
+            IERC20Upgradeable(IYieldSourceContract(yieldSourceVault).AATranche())
+                .balanceOf(address(this));
+    }
+
+    /**
+     * @return assets yield source asset balance of this vault
+     */
+    function assetBalanceAtYieldSource() public virtual view returns (uint256) {
+        uint256 shares = shareBalanceAtYieldSource();
+        return _convertYieldSourceSharesToAssets(shares, MathUpgradeable.Rounding.Down);
     }
 
     /**
      * @dev to be used for calculating the revenue share ratio
      * @return yieldSourceTotalShares total yield source shares supply
      */        
-    function getYieldSourceVaultTotalShares()
-        external
-        view
-        returns (uint256)
+    function getYieldSourceVaultTotalShares() external virtual view returns (uint256)
     {
         //IERC20Upgradeable(IYieldSourceContract(yieldSourceVault).AATranche()).totalSupply(); //for idle integration
-        return IYieldSourceContract(yieldSourceVault).getTotalValueLocked();
+        return IYieldSourceContract(yieldSourceVault).getTotalShares();
     }
 
     /**
      * @return feeReceiver address of the yield source vault
      */        
-    function getYieldSourceVaultFeeReceiver() public view returns (address) {
+    function getYieldSourceVaultFeeReceiver() public virtual view returns (address) {
         return IYieldSourceContract(yieldSourceVault).feeReceiver();
     }
 
     /**
      * @return owner address of the yield source vault
      */        
-    function getYieldSourceVaultOwner() public view returns (address) {
+    function getYieldSourceVaultOwner() public virtual view returns (address) {
         return IYieldSourceContract(yieldSourceVault).owner();
     }
 }

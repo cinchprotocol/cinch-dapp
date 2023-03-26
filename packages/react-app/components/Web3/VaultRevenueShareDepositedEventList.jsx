@@ -6,23 +6,29 @@ import { useEventListener } from "eth-hooks/events/useEventListener";
 
 import Address from "../Address";
 
-const VaultDepositEventList = ({ web3, assetDecimals = 6, shareDecimals = 6, vaultContractName = "Vault" }) => {
-  const vaultDepositEvents = useEventListener(web3?.readContracts, vaultContractName, "Deposit");
+const VaultRevenueShareDepositedEventList = ({
+  web3,
+  assetDecimals = 6,
+  shareDecimals = 6,
+  vaultContractName = "RevenueShareVault",
+}) => {
+  const vaultRevenueShareDepositedEvents = useEventListener(
+    web3?.readContracts,
+    vaultContractName,
+    "RevenueShareDeposited",
+  );
 
   return (
     <List
-      header={<div>Platform partner deposits</div>}
+      header={<div>Revenue share received</div>}
       bordered
-      dataSource={vaultDepositEvents}
+      dataSource={vaultRevenueShareDepositedEvents}
       renderItem={item => {
         return (
-          <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber + "_"}>
+          <List.Item key={item[0] + "_" + item[1] + "_" + item.blockNumber}>
             <Address address={item.args[0]} ensProvider={web3?.mainnetProvider} fontSize={16} />
             <span style={{ fontSize: 16, marginRight: 8 }}>
               {"Assets:" + ethers.utils.formatUnits(item?.args[2], assetDecimals)}
-            </span>
-            <span style={{ fontSize: 16, marginRight: 8 }}>
-              {"Shares:" + ethers.utils.formatUnits(item?.args[3], shareDecimals)}
             </span>
           </List.Item>
         );
@@ -31,4 +37,4 @@ const VaultDepositEventList = ({ web3, assetDecimals = 6, shareDecimals = 6, vau
   );
 };
 
-export default VaultDepositEventList;
+export default VaultRevenueShareDepositedEventList;

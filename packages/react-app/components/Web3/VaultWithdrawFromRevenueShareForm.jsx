@@ -6,42 +6,31 @@ const { ethers } = require("ethers");
 
 import { Button } from "../Button";
 
-const VaultRedeemForm = ({
+const VaultWithdrawFromRevenueShareForm = ({
   web3,
-  shareDecimals = 6,
-  referralAddress,
-  defaultRedeemAmountStr = "1000",
+  assetDecimals = 6,
+  defaultWithdrawAmountStr = "100",
   vaultContractName = "Vault",
-  cardTitle = "Redeem from Cinch Vault",
+  cardTitle = "Withdraw From Revenue Share (Referral Account Only)",
 }) => {
   const [formValues, setFormValues] = useState(null);
 
-  const redeemAsset = async values => {
-    const { redeemAmount, referralEnabled } = values;
-    if (!web3 || !redeemAmount || !referralAddress) return;
-    if (referralEnabled) {
-      await web3?.tx(
-        web3?.writeContracts[vaultContractName]?.redeemWithReferral(
-          ethers.utils.parseUnits(redeemAmount, shareDecimals),
-          web3?.address,
-          web3?.address,
-          referralAddress,
-        ),
-      );
-    } else {
-      await web3?.tx(
-        web3?.writeContracts[vaultContractName]?.redeem(
-          ethers.utils.parseUnits(redeemAmount, shareDecimals),
-          web3?.address,
-          web3?.address,
-        ),
-      );
-    }
+  const withdrawRevenueShare = async values => {
+    const { withdrawAmount } = values;
+    if (!web3 || !withdrawAmount) return;
+
+    await web3?.tx(
+      web3?.writeContracts[vaultContractName]?.withdrawFromRevenueShare(
+        web3?.writeContracts?.MockERC20?.address,
+        ethers.utils.parseUnits(withdrawAmount, assetDecimals),
+        web3?.address,
+      ),
+    );
   };
 
   const onFinish = async values => {
     console.log("onFinish:", values);
-    await redeemAsset(values);
+    await withdrawRevenueShare(values);
     setFormValues(values);
   };
 
@@ -58,27 +47,23 @@ const VaultRedeemForm = ({
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: 600 }}
-            initialValues={{ referralEnabled: true, redeemAmount: defaultRedeemAmountStr }}
+            initialValues={{ withdrawAmount: defaultWithdrawAmountStr }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
-              label="Redeem Amount"
-              name="redeemAmount"
-              rules={[{ required: true, message: "Please input the Redeem Amount!" }]}
+              label="Amount"
+              name="withdrawAmount"
+              rules={[{ required: true, message: "Please input the Withdraw Amount!" }]}
             >
               <Input />
-            </Form.Item>
-
-            <Form.Item name="referralEnabled" valuePropName="checked" wrapperCol={{ span: 16 }}>
-              <Checkbox>Include platform referral code</Checkbox>
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Space>
                 <Button type="primary" htmlType="submit">
-                  6. Redeem
+                  7. Withdraw
                 </Button>
               </Space>
             </Form.Item>
@@ -89,4 +74,4 @@ const VaultRedeemForm = ({
   );
 };
 
-export default VaultRedeemForm;
+export default VaultWithdrawFromRevenueShareForm;

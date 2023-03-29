@@ -69,7 +69,7 @@ function Vault({ web3 }) {
                   <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                     <div class="sm:col-span-1">
                       <dt class="text-sm font-medium text-gray-500">Underlying Asset</dt>
-                      <dd class="mt-1 text-sm font-medium text-gray-900">
+                      <dd class="mt-1 text-xl font-medium text-gray-900">
                         <img
                           className="inline-block h-8 w-8 rounded-full"
                           src="https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_48,q_auto/https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/network/ethereum/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48.jpg"
@@ -78,16 +78,24 @@ function Vault({ web3 }) {
                       </dd>
                     </div>
                     <div class="sm:col-span-1">
+                      <dt class="text-sm font-medium text-gray-500">APY </dt>
+                      <dd class="mt-1 text-xl text-gray-900">20%</dd>
+                    </div>
+                    <div class="sm:col-span-1">
+                      <dt class="text-sm font-medium text-gray-500">TVL</dt>
+                      <dd class="mt-1 text-xl text-gray-900">$45,000</dd>
+                    </div>
+                    <div class="sm:col-span-1">
                       <dt class="text-sm font-medium text-gray-500">Your balance </dt>
-                      <dd class="mt-1 text-2xl text-gray-900">$145,000</dd>
+                      <dd class="mt-1 text-xl text-gray-900">$15,000</dd>
                     </div>
                     <div class="sm:col-span-1">
                       <dt class="text-sm font-medium text-gray-500">Revenue shared on platform users (%)</dt>
-                      <dd class="mt-1 text-2xl text-gray-900">100%</dd>
+                      <dd class="mt-1 text-xl text-gray-900">100%</dd>
                     </div>
                     <div class="sm:col-span-1">
                       <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
-                      <dd class="mt-1 text-sm text-gray-900">{web3?.writeContracts?.MockProtocol?.address?.substr(0, 6) + "..." + web3?.writeContracts?.MockProtocol?.address?.substr(-4)}</dd>
+                      <dd class="mt-1 text-xl text-gray-900">{web3?.writeContracts?.MockProtocol?.address?.substr(0, 6) + "..." + web3?.writeContracts?.MockProtocol?.address?.substr(-4)}</dd>
                     </div>
 
                   </dl>

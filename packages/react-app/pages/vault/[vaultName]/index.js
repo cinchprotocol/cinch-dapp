@@ -42,10 +42,10 @@ function Vault({ web3 }) {
 
         <div>
           <Container>
-            <div class="md:flex md:items-center md:justify-between md:space-x-5">
+            <div class="mb-5 md:flex md:items-center md:justify-between md:space-x-5">
               <div class="flex items-center space-x-5">
                 <div class="flex-shrink-0">
-
+                  <svg xmlns="http://www.w3.org/2000/svg" className="rounded-full" x="0" y="0" height="96" width="96"><rect x="0" y="0" rx="0" ry="0" height="96" width="96" transform="translate(-20.335777385195094 -1.0928011512706348) rotate(289.7 48 48)" fill="#fc6600"></rect><rect x="0" y="0" rx="0" ry="0" height="96" width="96" transform="translate(-14.378700780418871 -56.274785017110986) rotate(278.0 48 48)" fill="#c71458"></rect><rect x="0" y="0" rx="0" ry="0" height="96" width="96" transform="translate(33.32068078053082 56.08823889598961) rotate(84.6 48 48)" fill="#15a7f2"></rect><rect x="0" y="0" rx="0" ry="0" height="96" width="96" transform="translate(-109.16822072293076 -19.167893883406055) rotate(261.3 48 48)" fill="#018c88"></rect></svg>
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
@@ -61,8 +61,8 @@ function Vault({ web3 }) {
             <div className="mb-10 lg:grid lg:grid-cols-5 lg:grid-rows-[auto,auto,1fr]">
               <div className="p-6 lg:mr-4 lg:col-span-3 bg-white rounded-2xl shadow">
                 <div className="">
-                  <h3 class="text-lg font-medium leading-6 text-gray-900">Fee sharing partnership proposal</h3>
-                  <p class="mt-1 max-w-2xl text-sm text-gray-500">Review and confirm details</p>
+                  <h3 class="text-lg font-medium leading-6 text-gray-600">Description</h3>
+                  <p class="mt-1 max-w-2xl text-sm text-gray-500">Metrix Liquid Token Fund I is a smart fund made by dHedge that utilizes blockchain-powered automation in token analysis to invest in digital assets. The fund strategy was tested with Apollo Partners, a testing fund, and will be closing in a few months. All investors must hold a Connectivity NFT Collection in order to enter the new fund.</p>
                 </div>
 
                 <div className="mb-10 border-t border-gray-200">
@@ -78,6 +78,10 @@ function Vault({ web3 }) {
                       </dd>
                     </div>
                     <div class="sm:col-span-1">
+                      <dt class="text-sm font-medium text-gray-500">Your balance </dt>
+                      <dd class="mt-1 text-2xl text-gray-900">$145,000</dd>
+                    </div>
+                    <div class="sm:col-span-1">
                       <dt class="text-sm font-medium text-gray-500">Revenue shared on platform users (%)</dt>
                       <dd class="mt-1 text-2xl text-gray-900">100%</dd>
                     </div>
@@ -85,10 +89,7 @@ function Vault({ web3 }) {
                       <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
                       <dd class="mt-1 text-sm text-gray-900">{web3?.writeContracts?.MockProtocol?.address?.substr(0, 6) + "..." + web3?.writeContracts?.MockProtocol?.address?.substr(-4)}</dd>
                     </div>
-                    <div class="sm:col-span-1">
-                      <dt class="text-sm font-medium text-gray-500">Multi-sig address</dt>
-                      <dd class="mt-1 text-sm text-gray-900">{web3?.writeContracts?.MockGnosisSafe?.address?.substr(0, 6) + "..." + web3?.writeContracts?.MockGnosisSafe?.address?.substr(-4)}</dd>
-                    </div>
+
                   </dl>
                 </div>
               </div>
@@ -160,17 +161,17 @@ function Vault({ web3 }) {
             {1 == 1 ?
               <div className="mt-14">
                 <h3 className="text-2xl font-semibold text-gray-900">
-                  Revenue-share partnership
+                  B2B Referral Performance
                 </h3>
                 <div className="p-10 mt-14 bg-white shadow rounded-lg">
                   <div>
                     {/* <h3 className="text-lg font-medium leading-6 text-gray-900">Last 30 days</h3> */}
-                    <dl className=" grid grid-cols-1 overflow-hidden md:grid-cols-4">
+                    <dl className=" grid grid-cols-1 overflow-hidden md:grid-cols-3">
                       <Web3Statistic
                         web3={web3}
                         contractName="MockProtocol"
                         getFuncName="getTotalValueLocked"
-                        title="Aggregate product TVL"
+                        title="TVL from Cinch referrals"
                         dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
                       />
 
@@ -179,7 +180,7 @@ function Vault({ web3 }) {
                         contractName="Vault"
                         getFuncName="getTotalValueLocked"
                         args={[referralAddress]}
-                        title="TVL from platform"
+                        title="Rev-share from Cinch referrals"
                         dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
                       />
 
@@ -188,18 +189,10 @@ function Vault({ web3 }) {
                         contractName="Vault"
                         getFuncName="balanceOf"
                         args={[web3?.address]}
-                        title="Your Vault share balance"
+                        title="Boosted APY (underlying + rev-share)"
                         dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
                       />
 
-                      <Web3Statistic
-                        web3={web3}
-                        contractName="FeeSplitter"
-                        getFuncName="getTotalSplittedTo"
-                        args={[web3?.readContracts?.MockERC20?.address, referralAddress]}
-                        title="Cumulative revenue-shared"
-                        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
-                      />
                     </dl>
                   </div>
                 </div>

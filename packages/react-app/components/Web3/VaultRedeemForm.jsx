@@ -45,42 +45,40 @@ const VaultRedeemForm = ({ web3, shareDecimals = 6, referralAddress, defaultRede
   };
 
   return (
-    <Row gutter={16}>
-      <Col span={24}>
-        <Card title="Redeem from Cinch Vault">
-          <Form
-            name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
-            initialValues={{ referralEnabled: true, redeemAmount: defaultRedeemAmountStr }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            autoComplete="off"
-          >
-            <Form.Item
-              label="Redeem Amount"
-              name="redeemAmount"
-              rules={[{ required: true, message: "Please input the Redeem Amount!" }]}
-            >
-              <Input />
-            </Form.Item>
+    <Form
+      name="basic"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      style={{ maxWidth: 600 }}
+      initialValues={{ referralEnabled: true, redeemAmount: defaultRedeemAmountStr }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
+      size="large"
+    >
+      <Form.Item
+        label="Redeem (USDC)"
+        name="redeemAmount"
+        rules={[{ required: true, message: "Please input the Redeem Amount!" }]}
+      >
+        <Input />
+      </Form.Item>
 
-            <Form.Item name="referralEnabled" valuePropName="checked" wrapperCol={{ span: 16 }}>
-              <Checkbox>Include platform referral code</Checkbox>
-            </Form.Item>
+      <Form.Item name="referralEnabled" valuePropName="checked" wrapperCol={{
+        offset: 8,
+        span: 16,
+      }}>
+        <Checkbox>Include platform referral code</Checkbox>
+      </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Space>
-                <Button type="primary" htmlType="submit">
-                  6. Redeem
-                </Button>
-              </Space>
-            </Form.Item>
-          </Form>
-        </Card>
-      </Col>
-    </Row>
+      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Space>
+          <Button type="primary" htmlType="submit">
+            Redeem
+          </Button>
+        </Space>
+      </Form.Item>
+    </Form>
   );
 };
 

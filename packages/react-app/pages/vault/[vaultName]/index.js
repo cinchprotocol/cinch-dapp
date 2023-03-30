@@ -42,16 +42,56 @@ function Vault({ web3 }) {
 
         <div>
           <Container>
-            <div class="mb-5 md:flex md:items-center md:justify-between md:space-x-5">
-              <div class="flex items-center space-x-5">
-                <div class="flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="rounded-full" x="0" y="0" height="96" width="96"><rect x="0" y="0" rx="0" ry="0" height="96" width="96" transform="translate(-20.335777385195094 -1.0928011512706348) rotate(289.7 48 48)" fill="#fc6600"></rect><rect x="0" y="0" rx="0" ry="0" height="96" width="96" transform="translate(-14.378700780418871 -56.274785017110986) rotate(278.0 48 48)" fill="#c71458"></rect><rect x="0" y="0" rx="0" ry="0" height="96" width="96" transform="translate(33.32068078053082 56.08823889598961) rotate(84.6 48 48)" fill="#15a7f2"></rect><rect x="0" y="0" rx="0" ry="0" height="96" width="96" transform="translate(-109.16822072293076 -19.167893883406055) rotate(261.3 48 48)" fill="#018c88"></rect></svg>
-                </div>
+            <div class="mb-5">
+              <div>
                 <div>
-                  <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                    Metrix Fund {1 == 1 ? <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">Active</span>
-                      : <span class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-0.5 text-sm font-medium text-yellow-800">Pending</span>}
-                  </h1>
+                  <dl className="mt-5 flex justify-start divide-y divide-gray-200 overflow-hidden rounded-lg  md:divide-x md:divide-y-0 ">
+
+                    <div class="flex items-center space-x-5 pr-8">
+                      <div class="flex-shrink-0 ">
+
+                        <img
+                          className="inline-block h-16 w-16 rounded-full"
+                          src="/metrixIcon.png"
+                          alt=""
+                        />
+                      </div>
+                      <div>
+                        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                          Metrix Fund
+                        </h1>
+                      </div>
+                    </div>
+                    <div className="px-8 py-2 ">
+                      <dt className="text-sm font-normal text-gray-900">APR</dt>
+                      <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
+                        <div className="flex items-baseline text-xl font-semibold text-gray-600">
+                          14%
+
+                        </div>
+                      </dd>
+                    </div>
+                    <div className="px-8 py-2">
+                      <dt className="text-sm font-normal text-gray-900">TVL</dt>
+                      <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
+                        <div className="flex items-baseline text-xl font-semibold text-gray-600">
+                          $151.3K
+
+                        </div>
+                      </dd>
+                    </div>
+                    <div className="px-6 py-2">
+                      <dt className="text-sm font-normal text-gray-900 text-center">Status</dt>
+                      <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
+                        <div className="flex items-baseline text-xl font-semibold text-gray-600">
+                          {1 == 1 ? <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">Active</span>
+                            : <span class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-0.5 text-sm font-medium text-yellow-800">Pending</span>}
+
+                        </div>
+                      </dd>
+                    </div>
+                  </dl>
+
                 </div>
               </div>
 
@@ -77,14 +117,14 @@ function Vault({ web3 }) {
                         /> USDC
                       </dd>
                     </div>
-                    <div class="sm:col-span-1">
+                    {/* <div class="sm:col-span-1">
                       <dt class="text-sm font-medium text-gray-500">APY </dt>
                       <dd class="mt-1 text-xl text-gray-900">20%</dd>
                     </div>
                     <div class="sm:col-span-1">
                       <dt class="text-sm font-medium text-gray-500">TVL</dt>
                       <dd class="mt-1 text-xl text-gray-900">$45,000</dd>
-                    </div>
+                    </div> */}
                     <div class="sm:col-span-1">
                       <dt class="text-sm font-medium text-gray-500">Your balance </dt>
                       <dd class="mt-1 text-xl text-gray-900">$15,000</dd>

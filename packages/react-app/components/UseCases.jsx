@@ -4,17 +4,20 @@ import { Table, Space, Row, Col } from "antd";
 
 import outletLogo from "/images/logos/outlet_logo_01.png";
 import stablecorpLogo from "/images/logos/stablecorp_logo_01.png";
+import idleLogo from "/images/logos/idle_Logo.png";
+import ribbonLogo from "/images/logos/ribbon_Logo_3.png";
+import metrixLogo from "/images/logos/metrix_Logo_1.png";
 
 export function UseCases() {
   return (
     <div className="bg-slate-50 py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-aos="fade-up">
         <div className="lg:text-center">
-          
+
           <h2 className="text-lg font-semibold text-blue-600">Who we work with </h2>
-           
+
           <span className="mt-2 text-3xl font-bold leading-8 tracking-tight text-gray-900 sm:text-4xl">
-          Cinch Protocol powers the best in web3
+            Cinch Protocol powers the best in web3
           </span>
           {/*
           <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
@@ -25,19 +28,26 @@ export function UseCases() {
         <div className="mt-10">
           <ul
             role="list"
-            className="mx-auto grid max-w-2xl grid-cols-1 gap-6 text-sm sm:grid-cols-2 lg:max-w-none lg:grid-cols-2"
+            className="mx-auto grid max-w-2xl grid-cols-1 gap-6 text-sm sm:grid-cols-3 lg:max-w-none lg:grid-cols-3"
           >
             <li key="outlet" className="p-6">
               <div className="flex justify-center">
-                <a target="_blank" href="https://outlet.finance/" rel="noreferrer">
-                  <Image src={outletLogo} />
+                <a target="_blank" href="https://outlet.finance/" rel="noreferrer" className="w-60">
+                  <Image src={ribbonLogo} />
                 </a>
               </div>
             </li>
             <li key="stablecorp" className="p-6">
               <div className="flex justify-center">
-                <a target="_blank" href="https://app.idle.finance/#/tranches/clearpool/USDC" rel="noreferrer">
-                  <Image src={stablecorpLogo} />
+                <a target="_blank" href="https://app.idle.finance/#/tranches/clearpool/USDC" rel="noreferrer" className="w-48">
+                  <Image src={idleLogo} />
+                </a>
+              </div>
+            </li>
+            <li key="metrix" className="p-6">
+              <div className="flex justify-center">
+                <a target="_blank" href="https://app.idle.finance/#/tranches/clearpool/USDC" rel="noreferrer" className="w-64">
+                  <Image src={metrixLogo} />
                 </a>
               </div>
             </li>

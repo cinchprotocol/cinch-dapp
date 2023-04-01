@@ -5,8 +5,8 @@ import { Table, Space, Row, Col } from "antd";
 import outletLogo from "/images/logos/outlet_logo_01.png";
 import stablecorpLogo from "/images/logos/stablecorp_logo_01.png";
 import idleLogo from "/images/logos/idle_logo.png";
-import ribbonLogo from "/images/logos/ribbon_Logo_3.png";
-import metrixLogo from "/images/logos/metrix_Logo_1.png";
+import ribbonLogo from "/images/logos/ribbon_logo_3.png";
+import metrixLogo from "/images/logos/metrix_logo_1.png";
 
 export function UseCases() {
   return (

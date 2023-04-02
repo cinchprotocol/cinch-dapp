@@ -4,25 +4,25 @@ import { useContractReader } from "eth-hooks";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 const { ethers } = require("ethers");
 
-import { Button } from "../Button";
+import { Button } from "../../Button";
 
-const VaultWithdrawFromRevenueShareForm = ({
+const VaultRedeemFormRibbonEarn = ({
   web3,
-  assetDecimals = 6,
-  defaultWithdrawAmountStr = "100",
-  vaultContractName = "Vault",
-  cardTitle = "Withdraw From Revenue Share (Referral Account Only)",
+  shareDecimals = 6,
+  defaultRedeemAmountStr = "1000",
+  vaultContractName = "MockProtocolRibbonEarn",
+  cardTitle = "Redeem from Cinch Vault",
 }) => {
   const [formValues, setFormValues] = useState(null);
 
-  const withdrawRevenueShare = async values => {
-    const { withdrawAmount } = values;
-    if (!web3 || !withdrawAmount) return;
+  const redeemAsset = async values => {
+    const { redeemAmount } = values;
+    if (!web3 || !redeemAmount) return;
 
     await web3?.tx(
-      web3?.writeContracts[vaultContractName]?.withdrawFromRevenueShare(
-        web3?.writeContracts?.MockERC20?.address,
-        ethers.utils.parseUnits(withdrawAmount, assetDecimals),
+      web3?.writeContracts[vaultContractName]?.redeem(
+        ethers.utils.parseUnits(redeemAmount, shareDecimals),
+        web3?.address,
         web3?.address,
       ),
     );
@@ -30,7 +30,7 @@ const VaultWithdrawFromRevenueShareForm = ({
 
   const onFinish = async values => {
     console.log("onFinish:", values);
-    await withdrawRevenueShare(values);
+    await redeemAsset(values);
     setFormValues(values);
   };
 
@@ -47,15 +47,15 @@ const VaultWithdrawFromRevenueShareForm = ({
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: 600 }}
-            initialValues={{ withdrawAmount: defaultWithdrawAmountStr }}
+            initialValues={{ redeemAmount: defaultRedeemAmountStr }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
-              label="Amount"
-              name="withdrawAmount"
-              rules={[{ required: true, message: "Please input the Withdraw Amount!" }]}
+              label="Redeem Amount"
+              name="redeemAmount"
+              rules={[{ required: true, message: "Please input the Redeem Amount!" }]}
             >
               <Input />
             </Form.Item>
@@ -63,7 +63,7 @@ const VaultWithdrawFromRevenueShareForm = ({
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Space>
                 <Button type="primary" htmlType="submit">
-                  8. Withdraw
+                  6. Redeem
                 </Button>
               </Space>
             </Form.Item>
@@ -74,4 +74,4 @@ const VaultWithdrawFromRevenueShareForm = ({
   );
 };
 
-export default VaultWithdrawFromRevenueShareForm;
+export default VaultRedeemFormRibbonEarn;

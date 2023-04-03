@@ -138,15 +138,13 @@ describe("Integration tests", function () {
         .approve(mockProtocol.address, protocolTVLAmount0);
       await mockProtocol.connect(owner).deposit(protocolTVLAmount0);
 
-      expect(await mockProtocol.getTotalValueLocked()).to.equal(
-        protocolTVLAmount0
-      );
+      expect(await mockProtocol.getTotalShares()).to.equal(protocolTVLAmount0);
     });
 
     it("should be able to deposit into vault with referral", async function () {
       console.log(
         "Referral Balance before: " +
-          (await vault.getTotalValueLocked(user2.address))
+          (await vault.totalSharesByReferral(user2.address))
       );
 
       await mockERC20.faucet(user2.address, depositAmount2);
@@ -160,10 +158,10 @@ describe("Integration tests", function () {
         );
 
       expect(await vault.balanceOf(user2.address)).to.equal(depositAmount2);
-      expect(await vault.getTotalValueLocked(user2.address)).to.equal(
+      expect(await vault.totalSharesByReferral(user2.address)).to.equal(
         depositAmount2
       );
-      expect(await mockProtocol.getTotalValueLocked()).to.equal(
+      expect(await mockProtocol.getTotalShares()).to.equal(
         protocolTVLAmount0.add(depositAmount2)
       );
       const tx0 = await feeSplitter.processFeeSplit(); // to update _lastProtocolTVL before releasing fee
@@ -171,10 +169,10 @@ describe("Integration tests", function () {
 
       console.log(await vault.balanceOf(user2.address), "user2 vault balance");
       console.log(
-        await vault.getTotalValueLocked(cinchVaultPayee2.address),
+        await vault.totalSharesByReferral(cinchVaultPayee2.address),
         "payee2 vault referral TVL"
       );
-      console.log(await mockProtocol.getTotalValueLocked(), "protocolTVL");
+      console.log(await mockProtocol.getTotalShares(), "protocolTVL");
       console.log(
         await feeSplitter.getInternalBalance(
           mockERC20.address,
@@ -223,7 +221,7 @@ describe("Integration tests", function () {
     });
 
     it("feeSpliter should split 10% fee to cinchPxPayee", async () => {
-      const protocolTVL = await mockProtocol.getTotalValueLocked();
+      const protocolTVL = await mockProtocol.getTotalShares();
       const tx = await feeSplitter.processFeeSplit();
       expect(tx).to.emit(feeSplitter, "FeeSplitProcessed");
       expect(

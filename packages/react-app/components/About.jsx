@@ -52,12 +52,12 @@ export function About() {
           <h2 className="text-lg text-blue-600 font-semibold">What we’re building</h2>
         </div>
         <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
-          <h2>The referral payment network for blockchain applications</h2>
+          <h2>The referral payment network for decentralized applications</h2>
           <p>
             The financial products most widely adopted in the world have one key ingredient: distribution.
           </p>
           <p>
-            Distribution is a major problem for blockchain applications. dApps have literally no distribution channels. As a result, too few people have access to blockchain applications.
+            Distribution is a major problem for decentralized applications. dApps have literally no distribution channels. As a result, too few people have access to decentralized applications.
 
           </p>
           <p>
@@ -77,7 +77,7 @@ export function About() {
           </p>
           <div className="mt-10 sm:mt-12">
             <a
-              href="https://tr61ro2oj6g.typeform.com/to/TzNCZG57"
+              href="https://tr61ro2oj6g.typeform.com/to/ZfxuAhXt"
               target="blank"
               className="inline-flex items-center px-8 py-2 border border-transparent text-lg font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >

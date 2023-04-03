@@ -14,10 +14,10 @@ export function UseCases() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-aos="fade-up">
         <div className="lg:text-center">
 
-          <h2 className="text-lg font-semibold text-blue-600">Who we work with </h2>
+          <h2 className="text-2xl font-semibold text-blue-600">Our partners </h2>
 
           <span className="mt-2 text-3xl font-bold leading-8 tracking-tight text-gray-900 sm:text-4xl">
-            Cinch Protocol powers the best in web3
+
           </span>
           {/*
           <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
@@ -28,25 +28,39 @@ export function UseCases() {
         <div className="mt-10">
           <ul
             role="list"
-            className="mx-auto grid max-w-2xl grid-cols-1 gap-6 text-sm sm:grid-cols-3 lg:max-w-none lg:grid-cols-3"
+            className="mx-auto grid max-w-2xl grid-cols-1 gap-6 text-sm sm:grid-cols-3 lg:max-w-none lg:grid-cols-5"
           >
             <li key="outlet" className="p-6">
               <div className="flex justify-center">
-                <a target="_blank" href="https://outlet.finance/" rel="noreferrer" className="w-60">
+                <a target="_blank" href="https://www.ribbon.finance/" rel="noreferrer" className="w-60">
                   <Image src={ribbonLogo} />
                 </a>
               </div>
             </li>
             <li key="stablecorp" className="p-6">
               <div className="flex justify-center">
-                <a target="_blank" href="https://app.idle.finance/#/tranches/clearpool/USDC" rel="noreferrer" className="w-48">
+                <a target="_blank" href="https://idle.finance" rel="noreferrer" className="w-48">
                   <Image src={idleLogo} />
+                </a>
+              </div>
+            </li>
+            <li key="outlet" className="p-6">
+              <div className="flex justify-center">
+                <a target="_blank" href="https://outlet.finance/" rel="noreferrer" className="w-60">
+                  <Image src={outletLogo} />
+                </a>
+              </div>
+            </li>
+            <li key="stablecorp" className="p-6">
+              <div className="flex justify-center">
+                <a target="_blank" href="https://www.stablecorp.ca/" rel="noreferrer" className="w-48">
+                  <Image src={stablecorpLogo} />
                 </a>
               </div>
             </li>
             <li key="metrix" className="p-6">
               <div className="flex justify-center">
-                <a target="_blank" href="https://app.idle.finance/#/tranches/clearpool/USDC" rel="noreferrer" className="w-64">
+                <a target="_blank" href="https://app.dhedge.org/pool/0xe31282190735e7bb599bd9d55e74d6bb437b13ac" rel="noreferrer" className="w-64">
                   <Image src={metrixLogo} />
                 </a>
               </div>

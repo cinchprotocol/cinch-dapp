@@ -9,7 +9,7 @@ export function Hero() {
           <div className="mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 sm:text-center lg:px-0 lg:text-left lg:flex lg:items-center lg:col-span-6">
             <div className="lg:py-24">
               <span className="block text-sm font-semibold tracking-wide text-slate-500 sm:text-base lg:text-md">
-                INTRODUCING B2B2C DISTRIBUTION FOR BLOCKCHAIN APPLICATIONS
+                DISTRIBUTION FOR DECENTRALIZED APPLICATIONS
               </span>
               <h1 className="mt-2 text-4xl tracking-tight font-bold sm:text-6xl sm:tracking-tight xl:text-6xl xl:tracking-tight">
                 <span className="text-slate-900">Reach </span>
@@ -22,7 +22,7 @@ export function Hero() {
                 </TextLoop>
               </h1>
               <p className="mt-3 text-base text-slate-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                No integration needed. Get your product(s) listed today.
+                List your product(s) today.
 
               </p>
               <div className="mt-10 sm:mt-12">

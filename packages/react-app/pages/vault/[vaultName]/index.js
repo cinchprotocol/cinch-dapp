@@ -20,6 +20,7 @@ import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 
+import CopyToClipboard from "/components/CopyToClipboardButton";
 
 import Web3Statistic from "/components/Web3/Statistic";
 import VaultDepositForm from "/components/Web3/VaultDepositForm";
@@ -51,7 +52,7 @@ function Vault({ web3 }) {
                       <div class="flex-shrink-0 ">
 
                         <img
-                          className="inline-block h-16 w-16 rounded-full"
+                          className="inline-block h-22 w-22 rounded-full"
                           src="/metrixIcon.png"
                           alt=""
                         />
@@ -60,6 +61,7 @@ function Vault({ web3 }) {
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                           Metrix Fund
                         </h1>
+                        <CopyToClipboard textToCopy='0xEdfdb5f2f02432F1E3271582056ECd0f884126aC'/>
                       </div>
                     </div>
                     <div className="px-8 py-2 ">
@@ -125,6 +127,7 @@ function Vault({ web3 }) {
                       <dt class="text-sm font-medium text-gray-500">TVL</dt>
                       <dd class="mt-1 text-xl text-gray-900">$45,000</dd>
                     </div> */}
+
                     <div class="sm:col-span-1">
                       <dt class="text-sm font-medium text-gray-500">Your balance </dt>
                       <dd class="mt-1 text-xl text-gray-900">$15,000</dd>

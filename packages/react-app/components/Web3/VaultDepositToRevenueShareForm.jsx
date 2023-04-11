@@ -6,16 +6,14 @@ const { ethers } = require("ethers");
 
 import { Button } from "../Button";
 
-const VaultDepositForm = ({
+const VaultDepositToRevenueShareForm = ({
   web3,
   assetDecimals = 6,
-  referralAddress,
-  defaultDepositAmountStr = "1000",
-  vaultContractName = "Vault",
-  cardTitle = "Deposit into Idle Clearpool",
+  defaultDepositAmountStr = "100",
+  vaultContractName = "RevenueShareVault",
+  cardTitle = "Send Revenue Share Payment",
 }) => {
   const [formValues, setFormValues] = useState(null);
-  const [isReferralEnabled, setIsReferralEnabled] = useState(true);
   const [depositAmountStr, setDepositAmountStr] = useState(defaultDepositAmountStr);
 
   const approveAsset = async values => {
@@ -30,24 +28,15 @@ const VaultDepositForm = ({
   };
 
   const depositAsset = async values => {
-    if (!web3 || !depositAmountStr || !referralAddress) return;
-    console.log("depositAsset", depositAmountStr, isReferralEnabled);
-    if (isReferralEnabled) {
-      await web3?.tx(
-        web3?.writeContracts?.[vaultContractName]?.depositWithReferral(
-          ethers.utils.parseUnits(depositAmountStr, assetDecimals),
-          web3?.address,
-          referralAddress,
-        ),
-      );
-    } else {
-      await web3?.tx(
-        web3?.writeContracts?.[vaultContractName]?.deposit(
-          ethers.utils.parseUnits(depositAmountStr, assetDecimals),
-          web3?.address,
-        ),
-      );
-    }
+    if (!web3 || !depositAmountStr) return;
+    console.log("depositAsset", depositAmountStr);
+    await web3?.tx(
+      web3?.writeContracts?.[vaultContractName]?.depositToRevenueShare(
+        web3?.address,
+        web3?.writeContracts?.MockERC20?.address,
+        ethers.utils.parseUnits(depositAmountStr, assetDecimals),
+      ),
+    );
   };
 
   const onFinish = async values => {
@@ -58,11 +47,6 @@ const VaultDepositForm = ({
 
   const onFinishFailed = errorInfo => {
     console.log("onFinishFailed:", errorInfo);
-  };
-
-  const onCheckBoxChange = e => {
-    //console.log(`onCheckBoxChange checked = ${e.target.checked}`);
-    setIsReferralEnabled(!isReferralEnabled);
   };
 
   const onInputChange = e => {
@@ -79,29 +63,23 @@ const VaultDepositForm = ({
             labelCol={{ span: 11 }}
             wrapperCol={{ span: 13 }}
             style={{ maxWidth: 600 }}
-            initialValues={{ referralEnabled: true, depositAmount: defaultDepositAmountStr }}
+            initialValues={{ depositAmount: defaultDepositAmountStr }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
-              label="Deposit Amount (USDC)"
+              label="Amount (USDC)"
               name="depositAmount"
-              rules={[{ required: true, message: "Please input the Deposit Amount!" }]}
+              rules={[{ required: true, message: "Please input the Revenue Share Amount!" }]}
             >
               <Input onChange={onInputChange} />
-            </Form.Item>
-
-            <Form.Item name="referralEnabled" valuePropName="checked" wrapperCol={{ span: 16 }}>
-              <Checkbox checked={isReferralEnabled} onChange={onCheckBoxChange}>
-                Include platform referral code
-              </Checkbox>
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 8 }}>
               <Space>
                 <Button type="primary" htmlType="submit">
-                  2. Approve
+                  4. Approve
                 </Button>
                 <Button
                   type="primary"
@@ -110,7 +88,7 @@ const VaultDepositForm = ({
                     depositAsset(formValues);
                   }}
                 >
-                  3. Deposit
+                  5. Send Payment
                 </Button>
               </Space>
             </Form.Item>
@@ -121,4 +99,4 @@ const VaultDepositForm = ({
   );
 };
 
-export default VaultDepositForm;
+export default VaultDepositToRevenueShareForm;

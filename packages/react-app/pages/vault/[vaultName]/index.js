@@ -52,14 +52,14 @@ function Vault({ web3 }) {
                       <div class="flex-shrink-0 ">
 
                         <img
-                          className="inline-block h-22 w-22 rounded-full"
-                          src="/metrixIcon.png"
+                          className="inline-block h-24 w-24 rounded-full"
+                          src="/ribbon_logo_1.png"
                           alt=""
                         />
                       </div>
                       <div>
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                          Metrix Fund
+                        Ribbon R-EARN
                         </h1>
                         <CopyToClipboard textToCopy={web3?.writeContracts?.MockProtocol?.address} />
                       </div>
@@ -68,7 +68,7 @@ function Vault({ web3 }) {
                       <dt className="text-sm font-normal text-gray-900">APR</dt>
                       <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div className="flex items-baseline text-xl font-semibold text-gray-600">
-                          14%
+                          9.7%
 
                         </div>
                       </dd>
@@ -77,7 +77,7 @@ function Vault({ web3 }) {
                       <dt className="text-sm font-normal text-gray-900">TVL</dt>
                       <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div className="flex items-baseline text-xl font-semibold text-gray-600">
-                          $151.3K
+                          $2.25 M
 
                         </div>
                       </dd>
@@ -104,11 +104,11 @@ function Vault({ web3 }) {
               <div className="p-6 lg:mr-4 lg:col-span-3 bg-white rounded-2xl shadow">
                 <div className="">
                   <h3 class="text-lg font-medium leading-6 text-gray-600">About product</h3>
-                  <p class="mt-1 max-w-2xl text-sm text-gray-500">Metrix Liquid Token Fund I is a smart fund made by dHedge that utilizes blockchain-powered automation in token analysis to invest in digital assets. The fund strategy was tested with Apollo Partners, a testing fund, and will be closing in a few months. All investors must hold a Connectivity NFT Collection in order to enter the new fund.</p>
+                  <p class="mt-1 max-w-2xl text-sm text-gray-500">The R-Earn vault employs a fully funded twin win strategy through which depositors can capitalise on the intra-week ETH movements in either direction while also ensuring their capital is protected. The vault earns interest by lending capital to our counterparties and uses part of it to generate a base APY and the remaining funding to purchase weekly at-the-money knock-out barrier options.</p>
                 </div>
 
                 <Tabs defaultActiveKey="1">
-                  <TabPane tab="Performance" key="1">
+                  <TabPane tab="Holdings" key="1">
                     <div>
                       <div>
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
@@ -127,7 +127,7 @@ function Vault({ web3 }) {
                           </div>
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Boosted APY (underlying + rev-share)</dt>
-                            <dd class="mt-1 text-xl text-gray-900">18%</dd>
+                            <dd class="mt-1 text-xl text-gray-900">11.26%</dd>
                           </div>
 
                         </dl>
@@ -135,7 +135,7 @@ function Vault({ web3 }) {
                     </div>
                   </TabPane>
 
-                  <TabPane tab="About" key="3">
+                  <TabPane tab="Referral" key="3">
                     <div>
                       <div>
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
@@ -152,7 +152,7 @@ function Vault({ web3 }) {
 
 
                           <div class="sm:col-span-1">
-                            <dt class="text-sm font-medium text-gray-500">Your refferal code </dt>
+                            <dt class="text-sm font-medium text-gray-500">Your referral code </dt>
                             <dd class="mt-1 text-xl text-gray-900"> <CopyToClipboard textToCopy='0xEdfdb5f2f02432F1E3271582056ECd0f884126aC' /></dd>
                           </div>
                           <div class="sm:col-span-1">
@@ -174,13 +174,13 @@ function Vault({ web3 }) {
 
               {/* Actions */}
               <>
-                <div className="px-6 py-8 lg:col-span-2 bg-white rounded-2xl shadow">
+                <div className="p-6 lg:col-span-2 bg-white rounded-2xl shadow">
                   {/* {vaultData?.status == 0 ? */}
                   {0 == 0 ?
 
 
                     <div>
-                      <Tabs defaultActiveKey="1" centered>
+                      <Tabs defaultActiveKey="1" centered size='large' tabBarStyle={{display:"flex", justifyContent:"space-between"}}>
                         <TabPane tab="Deposit" key="1">
                           <div className="mt-5">
                             <VaultDepositForm web3={web3} referralAddress={referralAddress} />

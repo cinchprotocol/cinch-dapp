@@ -61,7 +61,7 @@ function Vault({ web3 }) {
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                           Metrix Fund
                         </h1>
-                        <CopyToClipboard textToCopy='0xEdfdb5f2f02432F1E3271582056ECd0f884126aC'/>
+                        <CopyToClipboard textToCopy={web3?.writeContracts?.MockProtocol?.address} />
                       </div>
                     </div>
                     <div className="px-8 py-2 ">
@@ -103,46 +103,73 @@ function Vault({ web3 }) {
             <div className="mb-10 lg:grid lg:grid-cols-5 lg:grid-rows-[auto,auto,1fr]">
               <div className="p-6 lg:mr-4 lg:col-span-3 bg-white rounded-2xl shadow">
                 <div className="">
-                  <h3 class="text-lg font-medium leading-6 text-gray-600">Description</h3>
+                  <h3 class="text-lg font-medium leading-6 text-gray-600">About product</h3>
                   <p class="mt-1 max-w-2xl text-sm text-gray-500">Metrix Liquid Token Fund I is a smart fund made by dHedge that utilizes blockchain-powered automation in token analysis to invest in digital assets. The fund strategy was tested with Apollo Partners, a testing fund, and will be closing in a few months. All investors must hold a Connectivity NFT Collection in order to enter the new fund.</p>
                 </div>
 
-                <div className="mb-10 border-t border-gray-200">
-                  <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                    <div class="sm:col-span-1">
-                      <dt class="text-sm font-medium text-gray-500">Underlying Asset</dt>
-                      <dd class="mt-1 text-xl font-medium text-gray-900">
-                        <img
-                          className="inline-block h-8 w-8 rounded-full"
-                          src="https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_48,q_auto/https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/network/ethereum/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48.jpg"
-                          alt=""
-                        /> USDC
-                      </dd>
-                    </div>
-                    {/* <div class="sm:col-span-1">
-                      <dt class="text-sm font-medium text-gray-500">APY </dt>
-                      <dd class="mt-1 text-xl text-gray-900">20%</dd>
-                    </div>
-                    <div class="sm:col-span-1">
-                      <dt class="text-sm font-medium text-gray-500">TVL</dt>
-                      <dd class="mt-1 text-xl text-gray-900">$45,000</dd>
-                    </div> */}
+                <Tabs defaultActiveKey="1">
+                  <TabPane tab="Performance" key="1">
+                    <div>
+                      <div>
+                        <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                          <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">Balance </dt>
+                            <dd class="mt-1 text-xl text-gray-900">$15,000</dd>
+                          </div>
 
-                    <div class="sm:col-span-1">
-                      <dt class="text-sm font-medium text-gray-500">Your balance </dt>
-                      <dd class="mt-1 text-xl text-gray-900">$15,000</dd>
-                    </div>
-                    <div class="sm:col-span-1">
-                      <dt class="text-sm font-medium text-gray-500">Revenue shared on platform users (%)</dt>
-                      <dd class="mt-1 text-xl text-gray-900">100%</dd>
-                    </div>
-                    <div class="sm:col-span-1">
-                      <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
-                      <dd class="mt-1 text-xl text-gray-900">{web3?.writeContracts?.MockProtocol?.address?.substr(0, 6) + "..." + web3?.writeContracts?.MockProtocol?.address?.substr(-4)}</dd>
-                    </div>
+                          <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">Pending referral payment </dt>
+                            <dd class="mt-1 text-xl text-gray-900">$975</dd>
+                          </div>
+                          <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">Total cumulative refferal payments</dt>
+                            <dd class="mt-1 text-xl text-gray-900">$6,500</dd>
+                          </div>
+                          <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">Boosted APY (underlying + rev-share)</dt>
+                            <dd class="mt-1 text-xl text-gray-900">18%</dd>
+                          </div>
 
-                  </dl>
-                </div>
+                        </dl>
+                      </div>
+                    </div>
+                  </TabPane>
+
+                  <TabPane tab="About" key="3">
+                    <div>
+                      <div>
+                        <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                          <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">Underlying Asset</dt>
+                            <dd class="mt-1 text-xl font-medium text-gray-900">
+                              <img
+                                className="inline-block h-8 w-8 rounded-full"
+                                src="https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_48,q_auto/https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/network/ethereum/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48.jpg"
+                                alt=""
+                              /> USDC
+                            </dd>
+                          </div>
+
+
+                          <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">Your refferal code </dt>
+                            <dd class="mt-1 text-xl text-gray-900"> <CopyToClipboard textToCopy='0xEdfdb5f2f02432F1E3271582056ECd0f884126aC' /></dd>
+                          </div>
+                          <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">Revenue shared on platform users (%)</dt>
+                            <dd class="mt-1 text-xl text-gray-900">100%</dd>
+                          </div>
+                          <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
+                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={web3?.writeContracts?.MockProtocol?.address} /></dd>
+                          </div>
+
+                        </dl>
+                      </div>
+                    </div>
+                  </TabPane>
+                </Tabs>
+
               </div>
 
               {/* Actions */}

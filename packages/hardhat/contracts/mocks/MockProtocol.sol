@@ -99,7 +99,7 @@ contract MockProtocol is Ownable {
     /**
      * @dev Getter of _totalValueLocked
      */
-    function getTotalValueLocked() external view returns (uint256) {
+    function getTotalShares() external view returns (uint256) {
         return _totalValueLocked;
     }
 

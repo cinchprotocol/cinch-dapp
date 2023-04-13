@@ -190,7 +190,7 @@ contract FeeSplitter is FeeSplitterStorage, Initializable, ContextUpgradeable, O
      * For now, this contract is using the cinchPxPayee address as the hash key to get the TVL from CinchPx. 
      */
     function _getCinchPxTVL(address cinchPxPayee) private view returns (uint256) {
-        return ICinchPx(_cinchPxAddress).getTotalValueLocked(cinchPxPayee);
+        return ICinchPx(_cinchPxAddress).totalSharesByReferral(cinchPxPayee);
     }
 
     /**

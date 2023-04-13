@@ -66,7 +66,7 @@ function MobileNavigation() {
             className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5"
           >
             <MobileNavLink href="#about">About</MobileNavLink>
-            <MobileNavLink href="https://mirror.xyz/0x7352724d097517b11ccB2FED15FA4C557A42192f">Blog</MobileNavLink>
+            {/* <MobileNavLink href="https://mirror.xyz/0x7352724d097517b11ccB2FED15FA4C557A42192f">Blog</MobileNavLink> */}
             <MobileNavLink href="https://docs.cinchprotocol.io/cinch-protocol-documentation/">Docs</MobileNavLink>
             {/* <MobileNavLink href="#testimonials">Testimonials</MobileNavLink>
             <MobileNavLink href="#pricing">Pricing</MobileNavLink>
@@ -96,7 +96,7 @@ export function Header() {
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div className="hidden md:flex md:gap-x-6">
               <NavLink href="#about">About</NavLink>
-              <NavLink href="https://mirror.xyz/0x7352724d097517b11ccB2FED15FA4C557A42192f">Blog</NavLink>
+              {/* <NavLink href="https://mirror.xyz/0x7352724d097517b11ccB2FED15FA4C557A42192f">Blog</NavLink> */}
               <NavLink href="https://docs.cinchprotocol.io/cinch-protocol-documentation/">Docs</NavLink>
             </div>
             <Button href="https://tr61ro2oj6g.typeform.com/to/TzNCZG57" target="_blank" color="blue">

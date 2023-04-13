@@ -35,7 +35,7 @@ const protocolFeatures = [
   ,
   {
     name: "Access everyday people",
-    description: "Wallets are onboarding ordinary people, not just CT. Give them access to your products.",
+    description: "Wallets are onboarding ordinary people. Give them access to your application.",
     icon: ClockIcon,
   },
 
@@ -92,9 +92,10 @@ export function Features() {
     <div className="py-12 bg-sky-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-aos="fade-up">
         <div className="text-center">
-          <h2 className="text-lg text-blue-600 font-semibold">Payment infrastructure for smart contract integrations</h2>
+          <h2 className="text-lg text-blue-600 font-semibold">Feature your application on investment platforms.</h2>
           <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
-            Incentivizing DeFi adoption.
+            #1 distribution channel for dApps
+
           </p>
           {/* <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
           Lorem ipsum dolor sit amet consect adipisicing elit. Possimus magnam voluptatum cupiditate veritatis in

@@ -49,36 +49,39 @@ export function About() {
       </div>
       <div className="relative px-4 sm:px-6 lg:px-8">
         <div className="text-lg max-w-prose mx-auto">
-          <h1>
-            <span className="mt-2 block text-3xl text-center leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              What we’re building
-            </span>
-          </h1>
+          <h2 className="text-lg text-blue-600 font-semibold">What we’re building</h2>
         </div>
         <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
-          <h2>DeFi-as-a-service</h2>
+          <h2>The referral payment network for decentralized applications</h2>
           <p>
-            Our mission is to deliver DeFi to 100 million more users by incentivizing on-ramps. Our dApp makes it super easy for non-custodial platforms to generate revenue by offering smart contract products.
+            The financial products most widely adopted in the world have one key ingredient: distribution.
+          </p>
+          <p>
+            Distribution is a major problem for decentralized applications. dApps have literally no distribution channels. As a result, too few people have access to decentralized applications.
 
           </p>
           <p>
-            Wallet platforms need products they can monetize. Revenue-sharing is a popular way to monetize. Cinch’s dApp provides smart contracts to implement fee sharing on chain.
+            FinTech apps and investment platforms are the perfect distribution partners. The problem is, they will only offer products to their users that they can monetize properly.
+
 
           </p>
           <p>
-            Protocol that uses Cinch Protocol will be able to quickly and easily get access to millions of users via the wallet platforms that already use our fee sharing infrastructure.
+            Cinch uses smart contracts to automate and standardize referral payments between decentralized applications and distribution partners. This creates a powerful incentive for potential distribution partners and greatly simplifies the integration process.
 
           </p>
           <p>
-            Cinch is a one-stop go-to-market partner for protocols and a defi-as-a-service partner for wallet platforms.
+            <p>
+              Joining Cinch’s network of distribution partners requires no integration or developer resources.
+
+            </p>
           </p>
           <div className="mt-10 sm:mt-12">
             <a
-              href="https://tr61ro2oj6g.typeform.com/to/TzNCZG57"
+              href="https://tr61ro2oj6g.typeform.com/to/ZfxuAhXt"
               target="blank"
               className="inline-flex items-center px-8 py-2 border border-transparent text-lg font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Contact us
+              Join Network
             </a>
           </div>
         </div>

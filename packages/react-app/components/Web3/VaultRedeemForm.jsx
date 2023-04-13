@@ -6,17 +6,22 @@ const { ethers } = require("ethers");
 
 import { Button } from "../Button";
 
-const VaultRedeemForm = ({ web3, shareDecimals = 6, referralAddress, defaultRedeemAmountStr = "1000" }) => {
+const VaultRedeemForm = ({
+  web3,
+  shareDecimals = 6,
+  referralAddress,
+  defaultRedeemAmountStr = "1000",
+  vaultContractName = "Vault",
+  cardTitle = "Redeem from Cinch Vault",
+}) => {
   const [formValues, setFormValues] = useState(null);
-  const mockERC20ApprovalEvents = useEventListener(web3?.readContracts, "MockERC20", "Approval");
-  console.log("mockERC20ApprovalEvents", mockERC20ApprovalEvents);
 
   const redeemAsset = async values => {
     const { redeemAmount, referralEnabled } = values;
     if (!web3 || !redeemAmount || !referralAddress) return;
     if (referralEnabled) {
       await web3?.tx(
-        web3?.writeContracts?.Vault?.redeemWithReferral(
+        web3?.writeContracts[vaultContractName]?.redeemWithReferral(
           ethers.utils.parseUnits(redeemAmount, shareDecimals),
           web3?.address,
           referralAddress,
@@ -24,7 +29,7 @@ const VaultRedeemForm = ({ web3, shareDecimals = 6, referralAddress, defaultRede
       );
     } else {
       await web3?.tx(
-        web3?.writeContracts?.Vault?.redeem(
+        web3?.writeContracts[vaultContractName]?.redeem(
           ethers.utils.parseUnits(redeemAmount, shareDecimals),
           web3?.address,
           web3?.address,
@@ -44,6 +49,7 @@ const VaultRedeemForm = ({ web3, shareDecimals = 6, referralAddress, defaultRede
   };
 
   return (
+
     <Form
       name="basic"
       labelCol={{ span: 8 }}

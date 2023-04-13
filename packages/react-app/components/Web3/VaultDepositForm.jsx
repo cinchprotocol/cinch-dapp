@@ -6,19 +6,24 @@ const { ethers } = require("ethers");
 
 import { Button } from "../Button";
 
-const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDepositAmountStr = "1000" }) => {
+const VaultDepositForm = ({
+  web3,
+  assetDecimals = 6,
+  referralAddress,
+  defaultDepositAmountStr = "1000",
+  vaultContractName = "Vault",
+  cardTitle = "Deposit into Idle Clearpool",
+}) => {
   const [formValues, setFormValues] = useState(null);
   const [isReferralEnabled, setIsReferralEnabled] = useState(true);
   const [depositAmountStr, setDepositAmountStr] = useState(defaultDepositAmountStr);
-  const mockERC20ApprovalEvents = useEventListener(web3?.readContracts, "MockERC20", "Approval");
-  console.log("mockERC20ApprovalEvents", mockERC20ApprovalEvents);
 
   const approveAsset = async values => {
     const { depositAmount } = values;
     if (!web3 || !depositAmount) return;
     await web3?.tx(
       web3?.writeContracts?.MockERC20?.approve(
-        web3?.writeContracts?.Vault?.address,
+        web3?.writeContracts?.[vaultContractName]?.address,
         ethers.utils.parseUnits(depositAmount, assetDecimals),
       ),
     );
@@ -29,7 +34,7 @@ const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDep
     console.log("depositAsset", depositAmountStr, isReferralEnabled);
     if (isReferralEnabled) {
       await web3?.tx(
-        web3?.writeContracts?.Vault?.depositWithReferral(
+        web3?.writeContracts?.[vaultContractName]?.depositWithReferral(
           ethers.utils.parseUnits(depositAmountStr, assetDecimals),
           web3?.address,
           referralAddress,
@@ -37,7 +42,10 @@ const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDep
       );
     } else {
       await web3?.tx(
-        web3?.writeContracts?.Vault?.deposit(ethers.utils.parseUnits(depositAmountStr, assetDecimals), web3?.address),
+        web3?.writeContracts?.[vaultContractName]?.deposit(
+          ethers.utils.parseUnits(depositAmountStr, assetDecimals),
+          web3?.address,
+        ),
       );
     }
   };

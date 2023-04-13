@@ -59,7 +59,7 @@ function Vault({ web3 }) {
                       </div>
                       <div>
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                        Ribbon R-EARN
+                          Ribbon R-EARN
                         </h1>
                         <CopyToClipboard textToCopy={web3?.writeContracts?.MockProtocol?.address} />
                       </div>
@@ -102,10 +102,6 @@ function Vault({ web3 }) {
             {/* info */}
             <div className="mb-10 lg:grid lg:grid-cols-5 lg:grid-rows-[auto,auto,1fr]">
               <div className="p-6 lg:mr-4 lg:col-span-3 bg-white rounded-2xl shadow">
-                <div className="">
-                  <h3 class="text-lg font-medium leading-6 text-gray-600">About product</h3>
-                  <p class="mt-1 max-w-2xl text-sm text-gray-500">The R-Earn vault employs a fully funded twin win strategy through which depositors can capitalise on the intra-week ETH movements in either direction while also ensuring their capital is protected. The vault earns interest by lending capital to our counterparties and uses part of it to generate a base APY and the remaining funding to purchase weekly at-the-money knock-out barrier options.</p>
-                </div>
 
                 <Tabs defaultActiveKey="1">
                   <TabPane tab="Holdings" key="1">
@@ -126,8 +122,8 @@ function Vault({ web3 }) {
                             <dd class="mt-1 text-xl text-gray-900">$6,500</dd>
                           </div>
                           <div class="sm:col-span-1">
-                            <dt class="text-sm font-medium text-gray-500">Boosted APY (underlying + rev-share)</dt>
-                            <dd class="mt-1 text-xl text-gray-900">11.26%</dd>
+                            <dt class="text-sm font-medium text-gray-500">Referral Payment APY</dt>
+                            <dd class="mt-1 text-xl text-gray-900">1.56%</dd>
                           </div>
 
                         </dl>
@@ -135,7 +131,7 @@ function Vault({ web3 }) {
                     </div>
                   </TabPane>
 
-                  <TabPane tab="Referral" key="3">
+                  <TabPane tab="Referral" key="2">
                     <div>
                       <div>
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
@@ -168,6 +164,22 @@ function Vault({ web3 }) {
                       </div>
                     </div>
                   </TabPane>
+                  <TabPane tab="About" key="3">
+                    <div className="">
+                      <h3 class="text-lg font-medium leading-6 text-gray-600">Description</h3>
+                      <p class="mt-1 max-w-2xl text-sm text-gray-500"><a href="https://app.ribbon.finance/earn/R-EARN"> The R-Earn vault </a> employs a fully funded twin win strategy through which depositors can capitalise on the intra-week ETH movements in either direction while also ensuring their capital is protected. The vault earns interest by lending capital to our counterparties and uses part of it to generate a base APY and the remaining funding to purchase weekly at-the-money knock-out barrier options.</p>
+                      <div className="flex">
+                        <span className="text-green-600" >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                          </svg>
+                        </span>
+                        <p>
+                          <span className="ml-2">This vault has been audited by Hacken. <a>Audit report.</a></span></p>
+                      </div>
+
+                    </div>
+                  </TabPane>
                 </Tabs>
 
               </div>
@@ -175,113 +187,30 @@ function Vault({ web3 }) {
               {/* Actions */}
               <>
                 <div className="p-6 lg:col-span-2 bg-white rounded-2xl shadow">
-                  {/* {vaultData?.status == 0 ? */}
-                  {0 == 0 ?
 
 
-                    <div>
-                      <Tabs defaultActiveKey="1" centered size='large' tabBarStyle={{display:"flex", justifyContent:"space-between"}}>
-                        <TabPane tab="Deposit" key="1">
-                          <div className="mt-5">
-                            <VaultDepositForm web3={web3} referralAddress={referralAddress} />
-                          </div>
-                        </TabPane>
+                  <div>
+                    <Tabs defaultActiveKey="1" centered size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
+                      <TabPane tab="Deposit" key="1">
+                        <div className="mt-5">
+                          <VaultDepositForm web3={web3} referralAddress={referralAddress} />
+                        </div>
+                      </TabPane>
 
-                        <TabPane tab="Withdraw" key="3">
-                          <div className="mt-5">
-                            <VaultRedeemForm web3={web3} referralAddress={referralAddress} />
-                          </div>
-                        </TabPane>
-                      </Tabs>
+                      <TabPane tab="Withdraw" key="3">
+                        <div className="mt-5">
+                          <VaultRedeemForm web3={web3} referralAddress={referralAddress} />
+                        </div>
+                      </TabPane>
+                    </Tabs>
 
 
-                    </div>
-
-                    :
-
-                    <div>
-                      <h3 className="text-xl text-center font-semibold text-gray-900">Action Items</h3>
-                      <div>
-                        {/* {vaultData?.status == 0 ? <div> */}
-                        {1 == 0 ? <div>
-                        </div> :
-
-                          <div>
-                            <div class="rounded-md bg-yellow-50 p-4">
-                              <div class="flex">
-                                <div class="flex-shrink-0">
-                                  <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M8.485 3.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 3.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                                  </svg>
-                                </div>
-                                <div class="ml-3">
-                                  <div class="mt-2 text-sm text-yellow-700">
-                                    <p>Cinch contracts are now deployed.</p>
-                                    <p>Please include the following cryptographic as referral input on all transactions from users wallets.</p>
-                                    <p>Any transaction not tagged with your referral code will not generate fee revenue for you.</p>
-                                    <p>REFERRAL CODE: 0x610178dA211FEF7D417bC0e6FeD39F05609AD788</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>}
-                      </div>
-                    </div>
-                  }
-
+                  </div>
 
                 </div>
               </>
             </div>
 
-
-            {/* {vaultData?.status == 1 ? */}
-            {1 == 1 ?
-              <div className="mt-14">
-                <h3 className="text-2xl font-semibold text-gray-900">
-                  B2B Referral Performance
-                </h3>
-                <div className="p-10 mt-14 bg-white shadow rounded-lg">
-                  <div>
-                    {/* <h3 className="text-lg font-medium leading-6 text-gray-900">Last 30 days</h3> */}
-                    <dl className=" grid grid-cols-1 overflow-hidden md:grid-cols-3">
-                      <Web3Statistic
-                        web3={web3}
-                        contractName="MockProtocol"
-                        getFuncName="getTotalValueLocked"
-                        title="TVL from Cinch referrals"
-                        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
-                      />
-
-                      <Web3Statistic
-                        web3={web3}
-                        contractName="Vault"
-                        getFuncName="getTotalValueLocked"
-                        args={[referralAddress]}
-                        title="Rev-share from Cinch referrals"
-                        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
-                      />
-
-                      <Web3Statistic
-                        web3={web3}
-                        contractName="Vault"
-                        getFuncName="balanceOf"
-                        args={[web3?.address]}
-                        title="Boosted APY (underlying + rev-share)"
-                        dataTransform={data => ethers.utils.formatUnits(data, mockERC20Decimals)}
-                      />
-
-                    </dl>
-                  </div>
-                </div>
-
-              </div>
-              : <div>
-              </div>
-
-
-
-            }
 
 
             <h3 className="mt-14 text-2xl font-semibold text-gray-900">

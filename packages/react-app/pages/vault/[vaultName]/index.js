@@ -101,31 +101,31 @@ function Vault({ web3 }) {
 
             {/* info */}
             <div className="mb-10 lg:grid lg:grid-cols-5 lg:grid-rows-[auto,auto,1fr]">
-              <div className="p-6 lg:mr-4 lg:col-span-3 bg-white rounded-2xl shadow">
+              <div className="p-6 lg:mr-4 lg:col-span-3 rounded-2xl shadow">
 
                 <Tabs defaultActiveKey="1">
                   <TabPane tab="Holdings" key="1">
                     <div>
                       <div>
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                          <div class="sm:col-span-1">
+                          <div class="sm:col-span-1 bg-white shadow rounded-xl  p-5">
                             <dt class="text-sm font-medium text-gray-500">Balance </dt>
-                            <dd class="mt-1 text-xl text-gray-900">$15,000</dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">$15,000</dd>
                           </div>
-
-                          <div class="sm:col-span-1">
-                            <dt class="text-sm font-medium text-gray-500">Pending referral payment </dt>
-                            <dd class="mt-1 text-xl text-gray-900">$975</dd>
-                          </div>
-                          <div class="sm:col-span-1">
+                          <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
                             <dt class="text-sm font-medium text-gray-500">Total cumulative refferal payments</dt>
-                            <dd class="mt-1 text-xl text-gray-900">$6,500</dd>
-                          </div>
-                          <div class="sm:col-span-1">
-                            <dt class="text-sm font-medium text-gray-500">Referral Payment APY</dt>
-                            <dd class="mt-1 text-xl text-gray-900">1.56%</dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">$6,500</dd>
                           </div>
 
+
+                          <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
+                            <dt class="text-sm font-medium text-gray-500">Referral Payment APY</dt>
+                            <dd class="mt-1 text-2xl text-gray-900">1.56%</dd>
+                          </div>
+                          <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
+                            <dt class="text-sm font-medium text-gray-500">Boosted APY </dt>
+                            <dd class="mt-1 text-2xl text-gray-900">11.26%</dd>
+                          </div>
                         </dl>
                       </div>
                     </div>
@@ -167,7 +167,7 @@ function Vault({ web3 }) {
                   <TabPane tab="About" key="3">
                     <div className="">
                       <h3 class="text-lg font-medium leading-6 text-gray-600">Description</h3>
-                      <p class="mt-1 max-w-2xl text-sm text-gray-500"><a href="https://app.ribbon.finance/earn/R-EARN"> The R-Earn vault </a> employs a fully funded twin win strategy through which depositors can capitalise on the intra-week ETH movements in either direction while also ensuring their capital is protected. The vault earns interest by lending capital to our counterparties and uses part of it to generate a base APY and the remaining funding to purchase weekly at-the-money knock-out barrier options.</p>
+                      <p class="mt-1 max-w-2xl text-sm text-gray-500"><a href="https://app.ribbon.finance/earn/R-EARN"> The R-Earn vault </a> employs a fully funded twin win strategy through which depositors can capitalise on the intra-week ETH movements in either direction while also ensuring their capital is protected. The vault earns interest by lending capital to our counterparties and uses part of it to generate a base APY and the remaining funding to purchase weekly at-the-money knock-out barrier options. <a href="https://docs.ribbon.finance/ribbon-earn/ribbon-earn-usdc" target="_blank">Learn more.</a></p>
                       <div className="flex">
                         <span className="text-green-600" >
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -175,7 +175,7 @@ function Vault({ web3 }) {
                           </svg>
                         </span>
                         <p>
-                          <span className="ml-2">This vault has been audited by Hacken. <a>Audit report.</a></span></p>
+                          <span className="ml-2">This vault has been audited by Hacken. <a target="_blank">Audit report.</a></span></p>
                       </div>
 
                     </div>

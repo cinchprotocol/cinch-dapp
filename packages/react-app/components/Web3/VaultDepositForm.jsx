@@ -8,7 +8,7 @@ import { Button } from "../Button";
 
 const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDepositAmountStr = "1000" }) => {
   const [formValues, setFormValues] = useState(null);
-  const [isReferralEnabled, setIsReferralEnabled] = useState(true);
+  const [referralCode, setReferralCode] = useState(null);
   const [depositAmountStr, setDepositAmountStr] = useState(defaultDepositAmountStr);
   const mockERC20ApprovalEvents = useEventListener(web3?.readContracts, "MockERC20", "Approval");
   console.log("mockERC20ApprovalEvents", mockERC20ApprovalEvents);
@@ -26,8 +26,8 @@ const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDep
 
   const depositAsset = async values => {
     if (!web3 || !depositAmountStr || !referralAddress) return;
-    console.log("depositAsset", depositAmountStr, isReferralEnabled);
-    if (isReferralEnabled) {
+    console.log("depositAsset", depositAmountStr, referralCode);
+    if (referralCode) {
       await web3?.tx(
         web3?.writeContracts?.Vault?.depositWithReferral(
           ethers.utils.parseUnits(depositAmountStr, assetDecimals),
@@ -52,9 +52,9 @@ const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDep
     console.log("onFinishFailed:", errorInfo);
   };
 
-  const onCheckBoxChange = e => {
-    //console.log(`onCheckBoxChange checked = ${e.target.checked}`);
-    setIsReferralEnabled(!isReferralEnabled);
+  const onReferralChange = e => {
+    console.log(`onReferralChange value = ${e.target.value}`);
+    setReferralCode(e.target.value);
   };
 
   const onInputChange = e => {
@@ -82,13 +82,8 @@ const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDep
         <Input onChange={onInputChange} />
       </Form.Item>
 
-      <Form.Item name="referralEnabled" valuePropName="checked"    wrapperCol={{
-        offset: 8,
-        span: 16,
-      }}>
-        <Checkbox checked={isReferralEnabled} onChange={onCheckBoxChange}>
-          Include platform referral code
-        </Checkbox>
+      <Form.Item label="Referral Code" name="referralCode"  >
+        <Input onChange={onReferralChange} />
       </Form.Item>
 
       <Form.Item wrapperCol={{
@@ -97,7 +92,7 @@ const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDep
       }}>
         <Space>
           <Button type="primary" htmlType="submit">
-           Approve
+            Approve
           </Button>
           <Button
             type="primary"

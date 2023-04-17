@@ -63,16 +63,16 @@ const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDep
   };
 
   return (
+    <div className="px-8">
     <Form
-      name="basic"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
+      name="basic"    
       style={{ maxWidth: 600 }}
       initialValues={{ referralEnabled: true, depositAmount: defaultDepositAmountStr }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
       size="large"
+      layout="vertical"
     >
       <Form.Item
         label="Deposit (USDC)"
@@ -87,8 +87,7 @@ const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDep
       </Form.Item>
 
       <Form.Item wrapperCol={{
-        offset: 8,
-        span: 16,
+       
       }}>
         <Space>
           <Button type="primary" htmlType="submit">
@@ -106,6 +105,7 @@ const VaultDepositForm = ({ web3, assetDecimals = 6, referralAddress, defaultDep
         </Space>
       </Form.Item>
     </Form>
+    </div>
   );
 };
 

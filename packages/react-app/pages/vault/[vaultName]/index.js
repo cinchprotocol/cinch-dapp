@@ -186,9 +186,7 @@ function Vault({ web3 }) {
 
               {/* Actions */}
               <>
-                <div className="p-6 lg:col-span-2 bg-white rounded-2xl shadow">
-
-
+                <div className="p-2 lg:col-span-2 bg-white rounded-2xl shadow">
                   <div>
                     <Tabs defaultActiveKey="1" centered size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
                       <TabPane tab="Deposit" key="1">

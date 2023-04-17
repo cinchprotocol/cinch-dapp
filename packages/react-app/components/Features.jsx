@@ -94,7 +94,7 @@ export function Features() {
         <div className="text-center">
           <h2 className="text-lg text-blue-600 font-semibold">Feature your application on investment platforms.</h2>
           <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
-            #1 distribution channel for dApps
+            #1 growth channel for dApps
 
           </p>
           {/* <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">

@@ -52,16 +52,16 @@ export function About() {
           <h2 className="text-lg text-blue-600 font-semibold">What we’re building</h2>
         </div>
         <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
-          <h2>The referral payment network for decentralized applications</h2>
+          <h2>The referral marketplace for decentralized applications</h2>
           <p>
-            The financial products most widely adopted in the world have one key ingredient: distribution.
+            The most widely adopted financial products have one thing in common: superior distribution.
           </p>
           <p>
-            Distribution is a major problem for decentralized applications. dApps have literally no distribution channels. As a result, too few people have access to decentralized applications.
+            Distribution is a major problem for decentralized applications. dApps have difficulty reaching new users. As a result, too few people have access to decentralized applications.
 
           </p>
           <p>
-            FinTech apps and investment platforms are the perfect distribution partners. The problem is, they will only offer products to their users that they can monetize properly.
+            FinTech apps and investment platforms are the perfect distribution partners. The problem is, they will only offer products to their users that they can generate revenue from.
 
 
           </p>

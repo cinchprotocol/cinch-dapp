@@ -23,10 +23,10 @@ const LandingPage = () => {
       <main>
         <Hero />
         <Features />
-        {/*
-        <HowItWorks />
-        */}
         <UseCases />
+        <HowItWorks />
+       
+       
         <CallToAction />
         <About />
       </main>

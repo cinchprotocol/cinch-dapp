@@ -22,7 +22,7 @@ export function Hero() {
                 </TextLoop>
               </h1>
               <p className="mt-3 text-base text-slate-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Grow faster.
+                Grow total-value-locked faster.
 
               </p>
               <div className="mt-10 sm:mt-12">

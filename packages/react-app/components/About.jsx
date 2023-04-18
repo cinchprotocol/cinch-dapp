@@ -48,9 +48,7 @@ export function About() {
         </div>
       </div>
       <div className="relative px-4 sm:px-6 lg:px-8">
-        <div className="text-lg max-w-prose mx-auto">
-          <h2 className="text-lg text-blue-600 font-semibold">What we’re building</h2>
-        </div>
+        <h2 className="text-lg text-blue-600 font-semibold text-center">What we’re building</h2>
         <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
           <h2>The referral marketplace for decentralized applications</h2>
           <p>

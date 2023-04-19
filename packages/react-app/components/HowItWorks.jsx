@@ -1,6 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { TrendingDownIcon, CurrencyDollarIcon, AdjustmentsIcon, ChartSquareBarIcon, ChevronDownIcon } from '@heroicons/react/outline'
 import { Disclosure } from '@headlessui/react'
+import { Tabs } from "antd";
 
 const valTokenHowItWorks = [
     {
@@ -53,30 +54,65 @@ function classNames(...classes) {
 }
 
 export function HowItWorks() {
+    const { TabPane } = Tabs;
+    function callback(key) {
+        console.log(key);
+    }
+
     return (
         <div className="py-16 xl:py-36 px-4 sm:px-6 lg:px-8 bg-slate-50 overflow-hidden" data-aos="fade-up">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-                    <div>
-                        <h2 className="text-base font-semibold leading-7 text-blue-600">How it works</h2>
-                        <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">3 simple steps</p>
-                        <p className="mt-6 text-base leading-7 text-gray-600">
-                            to get listed on Cinch's referral network.
-                        </p>
-                    </div>
-                    <div className=''>
-                        <div className='bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
-                            1. Identify product
-                        </div>
-                        <div className='mt-8 bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
-                            2. Select referral amounts
-                        </div>
-                        <div className='mt-8 bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
-                            3.  Choose implementation method
-                        </div>
-                    </div>
+                <h2 className="text-base font-semibold leading-7 text-blue-600 text-center">How it works</h2>
+                <Tabs defaultActiveKey="1" onChange={callback} centered size="large">
+                    <TabPane tab="Protocols" key="1">
+                        <div className="p-4 mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+                            <div>
+                                <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Accelerate growth in 3 easy steps</p>
+                                <p className="mt-6 text-base leading-7 text-gray-600">
+                                    to get listed on Cinch's referral network.
+                                </p>
+                            </div>
+                            <div>
+                                <div className='bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
+                                    1. Request to Join Network
+                                </div>
+                                <div className='mt-8 bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
+                                    2. Select referral amounts
+                                </div>
+                                <div className='mt-8 bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
+                                    3.  Choose implementation method
+                                </div>
+                            </div>
 
-                </div>
+                        </div>
+                    </TabPane>
+                    <TabPane tab="Platforms" key="2">
+                        <div className="p-4 mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+                            <div>
+                                <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Monetize DeFi in 3 easy steps</p>
+                                <p className="mt-6 text-base leading-7 text-gray-600">
+                                    to get listed on Cinch's referral network.
+                                </p>
+                            </div>
+                            <div>
+                                <div className='bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
+                                    1.  Select your favorite DeFi partnership opportunity
+                                </div>
+                                <div className='mt-8 bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
+                                    2. Easy integrations thanks to purpose-built infrastructure (standardized for all products in Cinch’s marketplace)
+
+                                </div>
+                                <div className='mt-8 bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
+                                    3.  Track referral revenue and manage all affiliate partnerships from the Cinch dashboard
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </TabPane>
+                </Tabs>
+
+
             </div>
         </div>
     )

@@ -54,7 +54,7 @@ function classNames(...classes) {
 
 export function HowItWorks() {
     return (
-        <div className="py-16 xl:py-36 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden" data-aos="fade-up">
+        <div className="py-16 xl:py-36 px-4 sm:px-6 lg:px-8 bg-slate-50 overflow-hidden" data-aos="fade-up">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
                 <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
                     <div>
@@ -65,13 +65,13 @@ export function HowItWorks() {
                         </p>
                     </div>
                     <div className=''>
-                        <div className='bg-slate-50 font-semibold text-lg p-6 rounded-xl shadow-lg'>
+                        <div className='bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
                             1. Identify product
                         </div>
-                        <div className='mt-8 bg-slate-50 font-semibold text-lg p-6 rounded-xl shadow-lg'>
+                        <div className='mt-8 bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
                             2. Select referral amounts
                         </div>
-                        <div className='mt-8 bg-slate-50 font-semibold text-lg p-6 rounded-xl shadow-lg'>
+                        <div className='mt-8 bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
                             3.  Choose implementation method
                         </div>
                     </div>

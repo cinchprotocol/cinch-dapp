@@ -22,8 +22,9 @@ const LandingPage = () => {
       <Header />
       <main>
         <Hero />
-        <Features />
+       
         <UseCases />
+        <Features />
         <HowItWorks />
        
        

@@ -10,7 +10,7 @@ import metrixLogo from "/images/logos/metrix_logo_1.png";
 
 export function UseCases() {
   return (
-    <div className="bg-slate-50 py-6">
+    <div className="bg-white py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-aos="fade-up">
         <div className="lg:text-center">
 

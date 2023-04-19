@@ -12,8 +12,8 @@ export function Hero() {
                 REFERRAL MARKETPLACE FOR DECENTRALIZED APPLICATIONS
               </span>
               <h1 className="mt-2 text-4xl tracking-tight font-bold sm:text-6xl sm:tracking-tight xl:text-6xl xl:tracking-tight">
-                <span className="text-slate-900">Reach </span>
-                <span className="text-blue-500">new users </span>
+                <span className="text-slate-900">Feature </span>
+                <span className="text-blue-500">your dApp </span>
                 <span className="text-slate-900">on </span>
                 <TextLoop interval={2000} className="text-blue-500">
                   <span>mobile wallets</span>
@@ -22,7 +22,7 @@ export function Hero() {
                 </TextLoop>
               </h1>
               <p className="mt-3 text-base text-slate-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Grow total-value-locked faster.
+                Get distribution to grow TVL faster.
 
               </p>
               <div className="mt-10 sm:mt-12">

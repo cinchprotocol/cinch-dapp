@@ -67,20 +67,19 @@ export function HowItWorks() {
                     <TabPane tab="Protocols" key="1">
                         <div className="p-4 mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
                             <div>
-                                <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Accelerate growth in 3 easy steps</p>
-                                <p className="mt-6 text-base leading-7 text-gray-600">
-                                    to get listed on Cinch's referral network.
-                                </p>
+                                <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Accelerate growth</p>
+                                <p className="-mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">in 3 easy steps</p>
+
                             </div>
                             <div>
                                 <div className='bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
-                                    1. Request to Join Network
+                                    1. Get in touch via ‘Join Network’ to tell us which product to add as well as your target referral terms
                                 </div>
                                 <div className='mt-8 bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
-                                    2. Select referral amounts
+                                    2. Cinch deploys a Referral Vault that makes your product compatible with all distribution partners
                                 </div>
                                 <div className='mt-8 bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>
-                                    3.  Choose implementation method
+                                    3.  Track TVL growth and manage all partnerships from the Cinch dashboard
                                 </div>
                             </div>
 
@@ -89,10 +88,8 @@ export function HowItWorks() {
                     <TabPane tab="Platforms" key="2">
                         <div className="p-4 mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
                             <div>
-                                <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Monetize DeFi in 3 easy steps</p>
-                                <p className="mt-6 text-base leading-7 text-gray-600">
-                                    to get listed on Cinch's referral network.
-                                </p>
+                                <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Monetize DeFi</p>
+                                <p className="-mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">in 3 easy steps</p>
                             </div>
                             <div>
                                 <div className='bg-slate-100 font-semibold text-lg p-6 rounded-xl shadow-lg'>

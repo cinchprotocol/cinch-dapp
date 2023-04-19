@@ -52,16 +52,14 @@ export function About() {
         <div className="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
           <h2>The referral marketplace for decentralized applications</h2>
           <p>
-            The most widely adopted financial products have one thing in common: superior distribution.
+            The most widely adopted financial products have one thing in common: distribution.
           </p>
           <p>
-            Distribution is a major problem for decentralized applications. dApps have difficulty reaching new users. As a result, too few people have access to decentralized applications.
+            Distribution is a problem for decentralized applications. dApps have difficulty reaching new users. As a result, too few people have access to decentralized applications.
 
           </p>
           <p>
-            FinTech apps and investment platforms are the perfect distribution partners. The problem is, they will only offer products to their users that they can generate revenue from.
-
-
+            FinTech apps and investment platforms are the perfect distribution partners.
           </p>
           <p>
             Cinch uses smart contracts to automate and standardize referral payments between decentralized applications and distribution partners. This creates a powerful incentive for potential distribution partners and greatly simplifies the integration process.

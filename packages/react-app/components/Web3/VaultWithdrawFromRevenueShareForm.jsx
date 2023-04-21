@@ -63,7 +63,9 @@ const VaultWithdrawFromRevenueShareForm = ({
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Space>
                 <Button type="primary" htmlType="submit">
+
                   8. Withdraw
+
                 </Button>
               </Space>
             </Form.Item>

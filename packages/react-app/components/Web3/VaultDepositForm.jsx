@@ -71,6 +71,7 @@ const VaultDepositForm = ({
   };
 
   return (
+
     <Form
       name="basic"
       labelCol={{ span: 8 }}
@@ -89,6 +90,7 @@ const VaultDepositForm = ({
       >
         <Input onChange={onInputChange} />
       </Form.Item>
+
 
       <Form.Item name="referralEnabled" valuePropName="checked"    wrapperCol={{
         offset: 8,

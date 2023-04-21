@@ -71,53 +71,56 @@ const VaultDepositForm = ({
   };
 
   return (
-    <Row gutter={16}>
-      <Col span={24}>
-        <Card title={cardTitle}>
-          <Form
-            name="basic"
-            labelCol={{ span: 11 }}
-            wrapperCol={{ span: 13 }}
-            style={{ maxWidth: 600 }}
-            initialValues={{ referralEnabled: true, depositAmount: defaultDepositAmountStr }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            autoComplete="off"
+
+    <Form
+      name="basic"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      style={{ maxWidth: 600 }}
+      initialValues={{ referralEnabled: true, depositAmount: defaultDepositAmountStr }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
+      size="large"
+    >
+      <Form.Item
+        label="Deposit (USDC)"
+        name="depositAmount"
+        rules={[{ required: true, message: "Please input the Deposit Amount!" }]}
+      >
+        <Input onChange={onInputChange} />
+      </Form.Item>
+
+
+      <Form.Item name="referralEnabled" valuePropName="checked"    wrapperCol={{
+        offset: 8,
+        span: 16,
+      }}>
+        <Checkbox checked={isReferralEnabled} onChange={onCheckBoxChange}>
+          Include platform referral code
+        </Checkbox>
+      </Form.Item>
+
+      <Form.Item wrapperCol={{
+        offset: 8,
+        span: 16,
+      }}>
+        <Space>
+          <Button type="primary" htmlType="submit">
+           Approve
+          </Button>
+          <Button
+            type="primary"
+            disabled={formValues == null}
+            onClick={() => {
+              depositAsset(formValues);
+            }}
           >
-            <Form.Item
-              label="Deposit Amount (USDC)"
-              name="depositAmount"
-              rules={[{ required: true, message: "Please input the Deposit Amount!" }]}
-            >
-              <Input onChange={onInputChange} />
-            </Form.Item>
-
-            <Form.Item name="referralEnabled" valuePropName="checked" wrapperCol={{ span: 16 }}>
-              <Checkbox checked={isReferralEnabled} onChange={onCheckBoxChange}>
-                Include platform referral code
-              </Checkbox>
-            </Form.Item>
-
-            <Form.Item wrapperCol={{ offset: 8 }}>
-              <Space>
-                <Button type="primary" htmlType="submit">
-                  2. Approve
-                </Button>
-                <Button
-                  type="primary"
-                  disabled={formValues == null}
-                  onClick={() => {
-                    depositAsset(formValues);
-                  }}
-                >
-                  3. Deposit
-                </Button>
-              </Space>
-            </Form.Item>
-          </Form>
-        </Card>
-      </Col>
-    </Row>
+            Deposit
+          </Button>
+        </Space>
+      </Form.Item>
+    </Form>
   );
 };
 

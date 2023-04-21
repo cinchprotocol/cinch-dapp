@@ -27,23 +27,23 @@ const protocolFeatures = [
     icon: LightningBoltIcon,
   },
 
-  {
-    name: "Sustainable growth",
-    description: "Native token sell pressure and dilution are not required.",
-    icon: KeyIcon,
-  },
-  ,
-  {
-    name: "Access everyday people",
-    description: "Wallets are onboarding ordinary people, not just CT. Give them access to your products.",
-    icon: ClockIcon,
-  },
+  // {
+  //   name: "Sustainable growth",
+  //   description: "Native token sell pressure and dilution are not required.",
+  //   icon: KeyIcon,
+  // },
+  // ,
+  // {
+  //   name: "Access everyday people",
+  //   description: "Wallets are onboarding ordinary people. Give them access to your application.",
+  //   icon: ClockIcon,
+  // },
 
-  {
-    name: "Secure & efficient",
-    description: "Cinch uses EIP-4626 to standardize onboarding and integrations.",
-    icon: ShieldCheckIcon,
-  },
+  // {
+  //   name: "Secure & efficient",
+  //   description: "Cinch uses EIP-4626 to standardize onboarding and integrations.",
+  //   icon: ShieldCheckIcon,
+  // },
 ];
 
 const walletFeatures = [
@@ -64,23 +64,23 @@ const walletFeatures = [
     icon: LightningBoltIcon,
   },
 
-  {
-    name: "Easy and quick to implement",
-    description: "Our guided approach makes integrations a breeze.",
-    icon: KeyIcon,
-  },
-  ,
-  {
-    name: "No cost",
-    description: "Cinch handles everything related to onboarding and integrating new protocols.",
-    icon: ClockIcon,
-  },
+  // {
+  //   name: "Easy and quick to implement",
+  //   description: "Our guided approach makes integrations a breeze.",
+  //   icon: KeyIcon,
+  // },
+  // ,
+  // {
+  //   name: "No cost",
+  //   description: "Cinch handles everything related to onboarding and integrating new protocols.",
+  //   icon: ClockIcon,
+  // },
 
-  {
-    name: "Minimal risk",
-    description: "Cinch contracts never hold user funds and we use EIP-4626.",
-    icon: ShieldCheckIcon,
-  },
+  // {
+  //   name: "Minimal risk",
+  //   description: "Cinch contracts never hold user funds and we use EIP-4626.",
+  //   icon: ShieldCheckIcon,
+  // },
 ];
 
 export function Features() {
@@ -92,9 +92,10 @@ export function Features() {
     <div className="py-12 bg-sky-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-aos="fade-up">
         <div className="text-center">
-          <h2 className="text-lg text-blue-600 font-semibold">Payment infrastructure for smart contract integrations</h2>
+          <h2 className="text-lg text-blue-600 font-semibold">Feature your application on investment platforms.</h2>
           <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
-            Incentivizing DeFi adoption.
+            #1 growth channel for dApps
+
           </p>
           {/* <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
           Lorem ipsum dolor sit amet consect adipisicing elit. Possimus magnam voluptatum cupiditate veritatis in
@@ -103,7 +104,7 @@ export function Features() {
         </div>
 
         <div className="mt-10">
-          <Tabs defaultActiveKey="1" onChange={callback} centered>
+          <Tabs defaultActiveKey="1" onChange={callback} centered size="large">
             <TabPane tab="Protocols" key="1">
               <ul
                 role="list"

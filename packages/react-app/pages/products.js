@@ -76,20 +76,23 @@ function Vault({ web3 }) {
                             <ul role="list" className="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
                                 {clients.map((client) => (
                                     <li key={client.id} className="overflow-hidden rounded-xl shadow-xl bg-white">
+                                        <div className="text-right p-2">
+                                            <span className="inline-flex items-center gap-x-1.5 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+                                                <svg className="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
+                                                    <circle cx={3} cy={3} r={3} />
+                                                </svg>
+                                                Active
+                                            </span>
+                                        </div>
 
-                                        <div className="flex items-center gap-x-4 border-b border-gray-900/5 px-6 py-12">
+                                        <div className="flex items-center gap-x-4 border-b border-gray-900/5 px-6 pt-6 pb-14">
                                             <img
                                                 src={client.imageUrl}
                                                 alt={client.name}
                                                 className="h-20 w-20 flex-none rounded-full bg-white object-cover ring-1 ring-gray-900/10"
                                             />
                                             <div className="text-2xl font-medium leading-6 text-gray-900">{client.name}</div>
-                                            <span className="inline-flex text-right items-center gap-x-1.5 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
-                                                <svg className="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
-                                                    <circle cx={3} cy={3} r={3} />
-                                                </svg>
-                                                Active
-                                            </span>
+
                                         </div>
                                         <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6 bg-slate-50 shadow-inner">
                                             <div className="flex flex-1 justify-between items-end gap-4">

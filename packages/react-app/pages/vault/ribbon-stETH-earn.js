@@ -59,7 +59,7 @@ function Vault({ web3 }) {
                       </div>
                       <div>
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                          Ribbon R-EARN
+                          Ribbon stETH-EARN
                         </h1>
                         <CopyToClipboard textToCopy={web3?.writeContracts?.MockProtocol?.address} />
                       </div>
@@ -77,7 +77,7 @@ function Vault({ web3 }) {
                       <dt className="text-sm font-normal text-gray-900">TVL</dt>
                       <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div className="flex items-baseline text-xl font-semibold text-gray-600">
-                          $2.25 M
+                          2.28K stETH
 
                         </div>
                       </dd>
@@ -115,7 +115,7 @@ function Vault({ web3 }) {
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                           <div class="sm:col-span-1 bg-white shadow rounded-xl  p-5">
                             <dt class="text-sm font-medium text-gray-500">Balance </dt>
-                            <dd class="mt-1 text-2xl  text-gray-900">$15,000</dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">500 stETH</dd>
                           </div>
                           <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
                             <dt class="text-sm font-medium text-gray-500">Total cumulative referral payments</dt>

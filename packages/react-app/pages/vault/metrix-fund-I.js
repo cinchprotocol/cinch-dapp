@@ -53,13 +53,13 @@ function Vault({ web3 }) {
 
                         <img
                           className="inline-block h-24 w-24 rounded-full"
-                          src="/ribbon_logo_1.png"
+                          src="/metrixIcon.png"
                           alt=""
                         />
                       </div>
                       <div>
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                          Ribbon R-EARN
+                          Metrix Liquid Token Fund I
                         </h1>
                         <CopyToClipboard textToCopy={web3?.writeContracts?.MockProtocol?.address} />
                       </div>
@@ -125,11 +125,11 @@ function Vault({ web3 }) {
 
                           <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
                             <dt class="text-sm font-medium text-gray-500">Referral Payment APY</dt>
-                            <dd class="mt-1 text-2xl text-gray-900">1.56%</dd>
+                            <dd class="mt-1 text-2xl text-gray-900">1.5%</dd>
                           </div>
                           <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
-                            <dt class="text-sm font-medium text-gray-500">Boosted APY </dt>
-                            <dd class="mt-1 text-2xl text-gray-900">11.26%</dd>
+                            <dt class="text-sm font-medium text-gray-500">3M Returns</dt>
+                            <dd class="mt-1 text-2xl text-gray-900">9.64%</dd>
                           </div>
                         </dl>
                       </div>
@@ -172,7 +172,7 @@ function Vault({ web3 }) {
                   <TabPane tab="About" key="3">
                     <div className="">
                       <h3 class="text-lg font-medium leading-6 text-gray-600">Description</h3>
-                      <p class="mt-1 max-w-2xl text-sm text-gray-500"><a href="https://app.ribbon.finance/earn/R-EARN"> The R-Earn vault </a> employs a fully funded twin win strategy through which depositors can capitalise on the intra-week ETH movements in either direction while also ensuring their capital is protected. The vault earns interest by lending capital to our counterparties and uses part of it to generate a base APY and the remaining funding to purchase weekly at-the-money knock-out barrier options. <a href="https://docs.ribbon.finance/ribbon-earn/ribbon-earn-usdc" target="_blank">Learn more.</a></p>
+                      <p class="mt-1 max-w-2xl text-sm text-gray-500"><a href="https://app.dhedge.org/vault/0xe31282190735e7bb599bd9d55e74d6bb437b13ac"> Metrix Liquid Token Fund I </a> is a smart fund made by dHedge that utilizes blockchain-powered automation in token analysis to invest in digital assets. The fund strategy was tested with Apollo Partners, a testing fund, and will be closing in a few months. All investors must hold a Connectivity NFT Collection in order to enter the new fund.<a href="https://app.dhedge.org/vault/0xe31282190735e7bb599bd9d55e74d6bb437b13ac" target="_blank">Learn more.</a></p>
                       <div className="flex">
                         <span className="text-green-600" >
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

@@ -15,7 +15,7 @@ const VaultDepositForm = ({
   cardTitle = "Deposit into Idle Clearpool",
 }) => {
   const [formValues, setFormValues] = useState(null);
-  const [isReferralEnabled, setIsReferralEnabled] = useState(true);
+  const [referralCode, setReferralCode] = useState(null);
   const [depositAmountStr, setDepositAmountStr] = useState(defaultDepositAmountStr);
 
   const approveAsset = async values => {
@@ -31,8 +31,8 @@ const VaultDepositForm = ({
 
   const depositAsset = async values => {
     if (!web3 || !depositAmountStr || !referralAddress) return;
-    console.log("depositAsset", depositAmountStr, isReferralEnabled);
-    if (isReferralEnabled) {
+    console.log("depositAsset", depositAmountStr, referralCode);
+    if (referralCode) {
       await web3?.tx(
         web3?.writeContracts?.[vaultContractName]?.depositWithReferral(
           ethers.utils.parseUnits(depositAmountStr, assetDecimals),
@@ -60,9 +60,9 @@ const VaultDepositForm = ({
     console.log("onFinishFailed:", errorInfo);
   };
 
-  const onCheckBoxChange = e => {
-    //console.log(`onCheckBoxChange checked = ${e.target.checked}`);
-    setIsReferralEnabled(!isReferralEnabled);
+  const onReferralChange = e => {
+    console.log(`onReferralChange value = ${e.target.value}`);
+    setReferralCode(e.target.value);
   };
 
   const onInputChange = e => {
@@ -71,17 +71,17 @@ const VaultDepositForm = ({
   };
 
   return (
+    <div className="px-8">
 
     <Form
-      name="basic"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
+      name="basic"    
       style={{ maxWidth: 600 }}
       initialValues={{ referralEnabled: true, depositAmount: defaultDepositAmountStr }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
       size="large"
+      layout="vertical"
     >
       <Form.Item
         label="Deposit (USDC)"
@@ -92,22 +92,16 @@ const VaultDepositForm = ({
       </Form.Item>
 
 
-      <Form.Item name="referralEnabled" valuePropName="checked"    wrapperCol={{
-        offset: 8,
-        span: 16,
-      }}>
-        <Checkbox checked={isReferralEnabled} onChange={onCheckBoxChange}>
-          Include platform referral code
-        </Checkbox>
+      <Form.Item label="Referral Code" name="referralCode"  >
+        <Input onChange={onReferralChange} />
       </Form.Item>
 
       <Form.Item wrapperCol={{
-        offset: 8,
-        span: 16,
+       
       }}>
         <Space>
           <Button type="primary" htmlType="submit">
-           Approve
+            Approve
           </Button>
           <Button
             type="primary"
@@ -121,6 +115,7 @@ const VaultDepositForm = ({
         </Space>
       </Form.Item>
     </Form>
+    </div>
   );
 };
 

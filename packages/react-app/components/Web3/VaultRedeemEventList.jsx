@@ -6,9 +6,9 @@ import { useEventListener } from "eth-hooks/events/useEventListener";
 
 import Address from "../Address";
 
-const VaultRedeemEventList = ({ web3, assetDecimals = 6, shareDecimals = 6 }) => {
+const VaultRedeemEventList = ({ web3, assetDecimals = 6, shareDecimals = 6, vaultContractName = "Vault" }) => {
   //emit Withdraw(caller, receiver, owner, assets, shares);
-  const vaultRedeemEvents = useEventListener(web3?.readContracts, "Vault", "Withdraw");
+  const vaultRedeemEvents = useEventListener(web3?.readContracts, vaultContractName, "Withdraw");
 
   return (
     <List

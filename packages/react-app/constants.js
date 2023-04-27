@@ -145,6 +145,14 @@ export const NETWORKS = {
     blockExplorer: "https://optimistic.etherscan.io/",
     rpcUrl: `https://mainnet.optimism.io`,
   },
+  optimismGoerli: {
+    name: "optimismGoerli",
+    color: "#f01a37",
+    chainId: 420,
+    blockExplorer: "https://goerli-optimistic.etherscan.io/",
+    rpcUrl: `https://goerli.optimism.io`,
+    gasPrice: 0,
+  },
   localAvalanche: {
     name: "localAvalanche",
     color: "#666666",

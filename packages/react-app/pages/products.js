@@ -47,7 +47,7 @@ function Vault({ web3 }) {
         {
             id: 2,
             name: 'Metrix-fund-1',
-            vaultUrl: '/vault/metrix',
+            vaultUrl: '/vault/metrix-fund-I',
             metrics: [{ name: '3M Returns', value: '9.64%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$51.9K' }],
             token: 'USDC'
         },

@@ -65,7 +65,7 @@ function Vault({ web3 }) {
                       </div>
                     </div>
                     <div className="px-8 py-2 ">
-                      <dt className="text-sm font-normal text-gray-900">APR</dt>
+                      <dt className="text-sm font-normal text-gray-900">APY</dt>
                       <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div className="flex items-baseline text-xl font-semibold text-gray-600">
                           9.7%
@@ -86,7 +86,12 @@ function Vault({ web3 }) {
                       <dt className="text-sm font-normal text-gray-900 text-center">Status</dt>
                       <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div className="flex items-baseline text-xl font-semibold text-gray-600">
-                          {1 == 1 ? <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">Active</span>
+                          {1 == 1 ? <span className="inline-flex items-center gap-x-1.5 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+                            <svg className="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
+                              <circle cx={3} cy={3} r={3} />
+                            </svg>
+                            Active
+                          </span>
                             : <span class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-0.5 text-sm font-medium text-yellow-800">Pending</span>}
 
                         </div>
@@ -113,7 +118,7 @@ function Vault({ web3 }) {
                             <dd class="mt-1 text-2xl  text-gray-900">$15,000</dd>
                           </div>
                           <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
-                            <dt class="text-sm font-medium text-gray-500">Total cumulative refferal payments</dt>
+                            <dt class="text-sm font-medium text-gray-500">Total cumulative referral payments</dt>
                             <dd class="mt-1 text-2xl  text-gray-900">$6,500</dd>
                           </div>
 
@@ -167,7 +172,7 @@ function Vault({ web3 }) {
                   <TabPane tab="About" key="3">
                     <div className="">
                       <h3 class="text-lg font-medium leading-6 text-gray-600">Description</h3>
-                      <p class="mt-1 max-w-2xl text-sm text-gray-500"><a href="https://app.ribbon.finance/earn/R-EARN"> The R-Earn vault </a> employs a fully funded twin win strategy through which depositors can capitalise on the intra-week ETH movements in either direction while also ensuring their capital is protected. The vault earns interest by lending capital to our counterparties and uses part of it to generate a base APY and the remaining funding to purchase weekly at-the-money knock-out barrier options. <a href="https://docs.ribbon.finance/ribbon-earn/ribbon-earn-usdc" target="_blank">Learn more.</a></p>
+                      <p class="mt-1 max-w-2xl text-sm text-gray-500"><a href="https://app.ribbon.finance/earn/R-stETH-EARN"> The R-stETH-Earn vault </a> employs a fully funded dolphin strategy through which depositors can capitalize on the upside ETH movements while also ensuring their capital is protected up to 99.5% per trade. The vault earns a base APY and uses the remaining funding to purchase weekly at-the-money knock-out barrier options. The funding here comes from staking ETH, through Lido. <a href="https://docs.ribbon.finance/ribbon-earn/ribbon-earn-steth" target="_blank">Learn more.</a></p>
                       <div className="flex">
                         <span className="text-green-600" >
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

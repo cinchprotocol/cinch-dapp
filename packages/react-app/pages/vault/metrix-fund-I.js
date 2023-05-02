@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Web3Consumer } from "/helpers/Web3Context";
 import { useRouter } from "next/router";
 import _ from "lodash";
-import { Tabs } from "antd";
+import { Tabs, Alert } from "antd";
 const { ethers } = require("ethers");
 import Image from "next/image";
 import {
@@ -28,9 +28,75 @@ import VaultRedeemForm from "/components/Web3/VaultRedeemForm";
 import VaultDepositEventList from "/components/Web3/VaultDepositEventList";
 import VaultRedeemEventList from "/components/Web3/VaultRedeemEventList";
 import demo01 from "/images/demo/cinch_demo_01.png";
+import { NETWORK, NETWORKS } from "/constants";
 
 function Vault({ web3 }) {
-  //console.log("web3", web3);
+  const { NETWORKCHECK, localChainId, selectedChainId} = web3;
+  const targetNetwork = NETWORK(10); //optimism
+  let networkDisplay = null;
+console.log(targetNetwork.chainId);
+console.log(selectedChainId);
+  if (NETWORKCHECK && selectedChainId && selectedChainId !== targetNetwork.chainId) {
+    const networkSelected = NETWORK(selectedChainId);
+    const networkLocal = NETWORK(localChainId);
+   
+      networkDisplay = (
+        <div>
+          <Alert
+          showIcon
+            message="Wrong Network"
+            description={
+              <div>
+                Please switch your wallet network to {targetNetwork.name} to interact with the vault.
+                <Button style={{ marginLeft: 14}}
+                  onClick={async () => {
+                    const ethereum = window.ethereum;
+                    const data = [
+                      {
+                        chainId: "0x" + targetNetwork.chainId.toString(16),
+                        chainName: targetNetwork.name,
+                        nativeCurrency: targetNetwork.nativeCurrency,
+                        rpcUrls: [targetNetwork.rpcUrl],
+                        blockExplorerUrls: [targetNetwork.blockExplorer],
+                      },
+                    ];
+                    console.log("data", data);
+
+                    let switchTx;
+                    // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
+                    try {
+                      switchTx = await ethereum.request({
+                        method: "wallet_switchEthereumChain",
+                        params: [{ chainId: data[0].chainId }],
+                      });
+                    } catch (switchError) {
+                      // not checking specific error code, because maybe we're not using MetaMask
+                      try {
+                        switchTx = await ethereum.request({
+                          method: "wallet_addEthereumChain",
+                          params: data,
+                        });
+                      } catch (addError) {
+                        // handle "add" error
+                      }
+                    }
+
+                    if (switchTx) {
+                      console.log(switchTx);
+                    }
+                  }}
+                >
+                  <b>Switch to {targetNetwork && targetNetwork.name}</b>
+                </Button>
+              </div>
+            }
+            type="warning"
+            closable={false}
+          />
+        </div>
+      );    
+  }
+
   const mockERC20Decimals = 6;
   const referralAddress = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
   const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
@@ -44,6 +110,7 @@ function Vault({ web3 }) {
         <div>
           <Container>
             <div class="mb-5">
+              {networkDisplay}
               <div>
                 <div>
                   <dl className="mt-5 flex justify-start divide-y divide-gray-200 overflow-hidden rounded-lg  md:divide-x md:divide-y-0 ">

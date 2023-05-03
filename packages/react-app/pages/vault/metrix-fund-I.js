@@ -31,70 +31,70 @@ import demo01 from "/images/demo/cinch_demo_01.png";
 import { NETWORK, NETWORKS } from "/constants";
 
 function Vault({ web3 }) {
-  const { NETWORKCHECK, localChainId, selectedChainId} = web3;
+  const { NETWORKCHECK, localChainId, selectedChainId } = web3;
   const targetNetwork = NETWORK(10); //optimism
   let networkDisplay = null;
-console.log(targetNetwork.chainId);
-console.log(selectedChainId);
+  console.log(targetNetwork.chainId);
+  console.log(selectedChainId);
   if (NETWORKCHECK && selectedChainId && selectedChainId !== targetNetwork.chainId) {
     const networkSelected = NETWORK(selectedChainId);
     const networkLocal = NETWORK(localChainId);
-   
-      networkDisplay = (
-        <div>
-          <Alert
-          showIcon
-            message="Wrong Network"
-            description={
-              <div>
-                Please switch your wallet network to {targetNetwork.name} to interact with the vault.
-                <Button style={{ marginLeft: 14}}
-                  onClick={async () => {
-                    const ethereum = window.ethereum;
-                    const data = [
-                      {
-                        chainId: "0x" + targetNetwork.chainId.toString(16),
-                        chainName: targetNetwork.name,
-                        nativeCurrency: targetNetwork.nativeCurrency,
-                        rpcUrls: [targetNetwork.rpcUrl],
-                        blockExplorerUrls: [targetNetwork.blockExplorer],
-                      },
-                    ];
-                    console.log("data", data);
 
-                    let switchTx;
-                    // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
+    networkDisplay = (
+      <div className="mb-10">
+        <Alert
+          showIcon
+          message="Wrong Network"
+          description={
+            <div>
+              Please switch your wallet network to {targetNetwork.name} to interact with the vault.
+              <Button style={{ marginLeft: 14 }}
+                onClick={async () => {
+                  const ethereum = window.ethereum;
+                  const data = [
+                    {
+                      chainId: "0x" + targetNetwork.chainId.toString(16),
+                      chainName: targetNetwork.name,
+                      nativeCurrency: targetNetwork.nativeCurrency,
+                      rpcUrls: [targetNetwork.rpcUrl],
+                      blockExplorerUrls: [targetNetwork.blockExplorer],
+                    },
+                  ];
+                  console.log("data", data);
+
+                  let switchTx;
+                  // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
+                  try {
+                    switchTx = await ethereum.request({
+                      method: "wallet_switchEthereumChain",
+                      params: [{ chainId: data[0].chainId }],
+                    });
+                  } catch (switchError) {
+                    // not checking specific error code, because maybe we're not using MetaMask
                     try {
                       switchTx = await ethereum.request({
-                        method: "wallet_switchEthereumChain",
-                        params: [{ chainId: data[0].chainId }],
+                        method: "wallet_addEthereumChain",
+                        params: data,
                       });
-                    } catch (switchError) {
-                      // not checking specific error code, because maybe we're not using MetaMask
-                      try {
-                        switchTx = await ethereum.request({
-                          method: "wallet_addEthereumChain",
-                          params: data,
-                        });
-                      } catch (addError) {
-                        // handle "add" error
-                      }
+                    } catch (addError) {
+                      // handle "add" error
                     }
+                  }
 
-                    if (switchTx) {
-                      console.log(switchTx);
-                    }
-                  }}
-                >
-                  <b>Switch to {targetNetwork && targetNetwork.name}</b>
-                </Button>
-              </div>
-            }
-            type="warning"
-            closable={false}
-          />
-        </div>
-      );    
+                  if (switchTx) {
+                    console.log(switchTx);
+                  }
+                }}
+              >
+                Switch to {targetNetwork && targetNetwork.name}
+              </Button>
+            </div>
+          }
+          type="warning"
+          closable={false}
+        />
+      </div>
+    );
   }
 
   const mockERC20Decimals = 6;

@@ -70,16 +70,14 @@ const VaultRedeemForm = ({
           <Input />
         </Form.Item>
 
-        <Form.Item label="Referral Code" name="referralCode"  >
+        {/* <Form.Item label="Referral Code" name="referralCode"  >
         <Input />
-      </Form.Item>
+      </Form.Item> */}
 
-        <Form.Item>
-          <Space>
-            <Button type="primary" htmlType="submit">
+        <Form.Item>         
+            <Button type="primary" htmlType="submit" className="w-full">
               Redeem
-            </Button>
-          </Space>
+            </Button>          
         </Form.Item>
       </Form>
     </div>

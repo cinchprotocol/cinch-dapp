@@ -28,6 +28,7 @@ import VaultRedeemForm from "/components/Web3/VaultRedeemForm";
 import VaultDepositEventList from "/components/Web3/VaultDepositEventList";
 import VaultRedeemEventList from "/components/Web3/VaultRedeemEventList";
 import demo01 from "/images/demo/cinch_demo_01.png";
+import { XCircleIcon } from '@heroicons/react/outline'
 
 function Vault({ web3 }) {
   //console.log("web3", web3);
@@ -191,7 +192,7 @@ function Vault({ web3 }) {
 
               {/* Actions */}
               <>
-                <div className="p-2 lg:col-span-2 bg-white rounded-2xl shadow">
+                <div className="p-1 lg:col-span-2 bg-white rounded-2xl shadow">
                   <div>
                     <Tabs defaultActiveKey="1" centered size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
                       <TabPane tab="Deposit" key="1">
@@ -200,10 +201,34 @@ function Vault({ web3 }) {
                         </div>
                       </TabPane>
 
-                      <TabPane tab="Withdraw" key="3">
+                      <TabPane tab="Withdraw" key="2">
                         <div className="mt-5">
                           <VaultRedeemForm web3={web3} referralAddress={referralAddress} />
                         </div>
+                      </TabPane>
+                      <TabPane tab="Claim Referral" key="3">
+                        {1 == 1 ?
+                          <div className="rounded-md bg-red-50 m-10 p-6 align-middle">
+                            <div className="flex">
+                              <div className="flex-shrink-0">
+                                <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+                              </div>
+                              <div className="ml-3">
+                                <h3 className="font-medium text-red-700">Address not registered with Referral program.</h3>
+                              </div>
+                            </div>
+                          </div> :
+                          <div>
+                            <div class="sm:col-span-1 m-8">
+                              <dt class="text-sm font-medium text-gray-500">Available Referral Balance </dt>
+                              <dd class="mt-1 text-2xl  text-gray-900">1500 (USDC)</dd>
+                            </div>
+                            <div className="mt-5">
+
+                              <VaultRedeemForm web3={web3} referralAddress={referralAddress} />
+                            </div>
+                          </div>
+                        }
                       </TabPane>
                     </Tabs>
 

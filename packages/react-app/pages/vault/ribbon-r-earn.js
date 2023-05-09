@@ -35,6 +35,16 @@ function Vault({ web3 }) {
   const mockERC20Decimals = 6;
   const referralAddress = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
   const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
+  const vaultContractName = "RevenueShareVaultRibbonEarn";
+  const protocolContractName = "MockProtocolRibbonEarn";
+  const pollTime = 500;
+
+
+  var vaultBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, mockERC20Decimals);
+  var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
+var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, referralAddress], pollTime) ?? 0, mockERC20Decimals);
+var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [referralAddress]. pollTime)
+console.log('isReferralRegistered: ' + isReferralRegistered);
   const { TabPane } = Tabs;
   return (
     <div className="bg-slate-50">
@@ -116,11 +126,11 @@ function Vault({ web3 }) {
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                           <div class="sm:col-span-1 bg-white shadow rounded-xl  p-5">
                             <dt class="text-sm font-medium text-gray-500">Balance </dt>
-                            <dd class="mt-1 text-2xl  text-gray-900">$15,000</dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">{vaultBalance?.toString()}</dd>
                           </div>
                           <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
                             <dt class="text-sm font-medium text-gray-500">Total cumulative referral payments</dt>
-                            <dd class="mt-1 text-2xl  text-gray-900">$6,500</dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">{cumulativeReferralBalance.toString()}</dd>
                           </div>
 
 
@@ -207,7 +217,7 @@ function Vault({ web3 }) {
                         </div>
                       </TabPane>
                       <TabPane tab="Claim Referral" key="3">
-                        {1 == 1 ?
+                        {isReferralRegistered ?
                           <div className="rounded-md bg-red-50 m-10 p-6 align-middle">
                             <div className="flex">
                               <div className="flex-shrink-0">
@@ -221,7 +231,7 @@ function Vault({ web3 }) {
                           <div>
                             <div class="sm:col-span-1 m-8">
                               <dt class="text-sm font-medium text-gray-500">Available Referral Balance </dt>
-                              <dd class="mt-1 text-2xl  text-gray-900">1500 (USDC)</dd>
+                              <dd class="mt-1 text-2xl  text-gray-900">{pendingReferralBalance.toString()}</dd>
                             </div>
                             <div className="mt-5">
 

@@ -130,11 +130,11 @@ function Vault({ web3 }) {
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                           <div class="sm:col-span-1 bg-white shadow rounded-xl  p-5">
                             <dt class="text-sm font-medium text-gray-500">Balance </dt>
-                            <dd class="mt-1 text-2xl  text-gray-900">{vaultBalance?.toString()} USDC</dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">{vaultBalance?.toString()} <span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
                           <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
                             <dt class="text-sm font-medium text-gray-500">Total cumulative referral payments</dt>
-                            <dd class="mt-1 text-2xl  text-gray-900">{cumulativeReferralBalance.toString()}</dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">{cumulativeReferralBalance.toString()}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
 
 

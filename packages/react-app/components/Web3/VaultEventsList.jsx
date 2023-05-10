@@ -41,7 +41,7 @@ const VaultEventsList = ({ web3, assetDecimals = 6, shareDecimals = 6, vaultCont
               scope="col"
               className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
             >
-              Assets
+              Assets (USDC)
             </th>
             <th
               scope="col"

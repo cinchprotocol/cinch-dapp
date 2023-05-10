@@ -38,6 +38,7 @@ function Vault({ web3 }) {
   const mockERC20Decimals = 6;
   const referralAddress = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
   const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
+  const mockProtocolRibbonEarn = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
   const vaultContractName = "RevenueShareVaultRibbonEarn";
   const protocolContractName = "MockProtocolRibbonEarn";
   const pollTime = 500;
@@ -76,7 +77,7 @@ function Vault({ web3 }) {
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                           Ribbon R-EARN
                         </h1>
-                        <CopyToClipboard textToCopy={web3?.writeContracts?.MockProtocol?.address} />
+                        <CopyToClipboard textToCopy={mockProtocolRibbonEarn} />
                       </div>
                     </div>
                     <div className="px-8 py-2 ">
@@ -121,28 +122,28 @@ function Vault({ web3 }) {
 
             {/* info */}
             <div className="mb-10 lg:grid lg:grid-cols-5 lg:grid-rows-[auto,auto,1fr]">
-              <div className="p-6 lg:mr-4 lg:col-span-3 rounded-2xl shadow">
+              <div className="py-4 px-6 lg:mr-4 lg:col-span-3 rounded-2xl shadow bg-white">
 
                 <Tabs defaultActiveKey="1">
                   <TabPane tab="Holdings" key="1">
                     <div>
                       <div>
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                          <div class="sm:col-span-1 bg-white shadow rounded-xl  p-5">
+                          <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Balance </dt>
                             <dd class="mt-1 text-2xl  text-gray-900">{vaultBalance?.toString()} <span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
-                          <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
+                          <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Total cumulative referral payments</dt>
                             <dd class="mt-1 text-2xl  text-gray-900">{cumulativeReferralBalance.toString()}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
 
 
-                          <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
+                          <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Referral Payment APY</dt>
                             <dd class="mt-1 text-2xl text-gray-900">1.56%</dd>
                           </div>
-                          <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
+                          <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Boosted APY </dt>
                             <dd class="mt-1 text-2xl text-gray-900">11.26%</dd>
                           </div>

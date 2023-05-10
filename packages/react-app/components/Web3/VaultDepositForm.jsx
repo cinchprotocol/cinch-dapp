@@ -15,7 +15,7 @@ const VaultDepositForm = ({
   cardTitle = "Deposit into Idle Clearpool",
 }) => {
   const [formValues, setFormValues] = useState(null);
-  const [referralCode, setReferralCode] = useState(null);
+  const [referralCode, setReferralCode] = useState(referralAddress);
   const [depositAmountStr, setDepositAmountStr] = useState(defaultDepositAmountStr);
 
   const approveAsset = async values => {
@@ -30,14 +30,14 @@ const VaultDepositForm = ({
   };
 
   const depositAsset = async values => {
-    if (!web3 || !depositAmountStr || !referralAddress) return;
+    if (!web3 || !depositAmountStr || !referralCode) return;
     console.log("depositAsset", depositAmountStr, referralCode);
     if (referralCode) {
       await web3?.tx(
         web3?.writeContracts?.[vaultContractName]?.depositWithReferral(
           ethers.utils.parseUnits(depositAmountStr, assetDecimals),
           web3?.address,
-          referralAddress,
+          referralCode,
         ),
       );
     } else {
@@ -93,7 +93,7 @@ const VaultDepositForm = ({
 
 
       <Form.Item label="Referral Code" name="referralCode"  >
-        <Input onChange={onReferralChange} />
+        <Input onChange={onReferralChange}/>
       </Form.Item>
 
       <Form.Item wrapperCol={{

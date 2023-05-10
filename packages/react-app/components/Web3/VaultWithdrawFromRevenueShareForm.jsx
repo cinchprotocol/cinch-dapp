@@ -39,40 +39,36 @@ const VaultWithdrawFromRevenueShareForm = ({
   };
 
   return (
-    <Row gutter={16}>
-      <Col span={24}>
-        <Card title={cardTitle}>
-          <Form
-            name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
-            initialValues={{ withdrawAmount: defaultWithdrawAmountStr }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            autoComplete="off"
-          >
-            <Form.Item
-              label="Amount"
-              name="withdrawAmount"
-              rules={[{ required: true, message: "Please input the Withdraw Amount!" }]}
-            >
-              <Input />
-            </Form.Item>
+    <div className="px-8">
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Space>
-                <Button type="primary" htmlType="submit">
+      <Form
+        name="basic"
+        style={{ maxWidth: 600 }}
+        initialValues={{ withdrawAmount: defaultWithdrawAmountStr }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+        layout="vertical"
+        size="large"
+      >
+        <Form.Item
+          label="Amount"
+          name="withdrawAmount"
+          rules={[{ required: true, message: "Please input the Withdraw Amount!" }]}
+        >
+          <Input />
+        </Form.Item>
 
-                  8. Withdraw
+        <Form.Item>
+          <Button type="primary" htmlType="submit" className="w-full">
 
-                </Button>
-              </Space>
-            </Form.Item>
-          </Form>
-        </Card>
-      </Col>
-    </Row>
+            Withdraw
+
+          </Button>
+        </Form.Item>
+      </Form>
+
+    </div>
   );
 };
 

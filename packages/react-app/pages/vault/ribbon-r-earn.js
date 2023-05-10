@@ -31,7 +31,7 @@ import VaultEventsList from "/components/Web3/VaultEventsList";
 import VaultRedeemFormRibbonEarn from "/components/Web3/Ribbon/VaultRedeemFormRibbonEarn";
 import VaultWithdrawFromRevenueShareForm from "/components/Web3/VaultWithdrawFromRevenueShareForm";
 import demo01 from "/images/demo/cinch_demo_01.png";
-import { XCircleIcon } from '@heroicons/react/outline'
+import { XCircleIcon } from '@heroicons/react/outline';
 
 function Vault({ web3 }) {
   //console.log("web3", web3);
@@ -42,8 +42,7 @@ function Vault({ web3 }) {
   const vaultContractName = "RevenueShareVaultRibbonEarn";
   const protocolContractName = "MockProtocolRibbonEarn";
   const pollTime = 500;
-
-
+  
   var vaultBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, mockERC20Decimals);
   var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, referralAddress], pollTime) ?? 0, mockERC20Decimals);
@@ -211,6 +210,25 @@ function Vault({ web3 }) {
                   <div>
                     <Tabs defaultActiveKey="1" centered size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
                       <TabPane tab="Deposit" key="1">
+                        {/* <div className="bg-slate-50 m-6 rounded-2xl p-4 text-3xl  border hover:border-slate-300 flex justify-between">
+                          <input
+                            type='text'
+                            className="bg-transparent placeholder:text-[#B2B9D2] focus:none outline-none text-2xl border-0"
+                            placeholder='0.0'
+                            pattern='^[0-9]*[.,]?[0-9]*$'
+                            onChange={e => handleChange(e, 'amount')}
+                          />
+
+                          <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-lg font-medium px-3.5 py-2 text-sm font-semibold shadow-sm">
+                            <img
+                              className="inline-block h-8 w-8 rounded-full"
+                              src="/usdc_logo.jpeg"
+                              alt=""
+                            />
+                            USDC
+                          </div>
+                        </div> */}
+
                         <div className="mt-5">
                           <VaultDepositForm web3={web3} vaultContractName={vaultContractName} referralAddress={referralAddress} />
                         </div>

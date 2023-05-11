@@ -13,7 +13,7 @@ function NetworkDisplay({ web3 }) {
 
     networkDisplay = (
       <div className="bg-slate-50 px-3 py-1 border rounded-xl font-semibold">
-        {networkSelected.name}
+        {networkSelected.name == 'mainnet' ? 'Ethereum' : networkSelected.name}
       </div>
     );
   }

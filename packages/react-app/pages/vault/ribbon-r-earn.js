@@ -27,13 +27,30 @@ import VaultDepositForm from "/components/Web3/VaultDepositForm";
 import VaultRedeemForm from "/components/Web3/VaultRedeemForm";
 import VaultDepositEventList from "/components/Web3/VaultDepositEventList";
 import VaultRedeemEventList from "/components/Web3/VaultRedeemEventList";
+import VaultEventsList from "/components/Web3/VaultEventsList";
+import VaultRedeemFormRibbonEarn from "/components/Web3/Ribbon/VaultRedeemFormRibbonEarn";
+import VaultWithdrawFromRevenueShareForm from "/components/Web3/VaultWithdrawFromRevenueShareForm";
+import VaultAddRevenueShareReferralForm from "/components/Web3/VaultAddRevenueShareReferralForm";
+import VaultDepositToRevenueShareButton from "/components/Web3/VaultDepositToRevenueShareButton";
 import demo01 from "/images/demo/cinch_demo_01.png";
+import { XCircleIcon } from '@heroicons/react/outline';
 
 function Vault({ web3 }) {
   //console.log("web3", web3);
   const mockERC20Decimals = 6;
   const referralAddress = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
   const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
+  const mockProtocolRibbonEarn = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
+  const vaultContractName = "RevenueShareVaultRibbonEarn";
+  const protocolContractName = "MockProtocolRibbonEarn";
+  const pollTime = 500;
+
+  var vaultBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, mockERC20Decimals);
+  var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
+  var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, mockERC20Decimals);
+  var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address].pollTime)
+  console.log('isReferralRegistered: ' + isReferralRegistered);
+
   const { TabPane } = Tabs;
   return (
     <div className="bg-slate-50">
@@ -52,7 +69,7 @@ function Vault({ web3 }) {
                       <div class="flex-shrink-0 ">
 
                         <img
-                          className="inline-block h-24 w-24 rounded-full"
+                          className="inline-block h-16 w-16 rounded-full"
                           src="/ribbon_logo_1.png"
                           alt=""
                         />
@@ -61,7 +78,7 @@ function Vault({ web3 }) {
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                           Ribbon R-EARN
                         </h1>
-                        <CopyToClipboard textToCopy={web3?.writeContracts?.MockProtocol?.address} />
+                        <CopyToClipboard textToCopy={mockProtocolRibbonEarn} />
                       </div>
                     </div>
                     <div className="px-8 py-2 ">
@@ -106,28 +123,28 @@ function Vault({ web3 }) {
 
             {/* info */}
             <div className="mb-10 lg:grid lg:grid-cols-5 lg:grid-rows-[auto,auto,1fr]">
-              <div className="p-6 lg:mr-4 lg:col-span-3 rounded-2xl shadow">
+              <div className="py-4 px-6 lg:mr-4 lg:col-span-3 rounded-2xl shadow bg-white">
 
                 <Tabs defaultActiveKey="1">
                   <TabPane tab="Holdings" key="1">
                     <div>
                       <div>
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                          <div class="sm:col-span-1 bg-white shadow rounded-xl  p-5">
+                          <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Balance </dt>
-                            <dd class="mt-1 text-2xl  text-gray-900">$15,000</dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">{vaultBalance?.toString()} <span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
-                          <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
+                          <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Total cumulative referral payments</dt>
-                            <dd class="mt-1 text-2xl  text-gray-900">$6,500</dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">{cumulativeReferralBalance.toString()}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
 
 
-                          <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
+                          <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Referral Payment APY</dt>
                             <dd class="mt-1 text-2xl text-gray-900">1.56%</dd>
                           </div>
-                          <div class="sm:col-span-1 bg-white shadow rounded-xl p-5">
+                          <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Boosted APY </dt>
                             <dd class="mt-1 text-2xl text-gray-900">11.26%</dd>
                           </div>
@@ -162,7 +179,7 @@ function Vault({ web3 }) {
                           </div>
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
-                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={web3?.writeContracts?.MockProtocol?.address} /></dd>
+                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={mockProtocolRibbonEarn} /></dd>
                           </div>
 
                         </dl>
@@ -191,19 +208,105 @@ function Vault({ web3 }) {
 
               {/* Actions */}
               <>
-                <div className="p-2 lg:col-span-2 bg-white rounded-2xl shadow">
+                <div className="p-1 lg:col-span-2 bg-white rounded-2xl shadow">
                   <div>
                     <Tabs defaultActiveKey="1" centered size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
+                      <TabPane tab="Simulation" key="0">
+                        <div className="p-5">
+
+                          <Button
+                            onClick={async () => {
+                              await web3?.tx(
+                                web3?.writeContracts[vaultContractName]?.addRevenueShareReferral(web3?.address),
+                              );
+                            }}
+                          >
+                            1. Register your address with referral program
+                          </Button>
+
+                          <Button className="my-10"
+                            onClick={() => {
+                              web3?.tx(
+                                web3?.writeContracts?.MockERC20?.faucet(
+                                  web3?.address,
+                                  ethers.utils.parseUnits("1100", mockERC20Decimals),
+                                ),
+                              );
+                            }}
+                          >
+                            2. Get test USDC
+                          </Button>
+                          <div>
+                            <Button className="mb-10" variant="outline">
+                              3. Goto deposit tab and do deposit
+                            </Button>
+                          </div>
+
+
+                          <VaultDepositToRevenueShareButton web3={web3} vaultContractName={vaultContractName} />                         
+                                  
+                        </div>
+                      </TabPane>
                       <TabPane tab="Deposit" key="1">
+                        {/* <div className="bg-slate-50 m-6 rounded-2xl p-4 text-3xl  border hover:border-slate-300 flex justify-between">
+                          <input
+                            type='text'
+                            className="bg-transparent placeholder:text-[#B2B9D2] focus:none outline-none text-2xl border-0"
+                            placeholder='0.0'
+                            pattern='^[0-9]*[.,]?[0-9]*$'
+                            onChange={e => handleChange(e, 'amount')}
+                          />
+
+                          <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-lg font-medium px-3.5 py-2 text-sm font-semibold shadow">
+                            <img
+                              className="inline-block h-8 w-8 rounded-full"
+                              src="/usdc_logo.jpeg"
+                              alt=""
+                            />
+                            USDC
+                          </div>
+                        </div> */}
+
                         <div className="mt-5">
-                          <VaultDepositForm web3={web3} referralAddress={referralAddress} />
+                          <VaultDepositForm web3={web3} vaultContractName={vaultContractName} referralAddress={referralAddress} />
                         </div>
                       </TabPane>
 
-                      <TabPane tab="Withdraw" key="3">
+                      <TabPane tab="Withdraw" key="2">
                         <div className="mt-5">
-                          <VaultRedeemForm web3={web3} referralAddress={referralAddress} />
+                          <VaultRedeemFormRibbonEarn
+                            web3={web3}
+                            vaultContractName="MockProtocolRibbonEarn"
+                            cardTitle="Redeem from Protocol"
+                          />
                         </div>
+                      </TabPane>
+                      <TabPane tab="Claim Referral" key="3">
+                        {isReferralRegistered ?
+                          <div className="rounded-md bg-red-50 m-10 p-6 align-middle">
+                            <div className="flex">
+                              <div className="flex-shrink-0">
+                                <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+                              </div>
+                              <div className="ml-3">
+                                <h3 className="font-medium text-red-700">Address not registered with Referral program.</h3>
+                              </div>
+                            </div>
+                          </div> :
+                          <div>
+                            <div class="sm:col-span-1 m-8">
+                              <dt class="text-sm font-medium text-gray-500">Available Referral Balance </dt>
+                              <dd class="mt-1 text-2xl  text-gray-900">{pendingReferralBalance.toString()}</dd>
+                            </div>
+                            <div className="mt-5">
+                              <VaultWithdrawFromRevenueShareForm
+                                web3={web3}
+                                vaultContractName={vaultContractName}
+                                defaultWithdrawAmountStr={"90"}
+                              />
+                            </div>
+                          </div>
+                        }
                       </TabPane>
                     </Tabs>
 
@@ -219,14 +322,34 @@ function Vault({ web3 }) {
             <h3 className="mt-14 text-2xl font-semibold text-gray-900">
               Transactions
             </h3>
-            <div className="bg-white ">
-              <div>
-                <VaultDepositEventList web3={web3} mockERC20Decimals={mockERC20Decimals} />
-              </div>
-              <div style={{ marginTop: 16 }}>
-                <VaultRedeemEventList web3={web3} mockERC20Decimals={mockERC20Decimals} />
-              </div>
+            <div>
+              {/* <Tabs defaultActiveKey="1"  size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
+                <TabPane tab="Deposits" key="1">
+                  <div className="mt-5  bg-white">
+                  <VaultDepositEventList
+                  web3={web3}
+                  mockERC20Decimals={mockERC20Decimals}
+                  vaultContractName={vaultContractName}
+                />
+                  </div>
+                </TabPane>
+                <TabPane tab="Withdrawals" key="2">
+                  <div className="mt-5 bg-white">
+                  <VaultRedeemEventList
+                  web3={web3}
+                  mockERC20Decimals={mockERC20Decimals}
+                  vaultContractName={vaultContractName}
+                />
+                  </div>
+                </TabPane>
+              </Tabs> */}
+              <VaultEventsList
+                web3={web3}
+                mockERC20Decimals={mockERC20Decimals}
+                vaultContractName={vaultContractName}
+              />
             </div>
+
           </Container>
         </div>
       </>

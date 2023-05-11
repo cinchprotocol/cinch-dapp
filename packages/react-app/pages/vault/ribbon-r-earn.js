@@ -30,6 +30,8 @@ import VaultRedeemEventList from "/components/Web3/VaultRedeemEventList";
 import VaultEventsList from "/components/Web3/VaultEventsList";
 import VaultRedeemFormRibbonEarn from "/components/Web3/Ribbon/VaultRedeemFormRibbonEarn";
 import VaultWithdrawFromRevenueShareForm from "/components/Web3/VaultWithdrawFromRevenueShareForm";
+import VaultAddRevenueShareReferralForm from "/components/Web3/VaultAddRevenueShareReferralForm";
+import VaultDepositToRevenueShareButton from "/components/Web3/VaultDepositToRevenueShareButton";
 import demo01 from "/images/demo/cinch_demo_01.png";
 import { XCircleIcon } from '@heroicons/react/outline';
 
@@ -42,11 +44,11 @@ function Vault({ web3 }) {
   const vaultContractName = "RevenueShareVaultRibbonEarn";
   const protocolContractName = "MockProtocolRibbonEarn";
   const pollTime = 500;
-  
+
   var vaultBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, mockERC20Decimals);
   var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
-  var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, referralAddress], pollTime) ?? 0, mockERC20Decimals);
-  var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [referralAddress].pollTime)
+  var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, mockERC20Decimals);
+  var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address].pollTime)
   console.log('isReferralRegistered: ' + isReferralRegistered);
 
   const { TabPane } = Tabs;
@@ -67,7 +69,7 @@ function Vault({ web3 }) {
                       <div class="flex-shrink-0 ">
 
                         <img
-                          className="inline-block h-20 w-20 rounded-full"
+                          className="inline-block h-16 w-16 rounded-full"
                           src="/ribbon_logo_1.png"
                           alt=""
                         />
@@ -177,7 +179,7 @@ function Vault({ web3 }) {
                           </div>
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
-                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={web3?.writeContracts?.MockProtocol?.address} /></dd>
+                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={mockProtocolRibbonEarn} /></dd>
                           </div>
 
                         </dl>
@@ -209,6 +211,42 @@ function Vault({ web3 }) {
                 <div className="p-1 lg:col-span-2 bg-white rounded-2xl shadow">
                   <div>
                     <Tabs defaultActiveKey="1" centered size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
+                      <TabPane tab="Simulation" key="0">
+                        <div className="p-5">
+
+                          <Button
+                            onClick={async () => {
+                              await web3?.tx(
+                                web3?.writeContracts[vaultContractName]?.addRevenueShareReferral(web3?.address),
+                              );
+                            }}
+                          >
+                            1. Register your address with referral program
+                          </Button>
+
+                          <Button className="my-10"
+                            onClick={() => {
+                              web3?.tx(
+                                web3?.writeContracts?.MockERC20?.faucet(
+                                  web3?.address,
+                                  ethers.utils.parseUnits("1100", mockERC20Decimals),
+                                ),
+                              );
+                            }}
+                          >
+                            2. Get test USDC
+                          </Button>
+                          <div>
+                            <Button className="mb-10" variant="outline">
+                              3. Goto deposit tab and do deposit
+                            </Button>
+                          </div>
+
+
+                          <VaultDepositToRevenueShareButton web3={web3} vaultContractName={vaultContractName} />                         
+                                  
+                        </div>
+                      </TabPane>
                       <TabPane tab="Deposit" key="1">
                         {/* <div className="bg-slate-50 m-6 rounded-2xl p-4 text-3xl  border hover:border-slate-300 flex justify-between">
                           <input
@@ -219,7 +257,7 @@ function Vault({ web3 }) {
                             onChange={e => handleChange(e, 'amount')}
                           />
 
-                          <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-lg font-medium px-3.5 py-2 text-sm font-semibold shadow-sm">
+                          <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-lg font-medium px-3.5 py-2 text-sm font-semibold shadow">
                             <img
                               className="inline-block h-8 w-8 rounded-full"
                               src="/usdc_logo.jpeg"
@@ -238,7 +276,7 @@ function Vault({ web3 }) {
                         <div className="mt-5">
                           <VaultRedeemFormRibbonEarn
                             web3={web3}
-                            vaultContractName={"MockProtocolRibbonEarn"}
+                            vaultContractName="MockProtocolRibbonEarn"
                             cardTitle="Redeem from Protocol"
                           />
                         </div>

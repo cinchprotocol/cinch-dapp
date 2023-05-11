@@ -33,11 +33,9 @@ const VaultAddRevenueShareReferralForm = ({
   return (
     <Row gutter={16}>
       <Col span={24}>
-        <Card title={cardTitle}>
+        <Card>
           <Form
             name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
             style={{ maxWidth: 600 }}
             initialValues={{ referralAddress: defaultReferralAddress }}
             onFinish={onFinish}
@@ -52,7 +50,7 @@ const VaultAddRevenueShareReferralForm = ({
               <Input disabled={true} />
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Form.Item>
               <Space>
                 <Button type="primary" htmlType="submit">
                   0. Add Referral

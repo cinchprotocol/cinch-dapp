@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Web3Consumer } from "/helpers/Web3Context";
+import { formatNumber } from "/helpers/utils";
 import { useRouter } from "next/router";
 import _ from "lodash";
 import { Tabs } from "antd";
@@ -21,22 +22,17 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 
 import CopyToClipboard from "/components/CopyToClipboardButton";
-
-import Web3Statistic from "/components/Web3/Statistic";
 import VaultDepositForm from "/components/Web3/VaultDepositForm";
 import VaultRedeemForm from "/components/Web3/VaultRedeemForm";
-import VaultDepositEventList from "/components/Web3/VaultDepositEventList";
-import VaultRedeemEventList from "/components/Web3/VaultRedeemEventList";
 import VaultEventsList from "/components/Web3/VaultEventsList";
 import VaultRedeemFormRibbonEarn from "/components/Web3/Ribbon/VaultRedeemFormRibbonEarn";
 import VaultWithdrawFromRevenueShareForm from "/components/Web3/VaultWithdrawFromRevenueShareForm";
 import VaultAddRevenueShareReferralForm from "/components/Web3/VaultAddRevenueShareReferralForm";
 import VaultDepositToRevenueShareButton from "/components/Web3/VaultDepositToRevenueShareButton";
-import demo01 from "/images/demo/cinch_demo_01.png";
 import { XCircleIcon } from '@heroicons/react/outline';
 
 function Vault({ web3 }) {
-  //console.log("web3", web3);
+
   const mockERC20Decimals = 6;
   const referralAddress = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
   const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
@@ -49,7 +45,9 @@ function Vault({ web3 }) {
   var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, mockERC20Decimals);
   var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address].pollTime)
-  console.log('isReferralRegistered: ' + isReferralRegistered);
+  var ribbonTVL = ethers.utils.formatUnits(2269745893477 ?? 0, mockERC20Decimals); //TODO read from ribbon contract instead
+  // var ribbonTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, mockERC20Decimals);
+
 
   const { TabPane } = Tabs;
   return (
@@ -94,8 +92,8 @@ function Vault({ web3 }) {
                       <dt className="text-sm font-normal text-gray-900">TVL</dt>
                       <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div className="flex items-baseline text-xl font-semibold text-gray-600">
-                          $2.25 M
-
+                          {formatNumber(ribbonTVL, 2)}
+                          <span className="ml-2 text-sm font-medium text-gray-500">USDC</span>
                         </div>
                       </dd>
                     </div>
@@ -132,11 +130,11 @@ function Vault({ web3 }) {
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Balance </dt>
-                            <dd class="mt-1 text-2xl  text-gray-900">{vaultBalance?.toString()} <span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">{formatNumber(vaultBalance)}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Total cumulative referral payments</dt>
-                            <dd class="mt-1 text-2xl  text-gray-900">{cumulativeReferralBalance.toString()}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">{formatNumber(cumulativeReferralBalance)}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
 
 
@@ -243,8 +241,8 @@ function Vault({ web3 }) {
                           </div>
 
 
-                          <VaultDepositToRevenueShareButton web3={web3} vaultContractName={vaultContractName} />                         
-                                  
+                          <VaultDepositToRevenueShareButton web3={web3} vaultContractName={vaultContractName} />
+
                         </div>
                       </TabPane>
                       <TabPane tab="Deposit" key="1">

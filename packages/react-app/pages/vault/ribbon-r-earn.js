@@ -134,11 +134,12 @@ function Vault({ web3 }) {
     }
   }, [graphData]);
 
-  useEffect(() => {
+ useEffect(() => {
     const web3Address = web3?.address?.toString();
     console.log('WEB3 ADDRESS:', web3Address);
     setAddress(web3Address || '');
   }, [web3]);
+
 
   function calculateNetBalance() {
     let balance = 0;

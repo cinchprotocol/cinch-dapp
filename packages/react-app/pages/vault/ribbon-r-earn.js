@@ -135,7 +135,7 @@ function Vault({ web3 }) {
   }, [graphData]);
 
   async function fetchData() {
-    const response = await client.query(getGraphQuery(web3?.address)).toPromise();
+    const response = await client.query(getGraphQuery(web3?.address?.toString())).toPromise();
     console.log('GRAPH:', response.data)
     setGraphData(response.data);
   }

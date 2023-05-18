@@ -35,56 +35,103 @@ import { createClient } from 'urql'
 
 const APIURL = "https://api.studio.thegraph.com/query/47041/cinch_goerli/v0.0.5"
 
-const query = `
-  query {
-    withdraws(orderDirection: desc) {
-      assets
-      owner
-      receiver
-      sender
-      shares
-      blockTimestamp
-      id
+function getGraphQuery(address) {
+  const query = `
+    query {
+      withdraws(
+        orderDirection: desc
+        where: {receiver: "${address}"}
+      ) {
+        assets
+        owner
+        receiver
+        sender
+        shares
+        blockTimestamp
+        id
+      }
+      depositWithReferrals(
+        where: {caller: "${address}"}
+        orderDirection: desc
+      ) {
+        assets
+        caller
+        receiver
+        referral
+        shares
+        blockTimestamp
+        transactionHash
+        id
+      }
+      redeemWithReferrals(where: {caller: "${address}"}, orderDirection: desc) {
+        assets
+        blockTimestamp
+        caller
+        id
+        receiver
+        referral
+        shares
+        sharesOwner
+      }   
+      revenueShareWithdrawns(where: {receiver: "${address}"}, orderDirection: desc) {
+        amount
+        asset
+        blockTimestamp
+        receiver
+        referral
+      }
     }
-    depositWithReferrals(
-      where: {caller: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}
-      orderDirection: desc
-    ) {
-      assets
-      caller
-      receiver
-      referral
-      shares
-      blockTimestamp
-      transactionHash
-      id
-    }
-    redeemWithReferrals(where: {caller: ""}, orderDirection: desc) {
-      assets
-      blockTimestamp
-      caller
-      id
-      receiver
-      referral
-      shares
-      sharesOwner
-    }
-    revenueShareDepositeds {
-      amount
-      asset
-      assetsFrom
-      blockTimestamp
-      id
-    }
-    revenueShareWithdrawns(where: {receiver: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}, orderDirection: desc) {
-      amount
-      asset
-      blockTimestamp
-      receiver
-      referral
-    }
-  }
-`
+  `;
+
+  return query;
+}
+
+// const query = `
+//   query {
+//     withdraws(
+//       orderDirection: desc
+//       where: {receiver: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}
+//     ) {
+//       assets
+//       owner
+//       receiver
+//       sender
+//       shares
+//       blockTimestamp
+//       id
+//     }
+//     depositWithReferrals(
+//       where: {caller: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}
+//       orderDirection: desc
+//     ) {
+//       assets
+//       caller
+//       receiver
+//       referral
+//       shares
+//       blockTimestamp
+//       transactionHash
+//       id
+//     }
+//     redeemWithReferrals(where: {caller: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}, orderDirection: desc) {
+//       assets
+//       blockTimestamp
+//       caller
+//       id
+//       receiver
+//       referral
+//       shares
+//       sharesOwner
+//     }   
+//     revenueShareWithdrawns(where: {receiver: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}, orderDirection: desc) {
+//       amount
+//       asset
+//       blockTimestamp
+//       receiver
+//       referral
+//     }
+//   }
+// `
 
 const client = createClient({
   url: APIURL
@@ -135,7 +182,7 @@ function Vault({ web3 }) {
   }, [graphData]);
 
   async function fetchData() {
-    const response = await client.query(query).toPromise();
+    const response = await client.query(getGraphQuery(web3?.address)).toPromise();
     console.log('GRAPH:', response.data)
     setGraphData(response.data);
   }

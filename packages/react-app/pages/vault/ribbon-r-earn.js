@@ -30,6 +30,65 @@ import VaultWithdrawFromRevenueShareForm from "/components/Web3/VaultWithdrawFro
 import VaultAddRevenueShareReferralForm from "/components/Web3/VaultAddRevenueShareReferralForm";
 import VaultDepositToRevenueShareButton from "/components/Web3/VaultDepositToRevenueShareButton";
 import { XCircleIcon } from '@heroicons/react/outline';
+import { createClient } from 'urql'
+
+
+const APIURL = "https://api.studio.thegraph.com/query/47041/cinch_goerli/v0.0.5"
+
+const query = `
+  query {
+    withdraws(orderDirection: desc) {
+      assets
+      owner
+      receiver
+      sender
+      shares
+      blockTimestamp
+      id
+    }
+    depositWithReferrals(
+      where: {caller: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}
+      orderDirection: desc
+    ) {
+      assets
+      caller
+      receiver
+      referral
+      shares
+      blockTimestamp
+      transactionHash
+      id
+    }
+    redeemWithReferrals(where: {caller: ""}, orderDirection: desc) {
+      assets
+      blockTimestamp
+      caller
+      id
+      receiver
+      referral
+      shares
+      sharesOwner
+    }
+    revenueShareDepositeds {
+      amount
+      asset
+      assetsFrom
+      blockTimestamp
+      id
+    }
+    revenueShareWithdrawns(where: {receiver: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}, orderDirection: desc) {
+      amount
+      asset
+      blockTimestamp
+      receiver
+      referral
+    }
+  }
+`
+
+const client = createClient({
+  url: APIURL
+})
 
 function Vault({ web3 }) {
 
@@ -42,7 +101,7 @@ function Vault({ web3 }) {
   const pollTime = 500;
 
   var vaultBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, mockERC20Decimals);
-  var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
+  //var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, mockERC20Decimals);
   var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address].pollTime)
   var ribbonTVL = ethers.utils.formatUnits(2269745893477 ?? 0, mockERC20Decimals); //TODO read from ribbon contract instead
@@ -50,6 +109,53 @@ function Vault({ web3 }) {
 
 
   const { TabPane } = Tabs;
+
+  const [graphData, setGraphData] = useState([]);
+  const [netBalance, setNetBalance] = useState(0);
+  const [cumulativeReferralBalance, setCumulativeReferralBalance] = useState(0);
+  useEffect(() => {
+    // fetchData()
+    const pollingInterval = 5000; // 5 seconds
+
+    // Start polling
+    const intervalId = setInterval(fetchData, pollingInterval);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [])
+
+  async function fetchData() {
+    const response = await client.query(query).toPromise();
+    console.log('GRAPH:', response.data)
+    setGraphData(response.data);
+    calculateNetBalance();
+    calculateCumulativeReferralWithdrwals();  
+  }
+
+  function calculateNetBalance() {
+    let balance = 0;
+    graphData.depositWithReferrals?.forEach((deposit) => {
+      balance += parseInt(ethers.utils.formatUnits(deposit.assets ?? 0, 6));
+    });
+
+    graphData.withdraws?.forEach((withdrawal) => {
+      balance -= parseInt(ethers.utils.formatUnits(withdrawal.assets ?? 0, 6));
+    });
+
+    console.log('BALANCE:', balance);
+    setNetBalance(balance);
+  }
+
+  function calculateCumulativeReferralWithdrwals() {
+    let balance = 0;
+    graphData.revenueShareWithdrawns?.forEach((withdrawal) => {
+      balance += parseInt(ethers.utils.formatUnits(withdrawal.amount ?? 0, 6));
+    });
+
+     console.log('REFERRAL BALANCE:', balance);
+     setCumulativeReferralBalance(balance);
+  }
+
   return (
     <div className="bg-slate-50">
       <>
@@ -126,11 +232,12 @@ function Vault({ web3 }) {
                 <Tabs defaultActiveKey="1">
                   <TabPane tab="Holdings" key="1">
                     <div>
+
                       <div>
                         <dl class="pt-6 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Balance </dt>
-                            <dd class="mt-1 text-2xl  text-gray-900">{formatNumber(vaultBalance)}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
+                            <dd class="mt-1 text-2xl  text-gray-900">{formatNumber(netBalance)}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Total cumulative referral payments</dt>
@@ -342,9 +449,7 @@ function Vault({ web3 }) {
                 </TabPane>
               </Tabs> */}
               <VaultEventsList
-                web3={web3}
-                mockERC20Decimals={mockERC20Decimals}
-                vaultContractName={vaultContractName}
+                graphData={graphData}
               />
             </div>
 

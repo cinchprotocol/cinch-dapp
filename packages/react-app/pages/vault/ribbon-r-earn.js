@@ -86,53 +86,6 @@ function getGraphQuery(address) {
   return query;
 }
 
-// const query = `
-//   query {
-//     withdraws(
-//       orderDirection: desc
-//       where: {receiver: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}
-//     ) {
-//       assets
-//       owner
-//       receiver
-//       sender
-//       shares
-//       blockTimestamp
-//       id
-//     }
-//     depositWithReferrals(
-//       where: {caller: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}
-//       orderDirection: desc
-//     ) {
-//       assets
-//       caller
-//       receiver
-//       referral
-//       shares
-//       blockTimestamp
-//       transactionHash
-//       id
-//     }
-//     redeemWithReferrals(where: {caller: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}, orderDirection: desc) {
-//       assets
-//       blockTimestamp
-//       caller
-//       id
-//       receiver
-//       referral
-//       shares
-//       sharesOwner
-//     }   
-//     revenueShareWithdrawns(where: {receiver: "0x7352724d097517b11ccb2fed15fa4c557a42192f"}, orderDirection: desc) {
-//       amount
-//       asset
-//       blockTimestamp
-//       receiver
-//       referral
-//     }
-//   }
-// `
-
 const client = createClient({
   url: APIURL
 })

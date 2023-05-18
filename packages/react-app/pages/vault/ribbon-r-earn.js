@@ -100,32 +100,32 @@ function Vault({ web3 }) {
   const protocolContractName = "MockProtocolRibbonEarn";
   const pollTime = 500;
 
-  var vaultBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, mockERC20Decimals);
+  //var vaultBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, mockERC20Decimals);
   //var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, mockERC20Decimals);
-  var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address].pollTime)
+  var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
   var ribbonTVL = ethers.utils.formatUnits(2269745893477 ?? 0, mockERC20Decimals); //TODO read from ribbon contract instead
   // var ribbonTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, mockERC20Decimals);
 
 
   const { TabPane } = Tabs;
 
-
   const [netBalance, setNetBalance] = useState(0);
   const [cumulativeReferralBalance, setCumulativeReferralBalance] = useState(0);
   const [graphData, setGraphData] = useState(null); // Initialize graphData as null
+  const [address, setAddress] = useState('');
 
   useEffect(() => {
-    const pollingInterval = 5000; // 5 seconds
+    const fetchData = async () => {
+      if (address === '') return; // Skip fetching if the address is empty
 
-    const intervalId = setInterval(fetchData, pollingInterval);
-
-    // Clean up interval and reset data on component unmount
-    return () => {
-      clearInterval(intervalId);
-      setGraphData(null);
+      const response = await client.query(getGraphQuery(address)).toPromise();
+      console.log('GRAPH:', response.data);
+      setGraphData(response.data);
     };
-  }, []);
+
+    fetchData();
+  }, [address]);
 
   useEffect(() => {
     if (graphData) {
@@ -134,11 +134,12 @@ function Vault({ web3 }) {
     }
   }, [graphData]);
 
-  async function fetchData() {
-    const response = await client.query(getGraphQuery(web3?.address?.toString())).toPromise();
-    console.log('GRAPH:', response.data)
-    setGraphData(response.data);
-  }
+ useEffect(() => {
+    const web3Address = web3?.address?.toString();
+    console.log('WEB3 ADDRESS:', web3Address);
+    setAddress(web3Address || '');
+  }, [web3]);
+
 
   function calculateNetBalance() {
     let balance = 0;
@@ -154,7 +155,6 @@ function Vault({ web3 }) {
     setNetBalance(balance);
   }
 
-
   function calculateCumulativeReferralWithdrwals() {
     let balance = 0;
     graphData.revenueShareWithdrawns?.forEach((withdrawal) => {
@@ -164,6 +164,8 @@ function Vault({ web3 }) {
     console.log('REFERRAL BALANCE:', balance);
     setCumulativeReferralBalance(balance);
   }
+
+
 
   return (
     <div className="bg-slate-50">

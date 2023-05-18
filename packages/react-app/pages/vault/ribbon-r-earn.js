@@ -110,26 +110,34 @@ function Vault({ web3 }) {
 
   const { TabPane } = Tabs;
 
-  const [graphData, setGraphData] = useState([]);
+
   const [netBalance, setNetBalance] = useState(0);
   const [cumulativeReferralBalance, setCumulativeReferralBalance] = useState(0);
+  const [graphData, setGraphData] = useState(null); // Initialize graphData as null
+
   useEffect(() => {
-    // fetchData()
     const pollingInterval = 5000; // 5 seconds
 
-    // Start polling
     const intervalId = setInterval(fetchData, pollingInterval);
+
+    // Clean up interval and reset data on component unmount
     return () => {
       clearInterval(intervalId);
+      setGraphData(null);
     };
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (graphData) {
+      calculateNetBalance();
+      calculateCumulativeReferralWithdrwals();
+    }
+  }, [graphData]);
 
   async function fetchData() {
     const response = await client.query(query).toPromise();
     console.log('GRAPH:', response.data)
     setGraphData(response.data);
-    calculateNetBalance();
-    calculateCumulativeReferralWithdrwals();  
   }
 
   function calculateNetBalance() {
@@ -146,14 +154,15 @@ function Vault({ web3 }) {
     setNetBalance(balance);
   }
 
+
   function calculateCumulativeReferralWithdrwals() {
     let balance = 0;
     graphData.revenueShareWithdrawns?.forEach((withdrawal) => {
       balance += parseInt(ethers.utils.formatUnits(withdrawal.amount ?? 0, 6));
     });
 
-     console.log('REFERRAL BALANCE:', balance);
-     setCumulativeReferralBalance(balance);
+    console.log('REFERRAL BALANCE:', balance);
+    setCumulativeReferralBalance(balance);
   }
 
   return (

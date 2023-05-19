@@ -24,7 +24,7 @@ const VaultEventsList = ({ graphData }) => {
     return { ...obj, Type: 'Referral Withdrawal', assets: obj.amount };
   });
 
-  const vaultEvents = vaultDepositEvents?.concat(vaultWithdrawEvents).concat(vaultRevenueShareWithdrawEvents);
+  const vaultEvents = vaultDepositEvents?.concat(vaultWithdrawEvents).concat(vaultRevenueShareWithdrawEvents).sort((a, b) => b.blockTimestamp - a.blockTimestamp);;
 
   return (
     <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8 rounded-2xl shadow bg-white ring-1 ring-gray-300 mb-20">

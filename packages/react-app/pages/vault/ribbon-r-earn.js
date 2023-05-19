@@ -103,7 +103,7 @@ function Vault({ web3 }) {
   //var vaultBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, mockERC20Decimals);
   //var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, mockERC20Decimals);
-  var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
+  // var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
   var ribbonTVL = ethers.utils.formatUnits(2269745893477 ?? 0, mockERC20Decimals); //TODO read from ribbon contract instead
   // var ribbonTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, mockERC20Decimals);
 
@@ -354,7 +354,7 @@ function Vault({ web3 }) {
                           </Button>
                           <div>
                             <Button className="mb-10" variant="outline">
-                              3. Goto deposit tab and do deposit
+                              3. Go to deposit tab and do deposit
                             </Button>
                           </div>
 
@@ -398,30 +398,32 @@ function Vault({ web3 }) {
                         </div>
                       </TabPane>
                       <TabPane tab="Claim Referral" key="3">
-                        {isReferralRegistered ?
-                          <div className="rounded-md bg-red-50 m-10 p-6 align-middle">
-                            <div className="flex">
-                              <div className="flex-shrink-0">
-                                <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+                        {
+
+                          !useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', address, pollTime) ?
+                            <div className="rounded-md bg-red-50 m-10 p-6 align-middle">
+                              <div className="flex">
+                                <div className="flex-shrink-0">
+                                  <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+                                </div>
+                                <div className="ml-3">
+                                  <h3 className="font-medium text-red-700">Address not registered with Referral program.</h3>
+                                </div>
                               </div>
-                              <div className="ml-3">
-                                <h3 className="font-medium text-red-700">Address not registered with Referral program.</h3>
+                            </div> :
+                            <div>
+                              <div class="sm:col-span-1 m-8">
+                                <dt class="text-sm font-medium text-gray-500">Available Referral Balance </dt>
+                                <dd class="mt-1 text-2xl  text-gray-900">{pendingReferralBalance.toString()}</dd>
+                              </div>
+                              <div className="mt-5">
+                                <VaultWithdrawFromRevenueShareForm
+                                  web3={web3}
+                                  vaultContractName={vaultContractName}
+                                  defaultWithdrawAmountStr={"90"}
+                                />
                               </div>
                             </div>
-                          </div> :
-                          <div>
-                            <div class="sm:col-span-1 m-8">
-                              <dt class="text-sm font-medium text-gray-500">Available Referral Balance </dt>
-                              <dd class="mt-1 text-2xl  text-gray-900">{pendingReferralBalance.toString()}</dd>
-                            </div>
-                            <div className="mt-5">
-                              <VaultWithdrawFromRevenueShareForm
-                                web3={web3}
-                                vaultContractName={vaultContractName}
-                                defaultWithdrawAmountStr={"90"}
-                              />
-                            </div>
-                          </div>
                         }
                       </TabPane>
                     </Tabs>

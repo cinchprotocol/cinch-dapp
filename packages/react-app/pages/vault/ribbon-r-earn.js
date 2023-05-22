@@ -103,7 +103,7 @@ function Vault({ web3 }) {
   //var vaultBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, mockERC20Decimals);
   //var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, mockERC20Decimals);
-  // var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
+  var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
   var ribbonTVL = ethers.utils.formatUnits(2269745893477 ?? 0, mockERC20Decimals); //TODO read from ribbon contract instead
   // var ribbonTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, mockERC20Decimals);
 
@@ -400,7 +400,7 @@ function Vault({ web3 }) {
                       <TabPane tab="Claim Referral" key="3">
                         {
 
-                          !useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', address, pollTime) ?
+                          !isReferralRegistered ?
                             <div className="rounded-md bg-red-50 m-10 p-6 align-middle">
                               <div className="flex">
                                 <div className="flex-shrink-0">

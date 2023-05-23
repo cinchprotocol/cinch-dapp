@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Web3Consumer } from "/helpers/Web3Context";
 import { formatNumber } from "/helpers/utils";
-import { useRouter } from "next/router";
 import _ from "lodash";
 import { Tabs } from "antd";
 const { ethers } = require("ethers");
@@ -14,8 +13,6 @@ import {
   useOnBlock,
   useUserProviderAndSigner,
 } from "eth-hooks";
-import { useEventListener } from "eth-hooks/events/useEventListener";
-
 import { Container } from "/components/Container";
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
@@ -93,18 +90,14 @@ const client = createClient({
 function Vault({ web3 }) {
 
   const mockERC20Decimals = 6;
-  const referralAddress = "0xdfFFAC7E0418A115CFe41d80149C620bD0749628";
-  const protocolPayee = "0x683c5FEb93Dfe9f940fF966a264CBD0b59233cd2";
-  const mockProtocolRibbonEarn = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
+  const protocolContractAddress = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
   const vaultContractName = "RevenueShareVaultRibbonEarn";
   const protocolContractName = "MockProtocolRibbonEarn";
   const pollTime = 500;
 
-  //var vaultBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, mockERC20Decimals);
-  //var cumulativeReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalRevenueShareProcessedByAsset', [web3?.writeContracts?.MockERC20?.address], pollTime) ?? 0, mockERC20Decimals);
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, mockERC20Decimals);
   var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
-  var ribbonTVL = ethers.utils.formatUnits(2269745893477 ?? 0, mockERC20Decimals); //TODO read from ribbon contract instead
+  var ribbonTVL = ethers.utils.formatUnits(2269745893477 ?? 0, mockERC20Decimals); //TODO read from ribbon contract instead below
   // var ribbonTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, mockERC20Decimals);
 
 
@@ -134,7 +127,7 @@ function Vault({ web3 }) {
     }
   }, [graphData]);
 
- useEffect(() => {
+  useEffect(() => {
     const web3Address = web3?.address?.toString();
     console.log('WEB3 ADDRESS:', web3Address);
     setAddress(web3Address || '');
@@ -193,7 +186,7 @@ function Vault({ web3 }) {
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                           Ribbon R-EARN
                         </h1>
-                        <CopyToClipboard textToCopy={mockProtocolRibbonEarn} />
+                        <CopyToClipboard textToCopy={protocolContractAddress} />
                       </div>
                     </div>
                     <div className="px-8 py-2 ">
@@ -295,7 +288,7 @@ function Vault({ web3 }) {
                           </div>
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
-                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={mockProtocolRibbonEarn} /></dd>
+                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={protocolContractAddress} /></dd>
                           </div>
 
                         </dl>
@@ -384,7 +377,7 @@ function Vault({ web3 }) {
                         </div> */}
 
                         <div className="mt-5">
-                          <VaultDepositForm web3={web3} vaultContractName={vaultContractName} referralAddress={referralAddress} />
+                          <VaultDepositForm web3={web3} vaultContractName={vaultContractName} referralAddress={address} />
                         </div>
                       </TabPane>
 

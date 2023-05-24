@@ -11,8 +11,7 @@ const VaultDepositForm = ({
   assetDecimals = 6,
   referralAddress,
   defaultDepositAmountStr = "1000",
-  vaultContractName = "Vault",
-  cardTitle = "Deposit into Idle Clearpool",
+  vaultContractName = "Vault"
 }) => {
   const [formValues, setFormValues] = useState(null);
   const [referralCode, setReferralCode] = useState(referralAddress);
@@ -93,7 +92,7 @@ const VaultDepositForm = ({
 
 
       <Form.Item label="Referral Code" name="referralCode"  >
-        <Input onChange={onReferralChange}/>
+        <Input onChange={onReferralChange} value={referralCode}/>
       </Form.Item>
 
       <Form.Item wrapperCol={{

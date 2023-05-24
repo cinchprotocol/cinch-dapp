@@ -30,56 +30,64 @@ function Vault({ web3 }) {
             name: 'Ribbon R-EARN',
             vaultUrl: '/vault/ribbon-r-earn',
             metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: ' TVL', value: '$2.25M' }],
-            token: 'USDC'
+            token: 'USDC',
+            image: '/ribbon_logo_1.png'
         },
         {
             id: 2,
             name: 'Metrix-fund-1',
             vaultUrl: '/vault/metrix-fund-I',
             metrics: [{ name: '3M Returns', value: '9.64%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$51.9K' }],
-            token: 'USDC'
+            token: 'USDC',
+            image: '/metrixIcon.png'
         },
         {
             id: 3,
             name: 'Ribbon stETH',
             vaultUrl: '/vault/ribbon-stETH-earn',
             metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: 'TVL', value: '2.28K', unit: 'stETH' }],
-            token: 'stETH'
+            token: 'stETH',
+            image: '/ribbon_logo_1.png'
         },
         {
             id: 4,
             name: 'Toros USD Delta Neutral',
             vaultUrl: '/vault/dHedge-toros',
             metrics: [{ name: '1Y Returns', value: '3.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$109.3K' }],
-            token: 'USDC'
+            token: 'USDC',
+            image: '/toros.png'
         },
         {
             id: 5,
             name: 'Idle USDC Clearpool',
             vaultUrl: '/vault/dHedge-toros',
             metrics: [{ name: '1Y Returns', value: '3.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$109.3K' }],
-            token: 'USDC'
+            token: 'USDC',
+            image: '/idle_logo_01.png'
         },
         {
             id: 6,
             name: 'BENQI Staking',
             vaultUrl: '/vault/dHedge-toros',
             metrics: [{ name: '1Y Returns', value: '3.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$109.3K' }],
-            token: 'USDC'
+            token: 'USDC',
+            image: '/BENQI_logo.webp'
         },
         {
             id: 7,
             name: 'Pendle ETH Pool',
             vaultUrl: '/vault/dHedge-toros',
             metrics: [{ name: 'Boosted APY', value: '18.2%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$5.01 M' }],
-            token: 'USDC'
+            token: 'USDC',
+            image: '/Pendle_logo.jpeg'
         },
         {
             id: 8,
             name: 'Sommelier',
             vaultUrl: '/vault/dHedge-toros',
             metrics: [{ name: 'Boosted APY', value: '5%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$7.98M' }],
-            token: 'USDC'
+            token: 'USDC',
+            image: '/Sommelier_logo.png'
         },
     ]
 
@@ -119,8 +127,13 @@ function Vault({ web3 }) {
                                                 alt={client.name}
                                                 className="h-20 w-20 flex-none rounded-full bg-white object-cover ring-1 ring-gray-900/10"
                                             /> */}
-                                                <div className="h-20 w-20">
-                                                    {client.token == "USDC" ? usdcSvg : stETHSvg}
+                                                <div>
+                                                    {/* {client.token == "USDC" ? usdcSvg : stETHSvg} */}
+                                                    <img
+                                                        className="inline-block h-16 w-16 rounded-full bg-gray-500"
+                                                        src={client?.image}
+                                                        alt=""
+                                                    />
                                                 </div>
                                                 <div className="text-3xl font-medium leading-6 text-gray-900">{client.name}</div>
 

@@ -175,13 +175,13 @@ function Vault({ web3 }) {
 
                     <div class="flex items-center space-x-5 pr-8">
                       <div class="flex-shrink-0">
-                        
+
                         <img
                           className="inline-block h-16 w-16 rounded-full bg-black"
-                          src="/torros.png"                          
+                          src="/toros.png"
                           alt=""
                         />
-                        
+
                       </div>
                       <div>
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">

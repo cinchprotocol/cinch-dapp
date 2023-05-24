@@ -174,17 +174,18 @@ function Vault({ web3 }) {
                   <dl className="mt-5 flex justify-start divide-y divide-gray-200 overflow-hidden rounded-lg  md:divide-x md:divide-y-0 ">
 
                     <div class="flex items-center space-x-5 pr-8">
-                      <div class="flex-shrink-0 ">
-
+                      <div class="flex-shrink-0">
+                        
                         <img
-                          className="inline-block h-16 w-16 rounded-full"
-                          src="/ribbon_logo_1.png"
+                          className="inline-block h-16 w-16 rounded-full bg-black"
+                          src="/torros.png"                          
                           alt=""
                         />
+                        
                       </div>
                       <div>
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                          Ribbon R-EARN
+                          dHedge-Toros USD Delta Neutral Yield
                         </h1>
                         <CopyToClipboard textToCopy={protocolContractAddress} />
                       </div>
@@ -298,7 +299,7 @@ function Vault({ web3 }) {
                   <TabPane tab="About" key="3">
                     <div className="">
                       <h3 class="text-lg font-medium leading-6 text-gray-600">Description</h3>
-                      <p class="mt-1 max-w-2xl text-sm text-gray-500"><a href="https://app.ribbon.finance/earn/R-EARN"> The R-Earn vault </a> employs a fully funded twin win strategy through which depositors can capitalise on the intra-week ETH movements in either direction while also ensuring their capital is protected. The vault earns interest by lending capital to our counterparties and uses part of it to generate a base APY and the remaining funding to purchase weekly at-the-money knock-out barrier options. <a href="https://docs.ribbon.finance/ribbon-earn/ribbon-earn-usdc" target="_blank">Learn more.</a></p>
+                      <p class="mt-1 max-w-2xl text-sm text-gray-500"><a href="https://toros.finance/pool/0xc4c6333afdd510066786e0d257eb91095fd729e3"> The Toros USD Delta Neutral Yield </a> vault earns yield on crypto assets while hedging against to be market neutral, making interest on USD while uninfluenced by crypto price volatility. <a href="https://docs.toros.finance/dynamic-vaults/market-neutral-yield" target="_blank">Learn more.</a></p>
                       <div className="flex">
                         <span className="text-green-600" >
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

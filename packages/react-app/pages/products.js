@@ -24,6 +24,20 @@ function Vault({ web3 }) {
         <path d="M787.5 1595.83c-325-116.66-491.67-479.16-370.83-800 62.5-175 200-308.33 370.83-370.83 16.67-8.33 25-20.83 25-41.67V325c0-16.67-8.33-29.17-25-33.33-4.17 0-12.5 0-16.67 4.16-395.83 125-612.5 545.84-487.5 941.67 75 233.33 254.17 412.5 487.5 487.5 16.67 8.33 33.34 0 37.5-16.67 4.17-4.16 4.17-8.33 4.17-16.66v-58.34c0-12.5-12.5-29.16-25-37.5zM1229.17 295.83c-16.67-8.33-33.34 0-37.5 16.67-4.17 4.17-4.17 8.33-4.17 16.67v58.33c0 16.67 12.5 33.33 25 41.67 325 116.66 491.67 479.16 370.83 800-62.5 175-200 308.33-370.83 370.83-16.67 8.33-25 20.83-25 41.67V1700c0 16.67 8.33 29.17 25 33.33 4.17 0 12.5 0 16.67-4.16 395.83-125 612.5-545.84 487.5-941.67-75-237.5-258.34-416.67-487.5-491.67z" fill="#fff" />
     </svg></span>
 
+    const badgeComingSoon = <span className="inline-flex items-center gap-x-1.5 rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
+        <svg className="h-1.5 w-1.5 fill-yellow-500" viewBox="0 0 6 6" aria-hidden="true">
+            <circle cx={3} cy={3} r={3} />
+        </svg>
+        Coming soon
+    </span>
+
+    const badgeActive = <span className="inline-flex items-center gap-x-1.5 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+        <svg className="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
+            <circle cx={3} cy={3} r={3} />
+        </svg>
+        Active
+    </span>
+
     const clients = [
         {
             id: 1,
@@ -31,7 +45,8 @@ function Vault({ web3 }) {
             vaultUrl: '/vault/ribbon-r-earn',
             metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: ' TVL', value: '$2.25M' }],
             token: 'USDC',
-            image: '/ribbon_logo_1.png'
+            image: '/ribbon_logo_1.png',
+            status: 'Active'
         },
         {
             id: 2,
@@ -39,7 +54,8 @@ function Vault({ web3 }) {
             vaultUrl: '/vault/metrix-fund-I',
             metrics: [{ name: '3M Returns', value: '9.64%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$51.9K' }],
             token: 'USDC',
-            image: '/metrixIcon.png'
+            image: '/metrixIcon.png',
+            status: 'Active'
         },
         {
             id: 3,
@@ -47,47 +63,62 @@ function Vault({ web3 }) {
             vaultUrl: '/vault/ribbon-stETH-earn',
             metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: 'TVL', value: '2.28K', unit: 'stETH' }],
             token: 'stETH',
-            image: '/ribbon_logo_1.png'
+            image: '/ribbon_logo_1.png',
+            status: 'Active'
         },
         {
             id: 4,
             name: 'Toros USD Delta Neutral',
             vaultUrl: '/vault/dHedge-toros',
-            metrics: [{ name: '1Y Returns', value: '3.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$109.3K' }],
+            metrics: [{ name: 'Boosted APY', value: '11.1%' }, { name: 'Referral APY', value: '0.25%' }, { name: 'TVL', value: '$1.7M' }],
             token: 'USDC',
-            image: '/toros.png'
+            image: '/toros.png',
+            status: 'Active'
+        },
+        {
+            id: 4,
+            name: 'Toros Ethereum Yield',
+            vaultUrl: '',
+            metrics: [{ name: 'Boosted APY', value: '14.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$1.6M' }],
+            token: 'USDC',
+            image: '/toros.png',
+            status: 'Active'
         },
         {
             id: 5,
-            name: 'Idle USDC Clearpool',
-            vaultUrl: '/vault/dHedge-toros',
-            metrics: [{ name: '1Y Returns', value: '3.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$109.3K' }],
+            name: 'Idle USDT Clearpool Fasanara (senior)"',
+            vaultUrl: '',
+            metrics: [{ name: 'Boosted APY', value: '7.6%' }, { name: 'Referral APY', value: '0.7%' }, { name: 'TVL', value: '$1.95M' }],
             token: 'USDC',
-            image: '/idle_logo_01.png'
+            image: '/idle_logo_01.png',
+            status: 'Comingsoon'
         },
         {
             id: 6,
-            name: 'BENQI Staking',
-            vaultUrl: '/vault/dHedge-toros',
-            metrics: [{ name: '1Y Returns', value: '3.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$109.3K' }],
+            name: 'BENQI AVAX Liquid Staking',
+            vaultUrl: '',
+            metrics: [{ name: 'Boosted APY', value: '7.15%' }, { name: 'Referral APY', value: '1.0%' }, { name: 'TVL', value: '$94.3M' }],
             token: 'USDC',
-            image: '/BENQI_logo.webp'
+            image: '/BENQI_logo.webp',
+            status: 'Comingsoon'
         },
         {
             id: 7,
-            name: 'Pendle ETH Pool',
-            vaultUrl: '/vault/dHedge-toros',
-            metrics: [{ name: 'Boosted APY', value: '18.2%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$5.01 M' }],
+            name: 'PPendle PT USDT Pool',
+            vaultUrl: '',
+            metrics: [{ name: 'Boosted APY', value: '13.5%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$2.6M' }],
             token: 'USDC',
-            image: '/Pendle_logo.jpeg'
+            image: '/Pendle_logo.jpeg',
+            status: 'Comingsoon'
         },
         {
             id: 8,
-            name: 'Sommelier',
-            vaultUrl: '/vault/dHedge-toros',
-            metrics: [{ name: 'Boosted APY', value: '5%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$7.98M' }],
+            name: 'Sommelier Real Yield ETH',
+            vaultUrl: '',
+            metrics: [{ name: 'Boosted APY', value: '13.3%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$8.0M' }],
             token: 'USDC',
-            image: '/Sommelier_logo.png'
+            image: '/Sommelier_logo.png',
+            status: 'Comingsoon'
         },
     ]
 
@@ -96,13 +127,13 @@ function Vault({ web3 }) {
     }
 
     return (
-        <div className="bg-slate-50">
+        <div className="bg-slate-50 pb-10">
             <>
                 <CommonHead />
                 <DAppHeader web3={web3} />
 
                 <div>
-                    <Container className="h-screen">
+                    <Container className="min-h-screen">
                         <div className="md:flex md:items-center md:justify-between border-b border-gray-200">
                             <h1 className="text-4xl font-bold tracking-tight text-gray-900">Explore products</h1>
                         </div>
@@ -113,12 +144,7 @@ function Vault({ web3 }) {
                                     <li key={client.id} className="overflow-hidden rounded-xl shadow-xl bg-white">
                                         <a href={client.vaultUrl}>
                                             <div className="text-right p-2">
-                                                <span className="inline-flex items-center gap-x-1.5 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
-                                                    <svg className="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
-                                                        <circle cx={3} cy={3} r={3} />
-                                                    </svg>
-                                                    Active
-                                                </span>
+                                                {client.status == "Active" ? badgeActive : badgeComingSoon}
                                             </div>
 
                                             <div className="flex items-center gap-x-4 border-b border-gray-900/5 px-6 pt-6 pb-14">
@@ -135,7 +161,7 @@ function Vault({ web3 }) {
                                                         alt=""
                                                     />
                                                 </div>
-                                                <div className="text-3xl font-medium leading-6 text-gray-900">{client.name}</div>
+                                                <div className="text-2xl font-medium leading-6 text-gray-900">{client.name}</div>
 
                                             </div>
 

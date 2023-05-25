@@ -24,14 +24,14 @@ function Vault({ web3 }) {
         <path d="M787.5 1595.83c-325-116.66-491.67-479.16-370.83-800 62.5-175 200-308.33 370.83-370.83 16.67-8.33 25-20.83 25-41.67V325c0-16.67-8.33-29.17-25-33.33-4.17 0-12.5 0-16.67 4.16-395.83 125-612.5 545.84-487.5 941.67 75 233.33 254.17 412.5 487.5 487.5 16.67 8.33 33.34 0 37.5-16.67 4.17-4.16 4.17-8.33 4.17-16.66v-58.34c0-12.5-12.5-29.16-25-37.5zM1229.17 295.83c-16.67-8.33-33.34 0-37.5 16.67-4.17 4.17-4.17 8.33-4.17 16.67v58.33c0 16.67 12.5 33.33 25 41.67 325 116.66 491.67 479.16 370.83 800-62.5 175-200 308.33-370.83 370.83-16.67 8.33-25 20.83-25 41.67V1700c0 16.67 8.33 29.17 25 33.33 4.17 0 12.5 0 16.67-4.16 395.83-125 612.5-545.84 487.5-941.67-75-237.5-258.34-416.67-487.5-491.67z" fill="#fff" />
     </svg></span>
     const ethSvg = <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><g fill="none" fill-rule="evenodd"><circle cx="16" cy="16" r="16" fill="#627EEA" /><g fill="#FFF" fill-rule="nonzero"><path fill-opacity=".602" d="M16.498 4v8.87l7.497 3.35z" /><path d="M16.498 4L9 16.22l7.498-3.35z" /><path fill-opacity=".602" d="M16.498 21.968v6.027L24 17.616z" /><path d="M16.498 27.995v-6.028L9 17.616z" /><path fill-opacity=".2" d="M16.498 20.573l7.497-4.353-7.497-3.348z" /><path fill-opacity=".602" d="M9 16.22l7.498 4.353v-7.701z" /></g></g></svg></span>
-    const tetherSvg = <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 2000"><path d="M1000,0c552.26,0,1000,447.74,1000,1000S1552.24,2000,1000,2000,0,1552.38,0,1000,447.68,0,1000,0" fill="#53ae94"/><path d="M1123.42,866.76V718H1463.6V491.34H537.28V718H877.5V866.64C601,879.34,393.1,934.1,393.1,999.7s208,120.36,484.4,133.14v476.5h246V1132.8c276-12.74,483.48-67.46,483.48-133s-207.48-120.26-483.48-133m0,225.64v-0.12c-6.94.44-42.6,2.58-122,2.58-63.48,0-108.14-1.8-123.88-2.62v0.2C633.34,1081.66,451,1039.12,451,988.22S633.36,894.84,877.62,884V1050.1c16,1.1,61.76,3.8,124.92,3.8,75.86,0,114-3.16,121-3.8V884c243.8,10.86,425.72,53.44,425.72,104.16s-182,93.32-425.72,104.18" fill="#fff"/></svg></span>
+    const tetherSvg = <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 2000"><path d="M1000,0c552.26,0,1000,447.74,1000,1000S1552.24,2000,1000,2000,0,1552.38,0,1000,447.68,0,1000,0" fill="#53ae94" /><path d="M1123.42,866.76V718H1463.6V491.34H537.28V718H877.5V866.64C601,879.34,393.1,934.1,393.1,999.7s208,120.36,484.4,133.14v476.5h246V1132.8c276-12.74,483.48-67.46,483.48-133s-207.48-120.26-483.48-133m0,225.64v-0.12c-6.94.44-42.6,2.58-122,2.58-63.48,0-108.14-1.8-123.88-2.62v0.2C633.34,1081.66,451,1039.12,451,988.22S633.36,894.84,877.62,884V1050.1c16,1.1,61.76,3.8,124.92,3.8,75.86,0,114-3.16,121-3.8V884c243.8,10.86,425.72,53.44,425.72,104.16s-182,93.32-425.72,104.18" fill="#fff" /></svg></span>
 
     const tokenSvgMap = {
         USDC: usdcSvg,
         ETH: ethSvg,
         stETH: stETHSvg,
         USDT: tetherSvg,
-      };
+    };
 
     const badgeComingSoon = <span className="inline-flex items-center gap-x-1.5 rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
         <svg className="h-1.5 w-1.5 fill-yellow-500" viewBox="0 0 6 6" aria-hidden="true">
@@ -47,7 +47,7 @@ function Vault({ web3 }) {
         Active
     </span>
 
-    const clients = [
+    const vaultList = [
         {
             id: 1,
             name: 'Ribbon R-EARN',
@@ -81,7 +81,7 @@ function Vault({ web3 }) {
             vaultUrl: '/vault/dHedge-toros',
             metrics: [{ name: 'Boosted APY', value: '11.1%' }, { name: 'Referral APY', value: '0.25%' }, { name: 'TVL', value: '$1.7M' }],
             token: 'USDC',
-            image: '/toros.png',
+            image: '/toroslogo.png',
             status: 'Active'
         },
         {
@@ -90,12 +90,12 @@ function Vault({ web3 }) {
             vaultUrl: '',
             metrics: [{ name: 'Boosted APY', value: '14.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$1.6M' }],
             token: 'ETH',
-            image: '/toros.png',
+            image: '/toroslogo.png',
             status: 'Active'
         },
         {
             id: 5,
-            name: 'Idle USDT Clearpool Fasanara (senior)"',
+            name: 'Idle USDT Clearpool Fasanara',
             vaultUrl: '',
             metrics: [{ name: 'Boosted APY', value: '7.6%' }, { name: 'Referral APY', value: '0.7%' }, { name: 'TVL', value: '$1.95M' }],
             token: 'USDT',
@@ -108,12 +108,12 @@ function Vault({ web3 }) {
             vaultUrl: '',
             metrics: [{ name: 'Boosted APY', value: '7.15%' }, { name: 'Referral APY', value: '1.0%' }, { name: 'TVL', value: '$94.3M' }],
             token: 'USDC',
-            image: '/BENQI_logo.webp',
+            image: '/Benqi_logo.png',
             status: 'Comingsoon'
         },
         {
             id: 7,
-            name: 'PPendle PT USDT Pool',
+            name: 'Pendle PT USDT Pool',
             vaultUrl: '',
             metrics: [{ name: 'Boosted APY', value: '13.5%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$2.6M' }],
             token: 'USDT',
@@ -149,35 +149,33 @@ function Vault({ web3 }) {
 
                         <div className="mt-10">
                             <ul role="list" className="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
-                                {clients.map((client) => (
-                                    <li key={client.id} className="overflow-hidden rounded-xl shadow-xl bg-white">
-                                        <a href={client.vaultUrl}>
+                                {vaultList.map((vault) => (
+                                    <li key={vault.id} className="overflow-hidden rounded-xl shadow-xl bg-white">
+                                        <a href={vault.vaultUrl}>
                                             <div className="flex flex-row-reverse text-right p-2">
 
                                                 <div>
-                                                    {client.status == "Active" ? badgeActive : badgeComingSoon}
+                                                    {vault.status == "Active" ? badgeActive : badgeComingSoon}
                                                 </div>
                                                 <div className="inline-block h-7 w-7 rounded-full mr-4">
-                                                    {tokenSvgMap[client.token]}
+                                                    {tokenSvgMap[vault.token]}
                                                 </div>
                                             </div>
 
                                             <div className="flex items-center gap-x-4 border-b border-gray-900/5 px-6 pt-6 pb-14">
-                                                <div>
-                                                    <img
-                                                        className="inline-block h-16 w-16 rounded-full bg-gray-500"
-                                                        src={client?.image}
-                                                        alt=""
-                                                    />
-                                                </div>
-                                                <div className="text-2xl font-medium leading-6 text-gray-900">{client.name}</div>
+                                                <img
+                                                    className="h-16 w-16 rounded-full bg-gray-100"
+                                                    src={vault?.image}
+                                                    alt=""
+                                                />
+                                                <div className="text-2xl font-medium leading-6 text-gray-900">{vault.name}</div>
 
                                             </div>
 
 
                                             <dl className="-my-3 divide-y divide-gray-100  text-sm leading-6 bg-slate-50 shadow-inner">
                                                 <div className="grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-3">
-                                                    {client.metrics.map((metric) => (
+                                                    {vault.metrics.map((metric) => (
                                                         <div key={metric.name} className="p-4">
                                                             <p className="text-xs font-semibold  text-gray-400 uppercase">{metric.name}</p>
                                                             <p className="mt-2 flex items-baseline gap-x-2">

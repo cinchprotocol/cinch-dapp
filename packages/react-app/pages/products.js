@@ -23,6 +23,15 @@ function Vault({ web3 }) {
         <path d="M1275 1158.33c0-145.83-87.5-195.83-262.5-216.66-125-16.67-150-50-150-108.34s41.67-95.83 125-95.83c75 0 116.67 25 137.5 87.5 4.17 12.5 16.67 20.83 29.17 20.83h66.66c16.67 0 29.17-12.5 29.17-29.16v-4.17c-16.67-91.67-91.67-162.5-187.5-170.83v-100c0-16.67-12.5-29.17-33.33-33.34h-62.5c-16.67 0-29.17 12.5-33.34 33.34v95.83c-125 16.67-204.16 100-204.16 204.17 0 137.5 83.33 191.66 258.33 212.5 116.67 20.83 154.17 45.83 154.17 112.5s-58.34 112.5-137.5 112.5c-108.34 0-145.84-45.84-158.34-108.34-4.16-16.66-16.66-25-29.16-25h-70.84c-16.66 0-29.16 12.5-29.16 29.17v4.17c16.66 104.16 83.33 179.16 220.83 200v100c0 16.66 12.5 29.16 33.33 33.33h62.5c16.67 0 29.17-12.5 33.34-33.33v-100c125-20.84 208.33-108.34 208.33-220.84z" fill="#fff" />
         <path d="M787.5 1595.83c-325-116.66-491.67-479.16-370.83-800 62.5-175 200-308.33 370.83-370.83 16.67-8.33 25-20.83 25-41.67V325c0-16.67-8.33-29.17-25-33.33-4.17 0-12.5 0-16.67 4.16-395.83 125-612.5 545.84-487.5 941.67 75 233.33 254.17 412.5 487.5 487.5 16.67 8.33 33.34 0 37.5-16.67 4.17-4.16 4.17-8.33 4.17-16.66v-58.34c0-12.5-12.5-29.16-25-37.5zM1229.17 295.83c-16.67-8.33-33.34 0-37.5 16.67-4.17 4.17-4.17 8.33-4.17 16.67v58.33c0 16.67 12.5 33.33 25 41.67 325 116.66 491.67 479.16 370.83 800-62.5 175-200 308.33-370.83 370.83-16.67 8.33-25 20.83-25 41.67V1700c0 16.67 8.33 29.17 25 33.33 4.17 0 12.5 0 16.67-4.16 395.83-125 612.5-545.84 487.5-941.67-75-237.5-258.34-416.67-487.5-491.67z" fill="#fff" />
     </svg></span>
+    const ethSvg = <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><g fill="none" fill-rule="evenodd"><circle cx="16" cy="16" r="16" fill="#627EEA" /><g fill="#FFF" fill-rule="nonzero"><path fill-opacity=".602" d="M16.498 4v8.87l7.497 3.35z" /><path d="M16.498 4L9 16.22l7.498-3.35z" /><path fill-opacity=".602" d="M16.498 21.968v6.027L24 17.616z" /><path d="M16.498 27.995v-6.028L9 17.616z" /><path fill-opacity=".2" d="M16.498 20.573l7.497-4.353-7.497-3.348z" /><path fill-opacity=".602" d="M9 16.22l7.498 4.353v-7.701z" /></g></g></svg></span>
+    const tetherSvg = <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 2000"><path d="M1000,0c552.26,0,1000,447.74,1000,1000S1552.24,2000,1000,2000,0,1552.38,0,1000,447.68,0,1000,0" fill="#53ae94"/><path d="M1123.42,866.76V718H1463.6V491.34H537.28V718H877.5V866.64C601,879.34,393.1,934.1,393.1,999.7s208,120.36,484.4,133.14v476.5h246V1132.8c276-12.74,483.48-67.46,483.48-133s-207.48-120.26-483.48-133m0,225.64v-0.12c-6.94.44-42.6,2.58-122,2.58-63.48,0-108.14-1.8-123.88-2.62v0.2C633.34,1081.66,451,1039.12,451,988.22S633.36,894.84,877.62,884V1050.1c16,1.1,61.76,3.8,124.92,3.8,75.86,0,114-3.16,121-3.8V884c243.8,10.86,425.72,53.44,425.72,104.16s-182,93.32-425.72,104.18" fill="#fff"/></svg></span>
+
+    const tokenSvgMap = {
+        USDC: usdcSvg,
+        ETH: ethSvg,
+        stETH: stETHSvg,
+        USDT: tetherSvg,
+      };
 
     const badgeComingSoon = <span className="inline-flex items-center gap-x-1.5 rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
         <svg className="h-1.5 w-1.5 fill-yellow-500" viewBox="0 0 6 6" aria-hidden="true">
@@ -80,7 +89,7 @@ function Vault({ web3 }) {
             name: 'Toros Ethereum Yield',
             vaultUrl: '',
             metrics: [{ name: 'Boosted APY', value: '14.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$1.6M' }],
-            token: 'USDC',
+            token: 'ETH',
             image: '/toros.png',
             status: 'Active'
         },
@@ -89,7 +98,7 @@ function Vault({ web3 }) {
             name: 'Idle USDT Clearpool Fasanara (senior)"',
             vaultUrl: '',
             metrics: [{ name: 'Boosted APY', value: '7.6%' }, { name: 'Referral APY', value: '0.7%' }, { name: 'TVL', value: '$1.95M' }],
-            token: 'USDC',
+            token: 'USDT',
             image: '/idle_logo_01.png',
             status: 'Comingsoon'
         },
@@ -107,7 +116,7 @@ function Vault({ web3 }) {
             name: 'PPendle PT USDT Pool',
             vaultUrl: '',
             metrics: [{ name: 'Boosted APY', value: '13.5%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$2.6M' }],
-            token: 'USDC',
+            token: 'USDT',
             image: '/Pendle_logo.jpeg',
             status: 'Comingsoon'
         },
@@ -116,7 +125,7 @@ function Vault({ web3 }) {
             name: 'Sommelier Real Yield ETH',
             vaultUrl: '',
             metrics: [{ name: 'Boosted APY', value: '13.3%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$8.0M' }],
-            token: 'USDC',
+            token: 'ETH',
             image: '/Sommelier_logo.png',
             status: 'Comingsoon'
         },
@@ -143,18 +152,18 @@ function Vault({ web3 }) {
                                 {clients.map((client) => (
                                     <li key={client.id} className="overflow-hidden rounded-xl shadow-xl bg-white">
                                         <a href={client.vaultUrl}>
-                                            <div className="text-right p-2">
-                                                {client.status == "Active" ? badgeActive : badgeComingSoon}
+                                            <div className="flex flex-row-reverse text-right p-2">
+
+                                                <div>
+                                                    {client.status == "Active" ? badgeActive : badgeComingSoon}
+                                                </div>
+                                                <div className="inline-block h-7 w-7 rounded-full mr-4">
+                                                    {tokenSvgMap[client.token]}
+                                                </div>
                                             </div>
 
                                             <div className="flex items-center gap-x-4 border-b border-gray-900/5 px-6 pt-6 pb-14">
-                                                {/* <img
-                                                src={client.imageUrl}
-                                                alt={client.name}
-                                                className="h-20 w-20 flex-none rounded-full bg-white object-cover ring-1 ring-gray-900/10"
-                                            /> */}
                                                 <div>
-                                                    {/* {client.token == "USDC" ? usdcSvg : stETHSvg} */}
                                                     <img
                                                         className="inline-block h-16 w-16 rounded-full bg-gray-500"
                                                         src={client?.image}
@@ -179,27 +188,6 @@ function Vault({ web3 }) {
                                                     ))}
                                                 </div>
                                             </dl>
-                                            {/* <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6 bg-slate-50 shadow-inner">
-                                            <div className="flex flex-1 justify-between items-end gap-4">
-                                                <div className="flex flex-col gap-2">
-                                                    <p className="uppercase text-xs font-semibold text-gray-400 leading-4">APY</p>
-                                                    <p className="truncate text-lg font-bold text-gray-700 leading-4">9.7%</p>
-                                                </div>
-
-                                                <div className="flex flex-col gap-2">
-                                                    <p className="uppercase text-xs font-semibold text-gray-400 leading-4">Boosted APY</p>
-                                                    <p className="truncate text-lg font-bold text-gray-700 leading-4">11.26%</p>
-                                                </div>
-
-                                                <div className="flex flex-col gap-2">
-                                                    <p className="uppercase text-xs font-semibold text-gray-400 leading-4">TVL</p>
-                                                    <p className="truncate text-lg font-bold text-gray-700 leading-4">2.25M</p>
-                                                </div>
-
-
-
-                                            </div>
-                                        </dl> */}
                                         </a>
                                     </li>
                                 ))}

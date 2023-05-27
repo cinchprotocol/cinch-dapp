@@ -8,6 +8,7 @@ module.exports = {
     DEFAULT_WEB3_PROVIDER: process.env.DEFAULT_WEB3_PROVIDER,
     USDC_ADDRESS: process.env.USDC_ADDRESS,
     PRICE_DECIMALS: process.env.PRICE_DECIMALS || 6,
+    GRAPH_API_URL: process.env.GRAPH_API_URL,
   },
   images: {
     loader: "akamai",

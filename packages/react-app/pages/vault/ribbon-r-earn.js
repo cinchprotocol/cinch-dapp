@@ -29,9 +29,6 @@ import VaultDepositToRevenueShareButton from "/components/Web3/VaultDepositToRev
 import { XCircleIcon } from '@heroicons/react/outline';
 import { createClient } from 'urql'
 
-
-const APIURL = "https://api.studio.thegraph.com/query/47041/cinch_goerli/v0.0.5"
-
 function getGraphQuery(address) {
   const query = `
     query {
@@ -84,20 +81,20 @@ function getGraphQuery(address) {
 }
 
 const client = createClient({
-  url: APIURL
+  url: process.env.GRAPH_API_URL
 })
 
 function Vault({ web3 }) {
 
-  const mockERC20Decimals = 6;
+  const usdcERC20Decimals = 6;
   const protocolContractAddress = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
   const vaultContractName = "RevenueShareVaultRibbonEarn";
   const protocolContractName = "MockProtocolRibbonEarn";
   const pollTime = 500;
 
-  var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, mockERC20Decimals);
+  var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, usdcERC20Decimals);
   var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
-  var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, mockERC20Decimals); //TODO read from ribbon contract instead below
+  var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, usdcERC20Decimals); //TODO read from ribbon contract instead below
   // var underlyingProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, mockERC20Decimals);
 
 
@@ -338,7 +335,7 @@ function Vault({ web3 }) {
                               web3?.tx(
                                 web3?.writeContracts?.MockERC20?.faucet(
                                   web3?.address,
-                                  ethers.utils.parseUnits("1100", mockERC20Decimals),
+                                  ethers.utils.parseUnits("1100", usdcERC20Decimals),
                                 ),
                               );
                             }}
@@ -433,27 +430,7 @@ function Vault({ web3 }) {
             <h3 className="mt-14 text-2xl font-semibold text-gray-900">
               Transactions
             </h3>
-            <div>
-              {/* <Tabs defaultActiveKey="1"  size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
-                <TabPane tab="Deposits" key="1">
-                  <div className="mt-5  bg-white">
-                  <VaultDepositEventList
-                  web3={web3}
-                  mockERC20Decimals={mockERC20Decimals}
-                  vaultContractName={vaultContractName}
-                />
-                  </div>
-                </TabPane>
-                <TabPane tab="Withdrawals" key="2">
-                  <div className="mt-5 bg-white">
-                  <VaultRedeemEventList
-                  web3={web3}
-                  mockERC20Decimals={mockERC20Decimals}
-                  vaultContractName={vaultContractName}
-                />
-                  </div>
-                </TabPane>
-              </Tabs> */}
+            <div>             
               <VaultEventsList
                 graphData={graphData}
               />

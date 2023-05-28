@@ -7,7 +7,7 @@ import { Button } from "/components/Button";
 import { Container } from "/components/Container";
 import { Logo } from "/components/Logo";
 import { NavLink } from "/components/NavLink";
-import { Account } from "../components";
+import { Account, NetworkDisplay } from "../components";
 
 function MobileNavLink({ href, children }) {
   return (
@@ -101,6 +101,7 @@ export function DAppHeader(props) {
            */}
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
+          <NetworkDisplay />
             <Account {...props?.web3} />
           </div>
         </nav>

@@ -39,38 +39,32 @@ const VaultRedeemFormRibbonEarn = ({
   };
 
   return (
-    <Row gutter={16}>
-      <Col span={24}>
-        <Card title={cardTitle}>
-          <Form
-            name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
-            initialValues={{ redeemAmount: defaultRedeemAmountStr }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            autoComplete="off"
-          >
-            <Form.Item
-              label="Redeem Amount"
-              name="redeemAmount"
-              rules={[{ required: true, message: "Please input the Redeem Amount!" }]}
-            >
-              <Input />
-            </Form.Item>
+    <div className="px-8">
+      <Form
+        name="basic"
+        style={{ maxWidth: 600 }}
+        initialValues={{ redeemAmount: defaultRedeemAmountStr }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+        size="large"
+        layout="vertical"
+      >
+        <Form.Item
+          label="Redeem Amount"
+          name="redeemAmount"
+          rules={[{ required: true, message: "Please input the Redeem Amount!" }]}
+        >
+          <Input />
+        </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Space>
-                <Button type="primary" htmlType="submit">
-                  6. Redeem
-                </Button>
-              </Space>
-            </Form.Item>
-          </Form>
-        </Card>
-      </Col>
-    </Row>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" className="w-full">
+            Withdraw
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   );
 };
 

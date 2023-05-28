@@ -19,12 +19,16 @@ const VaultDepositToRevenueShareForm = ({
   const approveAsset = async values => {
     const { depositAmount } = values;
     if (!web3 || !depositAmount) return;
-    await web3?.tx(
+    var result = await web3?.tx(
       web3?.writeContracts?.MockERC20?.approve(
         web3?.writeContracts?.[vaultContractName]?.address,
         ethers.utils.parseUnits(depositAmount, assetDecimals),
       ),
-    );
+      async update => {
+        if (update && (update.status === "confirmed" || update.status === 1)) {
+          await depositAsset();
+        }
+      });
   };
 
   const depositAsset = async values => {
@@ -36,7 +40,13 @@ const VaultDepositToRevenueShareForm = ({
         web3?.writeContracts?.MockERC20?.address,
         ethers.utils.parseUnits(depositAmountStr, assetDecimals),
       ),
-    );
+      async update => {
+        if (update && (update.status === "confirmed" || update.status === 1)) {
+          await web3?.tx(
+            web3?.writeContracts[vaultContractName]?.setTotalSharesInReferralAccordingToYieldSource( web3?.address, web3?.address),
+          );
+        }
+      });
   };
 
   const onFinish = async values => {

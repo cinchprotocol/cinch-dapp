@@ -87,15 +87,15 @@ const client = createClient({
 function Vault({ web3 }) {
 
   const usdcERC20Decimals = 6;
-  const protocolContractAddress = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
+  const protocolContractAddress = "0x84c2b16fa6877a8ff4f3271db7ea837233dfd6f0";
   const vaultContractName = "RevenueShareVaultRibbonEarn";
   const protocolContractName = "MockProtocolRibbonEarn";
   const pollTime = 500;
 
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, usdcERC20Decimals);
   var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
-  var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, usdcERC20Decimals); //TODO read from ribbon contract instead below
-  // var underlyingProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, mockERC20Decimals);
+  //var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, usdcERC20Decimals); //TODO read from ribbon contract instead below
+  var underlyingProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, mockERC20Decimals);
 
 
   const { TabPane } = Tabs;
@@ -369,7 +369,7 @@ function Vault({ web3 }) {
                               src="/usdc_logo.jpeg"
                               alt=""
                             />
-                            USDC
+                            USDC  
                           </div>
                         </div> */}
 
@@ -430,7 +430,7 @@ function Vault({ web3 }) {
             <h3 className="mt-14 text-2xl font-semibold text-gray-900">
               Transactions
             </h3>
-            <div>             
+            <div>
               <VaultEventsList
                 graphData={graphData}
               />

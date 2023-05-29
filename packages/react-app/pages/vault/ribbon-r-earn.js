@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Web3Consumer } from "/helpers/Web3Context";
 import { formatNumber } from "/helpers/utils";
 import _ from "lodash";
-import { Tabs } from "antd";
+import { Tabs, Alert } from "antd";
 const { ethers } = require("ethers");
 import Image from "next/image";
 import {
@@ -28,6 +28,7 @@ import VaultAddRevenueShareReferralForm from "/components/Web3/VaultAddRevenueSh
 import VaultDepositToRevenueShareButton from "/components/Web3/VaultDepositToRevenueShareButton";
 import { XCircleIcon } from '@heroicons/react/outline';
 import { createClient } from 'urql'
+import { NETWORK, NETWORKS } from "/constants";
 
 function getGraphQuery(address) {
   const query = `
@@ -156,6 +157,72 @@ function Vault({ web3 }) {
   }
 
 
+  const { NETWORKCHECK, localChainId, selectedChainId } = web3;
+  const targetNetwork = NETWORK(1); //mainnet
+  const targetNetworkName = targetNetwork.name == 'mainnet'? 'Ethereum' : targetNetwork.name;
+  let networkDisplay = null;
+  console.log(targetNetwork.chainId);
+  console.log(selectedChainId);
+  if (NETWORKCHECK && selectedChainId && selectedChainId !== targetNetwork.chainId) {
+    const networkSelected = NETWORK(selectedChainId);
+    const networkLocal = NETWORK(localChainId);
+
+    networkDisplay = (
+      <div className="mb-10">
+        <Alert
+          showIcon
+          message="Wrong Network"
+          description={
+            <div>
+              Please switch your wallet network to {targetNetworkName} to interact with the vault.
+              <Button style={{ marginLeft: 14 }}
+                onClick={async () => {
+                  const ethereum = window.ethereum;
+                  const data = [
+                    {
+                      chainId: "0x" + targetNetwork.chainId.toString(16),
+                      chainName: targetNetworkName,
+                      nativeCurrency: targetNetwork.nativeCurrency,
+                      rpcUrls: [targetNetwork.rpcUrl],
+                      blockExplorerUrls: [targetNetwork.blockExplorer],
+                    },
+                  ];
+                  console.log("data", data);
+
+                  let switchTx;
+                  // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
+                  try {
+                    switchTx = await ethereum.request({
+                      method: "wallet_switchEthereumChain",
+                      params: [{ chainId: data[0].chainId }],
+                    });
+                  } catch (switchError) {
+                    // not checking specific error code, because maybe we're not using MetaMask
+                    try {
+                      switchTx = await ethereum.request({
+                        method: "wallet_addEthereumChain",
+                        params: data,
+                      });
+                    } catch (addError) {
+                      // handle "add" error
+                    }
+                  }
+
+                  if (switchTx) {
+                    console.log(switchTx);
+                  }
+                }}
+              >
+                Switch to {targetNetworkName}
+              </Button>
+            </div>
+          }
+          type="warning"
+          closable={false}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-slate-50">
@@ -166,6 +233,7 @@ function Vault({ web3 }) {
         <div>
           <Container>
             <div class="mb-5">
+              {networkDisplay}
               <div>
                 <div>
                   <dl className="mt-5 flex justify-start divide-y divide-gray-200 overflow-hidden rounded-lg  md:divide-x md:divide-y-0 ">

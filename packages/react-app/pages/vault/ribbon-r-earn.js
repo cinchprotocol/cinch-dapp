@@ -32,19 +32,7 @@ import { NETWORK, NETWORKS } from "/constants";
 
 function getGraphQuery(address) {
   const query = `
-    query {
-      withdraws(
-        orderDirection: desc
-        where: {receiver: "${address}"}
-      ) {
-        assets
-        owner
-        receiver
-        sender
-        shares
-        blockTimestamp
-        id
-      }
+    query {     
       depositWithReferrals(
         where: {caller: "${address}"}
         orderDirection: desc
@@ -58,22 +46,33 @@ function getGraphQuery(address) {
         transactionHash
         id
       }
-      redeemWithReferrals(where: {caller: "${address}"}, orderDirection: desc) {
-        assets
-        blockTimestamp
-        caller
-        id
-        receiver
-        referral
-        shares
-        sharesOwner
-      }   
       revenueShareWithdrawns(where: {receiver: "${address}"}, orderDirection: desc) {
         amount
         asset
         blockTimestamp
         receiver
         referral
+      }
+      initiateWithdraws(
+        orderBy: blockTimestamp
+        orderDirection: desc
+        where: {account: "${address}"}
+      ) {
+        account
+        shares
+        round
+        blockTimestamp
+      }
+      withdraws(
+        first: 2
+        orderBy: blockTimestamp
+        orderDirection: desc
+        where: {account: "${address}"}
+      ) {
+        account
+        amount
+        blockTimestamp
+        shares
       }
     }
   `;
@@ -139,7 +138,7 @@ function Vault({ web3 }) {
     });
 
     graphData.withdraws?.forEach((withdrawal) => {
-      balance -= parseInt(ethers.utils.formatUnits(withdrawal.assets ?? 0, 6));
+      balance -= parseInt(ethers.utils.formatUnits(withdrawal.amount ?? 0, 6));
     });
 
     console.log('BALANCE:', balance);

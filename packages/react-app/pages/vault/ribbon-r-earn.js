@@ -159,7 +159,7 @@ function Vault({ web3 }) {
 
   const { NETWORKCHECK, localChainId, selectedChainId } = web3;
   const targetNetwork = NETWORK(1); //mainnet
-  const targetNetworkName = targetNetwork.name == 'mainnet'? 'Ethereum' : targetNetwork.name;
+  const targetNetworkName = targetNetwork.name == 'mainnet' ? 'Ethereum' : targetNetwork.name;
   let networkDisplay = null;
   console.log(targetNetwork.chainId);
   console.log(selectedChainId);
@@ -385,42 +385,44 @@ function Vault({ web3 }) {
                 <div className="p-1 lg:col-span-2 bg-white rounded-2xl shadow">
                   <div>
                     <Tabs defaultActiveKey="1" centered size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
-                      <TabPane tab="Simulation" key="0">
-                        <div className="p-5">
+                      {selectedChainId !== 1 ?
+                        <TabPane tab="Simulation" key="0">
+                          <div className="p-5">
 
-                          <Button
-                            onClick={async () => {
-                              await web3?.tx(
-                                web3?.writeContracts[vaultContractName]?.addRevenueShareReferral(web3?.address),
-                              );
-                            }}
-                          >
-                            1. Register your address with referral program
-                          </Button>
-
-                          <Button className="my-10"
-                            onClick={() => {
-                              web3?.tx(
-                                web3?.writeContracts?.MockERC20?.faucet(
-                                  web3?.address,
-                                  ethers.utils.parseUnits("1100", usdcERC20Decimals),
-                                ),
-                              );
-                            }}
-                          >
-                            2. Get test USDC
-                          </Button>
-                          <div>
-                            <Button className="mb-10" variant="outline">
-                              3. Go to deposit tab and do deposit
+                            <Button
+                              onClick={async () => {
+                                await web3?.tx(
+                                  web3?.writeContracts[vaultContractName]?.addRevenueShareReferral(web3?.address),
+                                );
+                              }}
+                            >
+                              1. Register your address with referral program
                             </Button>
+
+                            <Button className="my-10"
+                              onClick={() => {
+                                web3?.tx(
+                                  web3?.writeContracts?.MockERC20?.faucet(
+                                    web3?.address,
+                                    ethers.utils.parseUnits("1100", usdcERC20Decimals),
+                                  ),
+                                );
+                              }}
+                            >
+                              2. Get test USDC
+                            </Button>
+                            <div>
+                              <Button className="mb-10" variant="outline">
+                                3. Go to deposit tab and do deposit
+                              </Button>
+                            </div>
+
+
+                            <VaultDepositToRevenueShareButton web3={web3} vaultContractName={vaultContractName} />
+
                           </div>
-
-
-                          <VaultDepositToRevenueShareButton web3={web3} vaultContractName={vaultContractName} />
-
-                        </div>
-                      </TabPane>
+                        </TabPane> : ""
+                      }
                       <TabPane tab="Deposit" key="1">
                         {/* <div className="bg-slate-50 m-6 rounded-2xl p-4 text-3xl  border hover:border-slate-300 flex justify-between">
                           <input

@@ -11,11 +11,20 @@ import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
 
 import CopyToClipboard from "/components/CopyToClipboardButton";
-
+import {
+    useBalance,
+    useContractLoader,
+    useContractReader,
+    useGasPrice,
+    useOnBlock,
+    useUserProviderAndSigner,
+} from "eth-hooks";
 
 function Vault({ web3 }) {
-
+    const usdcERC20Decimals = 6;
+    const pollTime = 500;
     const { TabPane } = Tabs;
+    var ribbonProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, 'MockProtocolRibbonEarn', 'totalBalance', [], pollTime) ?? 0, usdcERC20Decimals);
 
     const stETHSvg = <span><svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" height="100%"><path d="M0 28C0 12.536 12.536 0 28 0C43.464 0 56 12.536 56 28C56 43.464 43.464 56 28 56C12.536 56 0 43.464 0 28Z" fill="#00A3FF" fill-opacity="0.12"></path><path d="M16.5666 25.9769L16.2466 26.4679C12.6375 32.0043 13.4435 39.2549 18.1844 43.9002C20.9735 46.633 24.629 47.9996 28.2844 48C28.2844 48 28.2844 48 16.5666 25.9769Z" fill="#00A3FF"></path><path opacity="0.6" d="M28.282 32.6703L16.5641 25.9769C28.282 48 28.282 48 28.282 48C28.282 43.2036 28.282 37.7074 28.282 32.6703Z" fill="#00A3FF"></path><path opacity="0.6" d="M40.0148 25.9769L40.3348 26.4679C43.9439 32.0043 43.1379 39.2549 38.397 43.9002C35.6079 46.633 31.9525 47.9996 28.297 48C28.297 48 28.297 48 40.0148 25.9769Z" fill="#00A3FF"></path><path opacity="0.2" d="M28.2958 32.6703L40.0137 25.9769C28.2959 48 28.2958 48 28.2958 48C28.2958 43.2036 28.2958 37.7074 28.2958 32.6703Z" fill="#00A3FF"></path><path opacity="0.2" d="M28.3 17.7188V29.263L38.3937 23.4947L28.3 17.7188Z" fill="#00A3FF"></path><path opacity="0.6" d="M28.297 17.7188L18.196 23.4945L28.297 29.263V17.7188Z" fill="#00A3FF"></path><path d="M28.297 8.00839L18.196 23.4964L28.297 17.7045V8.00839Z" fill="#00A3FF"></path><path opacity="0.6" d="M28.3 17.7036L38.4014 23.4957L28.3 8V17.7036Z" fill="#00A3FF"></path></svg></span>;
     const usdcSvg = <span><svg xmlns="http://www.w3.org/2000/svg" data-name="86977684-12db-4850-8f30-233a7c267d11" viewBox="0 0 2000 2000">
@@ -52,51 +61,51 @@ function Vault({ web3 }) {
             id: 1,
             name: 'Ribbon R-EARN',
             vaultUrl: '/vault/ribbon-r-earn',
-            metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: ' TVL', value: '$2.25M' }],
+            metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: ' TVL', value: ribbonProductTVL }],
             token: 'USDC',
             image: '/ribbon_logo_1.png',
             status: 'Active'
         },
         {
             id: 2,
-            name: 'Metrix-fund-1',
-            vaultUrl: '/vault/metrix-fund-I',
+            name: 'Metrix Fund 1',
+            vaultUrl: '#',
             metrics: [{ name: '3M Returns', value: '9.64%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$51.9K' }],
             token: 'USDC',
             image: '/metrixIcon.png',
-            status: 'Active'
+            status: 'Comingsoon'
         },
         {
             id: 3,
             name: 'Ribbon stETH',
-            vaultUrl: '/vault/ribbon-stETH-earn',
+            vaultUrl: '#',
             metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: 'TVL', value: '2.28K', unit: 'stETH' }],
             token: 'stETH',
             image: '/ribbon_logo_1.png',
-            status: 'Active'
+            status: 'Comingsoon'
         },
         {
             id: 4,
             name: 'Toros USD Delta Neutral',
-            vaultUrl: '/vault/dHedge-toros',
+            vaultUrl: '#',
             metrics: [{ name: 'Boosted APY', value: '11.1%' }, { name: 'Referral APY', value: '0.25%' }, { name: 'TVL', value: '$1.7M' }],
             token: 'USDC',
             image: '/toroslogo.png',
-            status: 'Active'
+            status: 'Comingsoon'
         },
         {
             id: 4,
             name: 'Toros Ethereum Yield',
-            vaultUrl: '',
+            vaultUrl: '#',
             metrics: [{ name: 'Boosted APY', value: '14.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$1.6M' }],
             token: 'ETH',
             image: '/toroslogo.png',
-            status: 'Active'
+            status: 'Comingsoon'
         },
         {
             id: 5,
             name: 'Idle USDT Clearpool Fasanara',
-            vaultUrl: '',
+            vaultUrl: '#',
             metrics: [{ name: 'Boosted APY', value: '7.6%' }, { name: 'Referral APY', value: '0.7%' }, { name: 'TVL', value: '$1.95M' }],
             token: 'USDT',
             image: '/idle_logo_01.png',
@@ -105,7 +114,7 @@ function Vault({ web3 }) {
         {
             id: 6,
             name: 'BENQI AVAX Liquid Staking',
-            vaultUrl: '',
+            vaultUrl: '#',
             metrics: [{ name: 'Boosted APY', value: '7.15%' }, { name: 'Referral APY', value: '1.0%' }, { name: 'TVL', value: '$94.3M' }],
             token: 'USDC',
             image: '/Benqi_logo.png',
@@ -114,7 +123,7 @@ function Vault({ web3 }) {
         {
             id: 7,
             name: 'Pendle PT USDT Pool',
-            vaultUrl: '',
+            vaultUrl: '#',
             metrics: [{ name: 'Boosted APY', value: '13.5%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$2.6M' }],
             token: 'USDT',
             image: '/Pendle_logo.jpeg',
@@ -123,7 +132,7 @@ function Vault({ web3 }) {
         {
             id: 8,
             name: 'Sommelier Real Yield ETH',
-            vaultUrl: '',
+            vaultUrl: '#',
             metrics: [{ name: 'Boosted APY', value: '13.3%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$8.0M' }],
             token: 'ETH',
             image: '/Sommelier_logo.png',

@@ -30,7 +30,7 @@ export function Web3Provider({ children, ...props }) {
     return null;
   }
 
-  const { network = "localhost", DEBUG = true, NETWORKCHECK = true } = props;
+  const { network = "localhost", DEBUG = false, NETWORKCHECK = true } = props;
 
   // app states
   const [injectedProvider, setInjectedProvider] = useState();
@@ -46,8 +46,8 @@ export function Web3Provider({ children, ...props }) {
   const poktMainnetProvider = useMemo(() => {
     return navigator.onLine
       ? new ethers.providers.StaticJsonRpcProvider(
-          "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
-        )
+        "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
+      )
       : null;
   }, [navigator.onLine]);
   const mainnetInfura = useMemo(() => {
@@ -99,37 +99,7 @@ export function Web3Provider({ children, ...props }) {
               100: "https://dai.poa.network", // xDai
             },
           },
-        },
-        portis: {
-          display: {
-            logo: "https://user-images.githubusercontent.com/9419140/128913641-d025bc0c-e059-42de-a57b-422f196867ce.png",
-            name: "Portis",
-            description: "Connect to Portis App",
-          },
-          package: Portis,
-          options: {
-            id: "6255fb2b-58c8-433b-a2c9-62098c05ddc9",
-          },
-        },
-        fortmatic: {
-          package: Fortmatic, // required
-          options: {
-            key: "pk_live_5A7C91B2FC585A17", // required
-          },
-        },
-        // torus: {
-        //   package: Torus,
-        //   options: {
-        //     networkParams: {
-        //       host: "https://localhost:8545", // optional
-        //       chainId: 1337, // optional
-        //       networkId: 1337 // optional
-        //     },
-        //     config: {
-        //       buildEnv: "development" // optional
-        //     },
-        //   },
-        // },
+        },      
         "custom-walletlink": {
           display: {
             logo: "https://play-lh.googleusercontent.com/PjoJoG27miSglVBXoXrxBSLveV6e3EeBPpNY55aiUUBM9Q1RCETKCOqdOkX2ZydqVf0",
@@ -142,9 +112,6 @@ export function Web3Provider({ children, ...props }) {
             return provider;
           },
         },
-        authereum: {
-          package: Authereum, // required
-        },
       },
     });
   }, []);
@@ -153,8 +120,8 @@ export function Web3Provider({ children, ...props }) {
     poktMainnetProvider && poktMainnetProvider._isProvider
       ? poktMainnetProvider
       : scaffoldEthProvider && scaffoldEthProvider._network
-      ? scaffoldEthProvider
-      : mainnetInfura;
+        ? scaffoldEthProvider
+        : mainnetInfura;
 
   const logoutOfWeb3Modal = async () => {
     await web3Modal.clearCachedProvider();
@@ -172,7 +139,7 @@ export function Web3Provider({ children, ...props }) {
   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
   const gasPrice = useGasPrice(targetNetwork, "fast");
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
-  const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
+  const userProviderAndSigner = network == 'localhost' ? useUserProviderAndSigner(injectedProvider, localProvider) : useUserProviderAndSigner(injectedProvider);
   const userSigner = userProviderAndSigner.signer;
 
   useEffect(() => {

@@ -250,7 +250,7 @@ function Vault({ web3 }) {
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                           Ribbon R-EARN
                         </h1>
-                        <CopyToClipboard textToCopy={protocolContractAddress} />
+                        <CopyToClipboard textToCopy={web3?.writeContracts?.[vaultContractName]?.address} />
                       </div>
                     </div>
                     <div className="px-8 py-2 ">
@@ -342,17 +342,17 @@ function Vault({ web3 }) {
                           </div>
 
 
-                          <div class="sm:col-span-1">
+                          {/* <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Your referral code </dt>
                             <dd class="mt-1 text-xl text-gray-900"> <CopyToClipboard textToCopy='0xEdfdb5f2f02432F1E3271582056ECd0f884126aC' /></dd>
-                          </div>
+                          </div> */}
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Revenue shared on platform users (%)</dt>
                             <dd class="mt-1 text-xl text-gray-900">100%</dd>
                           </div>
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
-                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={protocolContractAddress} /></dd>
+                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={web3?.writeContracts?.[vaultContractName]?.address} /></dd>
                           </div>
 
                         </dl>
@@ -370,7 +370,7 @@ function Vault({ web3 }) {
                           </svg>
                         </span>
                         <p>
-                          <span className="ml-2">This vault has been audited by Hacken. <a target="_blank">Audit report.</a></span></p>
+                          <span className="ml-2">This vault has been audited by Hacken. <a target="_blank" href="https://2144113251-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FEUGrGQMszyzwnqSJcQhi%2Fuploads%2FPhxht08pRErhrpoguGLO%2FCinch_Protocol_Hacken%20OU_Audit%20Report_12052023.pdf?alt=media&token=271737c0-8966-475e-a378-0858e2ca2998">Audit report.</a></span></p>
                       </div>
 
                     </div>

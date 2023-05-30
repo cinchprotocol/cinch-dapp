@@ -451,7 +451,7 @@ function Vault({ web3 }) {
                         <div className="mt-5">
                           <VaultRedeemFormRibbonEarn
                             web3={web3}
-                            vaultContractName="MockProtocolRibbonEarn"
+                            vaultContractName={protocolContractName}
                             cardTitle="Redeem from Protocol"
                           />
                         </div>

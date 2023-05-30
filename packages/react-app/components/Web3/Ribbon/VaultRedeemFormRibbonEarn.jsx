@@ -14,8 +14,8 @@ const VaultRedeemFormRibbonEarn = ({
   cardTitle = "Redeem from Cinch Vault",
 }) => {
   const [withdrawAmountStr, setWithdrawAmountStr] = useState(0);
-  var pendingWithdrawal = useContractReader(web3.readContracts, vaultContractName, 'withdrawals', ['0x5a5a338eb7f5baf9b3ff72ce57424deecf23e154'], 500);
-  console.log("pendingWithdrawal", pendingWithdrawal);
+  var pendingWithdrawal = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'withdrawals', ['0x5a5a338eb7f5baf9b3ff72ce57424deecf23e154'], 500)?.[1] ?? 0, shareDecimals);
+
   const initiateWithdraw = async values => {
     if (!web3 || !withdrawAmountStr) return;
 
@@ -51,9 +51,12 @@ const VaultRedeemFormRibbonEarn = ({
 
   return (
     <div className="px-8">
-      <div>
-        {pendingWithdrawal?.toString()}
-      </div>
+      {pendingWithdrawal > 0 ?
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Pending Withdrawal Balance </dt>
+          <dd class="mt-1 text-2xl  text-gray-900">{pendingWithdrawal?.toString()}</dd>
+        </div> : ""
+      }
       <Form
         name="basic"
         style={{ maxWidth: 600 }}
@@ -66,13 +69,14 @@ const VaultRedeemFormRibbonEarn = ({
         <Form.Item
           label="Redeem Amount"
           name="redeemAmount"
+          hidden={pendingWithdrawal > 0}
           rules={[{ required: true, message: "Please input the Redeem Amount!" }]}
         >
           <Input onChange={onAmountChange} />
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary"
+          <Button type="primary" hidden={pendingWithdrawal > 0}
             onClick={() => {
               initiateWithdraw();
             }} className="w-full">
@@ -81,7 +85,7 @@ const VaultRedeemFormRibbonEarn = ({
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary"
+          <Button type="primary" hidden={pendingWithdrawal == 0}
             onClick={() => {
               completeWithdraw();
             }} className="w-full">

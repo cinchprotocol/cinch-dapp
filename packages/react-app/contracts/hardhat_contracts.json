@@ -12160,6 +12160,30 @@
               ],
               "stateMutability": "nonpayable",
               "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "name": "withdrawals",
+              "outputs": [
+                {
+                  "internalType": "uint16",
+                  "name": "round",
+                  "type": "uint16"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "shares",
+                  "type": "uint128"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
             }
           ]
         },

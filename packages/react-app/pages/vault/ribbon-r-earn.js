@@ -342,10 +342,10 @@ function Vault({ web3 }) {
                           </div>
 
 
-                          <div class="sm:col-span-1">
+                          {/* <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Your referral code </dt>
                             <dd class="mt-1 text-xl text-gray-900"> <CopyToClipboard textToCopy='0xEdfdb5f2f02432F1E3271582056ECd0f884126aC' /></dd>
-                          </div>
+                          </div> */}
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Revenue shared on platform users (%)</dt>
                             <dd class="mt-1 text-xl text-gray-900">100%</dd>

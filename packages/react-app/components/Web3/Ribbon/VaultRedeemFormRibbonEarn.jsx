@@ -14,7 +14,7 @@ const VaultRedeemFormRibbonEarn = ({
   cardTitle = "Redeem from Cinch Vault",
 }) => {
   const [withdrawAmountStr, setWithdrawAmountStr] = useState(0);
-  var pendingWithdrawal = useContractReader(web3.readContracts, vaultContractName, 'withdrawals', [0x5a5a338eb7f5baf9b3ff72ce57424deecf23e154], 500);
+  var pendingWithdrawal = useContractReader(web3.readContracts, vaultContractName, 'withdrawals', ['0x5a5a338eb7f5baf9b3ff72ce57424deecf23e154'], 500);
   console.log("pendingWithdrawal", pendingWithdrawal);
   const initiateWithdraw = async values => {
     if (!web3 || !withdrawAmountStr) return;

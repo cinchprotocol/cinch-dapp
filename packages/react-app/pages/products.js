@@ -9,7 +9,7 @@ import { Container } from "/components/Container";
 import { CommonHead } from "/components/CommonHead";
 import { DAppHeader } from "/components/DAppHeader";
 import { Button } from "/components/Button";
-
+import { formatNumber } from "/helpers/utils";
 import CopyToClipboard from "/components/CopyToClipboardButton";
 import {
     useBalance,
@@ -25,6 +25,7 @@ function Vault({ web3 }) {
     const pollTime = 500;
     const { TabPane } = Tabs;
     var ribbonProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, 'MockProtocolRibbonEarn', 'totalBalance', [], pollTime) ?? 0, usdcERC20Decimals);
+    ribbonProductTVL = formatNumber(ribbonProductTVL, 2);
 
     const stETHSvg = <span><svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" height="100%"><path d="M0 28C0 12.536 12.536 0 28 0C43.464 0 56 12.536 56 28C56 43.464 43.464 56 28 56C12.536 56 0 43.464 0 28Z" fill="#00A3FF" fill-opacity="0.12"></path><path d="M16.5666 25.9769L16.2466 26.4679C12.6375 32.0043 13.4435 39.2549 18.1844 43.9002C20.9735 46.633 24.629 47.9996 28.2844 48C28.2844 48 28.2844 48 16.5666 25.9769Z" fill="#00A3FF"></path><path opacity="0.6" d="M28.282 32.6703L16.5641 25.9769C28.282 48 28.282 48 28.282 48C28.282 43.2036 28.282 37.7074 28.282 32.6703Z" fill="#00A3FF"></path><path opacity="0.6" d="M40.0148 25.9769L40.3348 26.4679C43.9439 32.0043 43.1379 39.2549 38.397 43.9002C35.6079 46.633 31.9525 47.9996 28.297 48C28.297 48 28.297 48 40.0148 25.9769Z" fill="#00A3FF"></path><path opacity="0.2" d="M28.2958 32.6703L40.0137 25.9769C28.2959 48 28.2958 48 28.2958 48C28.2958 43.2036 28.2958 37.7074 28.2958 32.6703Z" fill="#00A3FF"></path><path opacity="0.2" d="M28.3 17.7188V29.263L38.3937 23.4947L28.3 17.7188Z" fill="#00A3FF"></path><path opacity="0.6" d="M28.297 17.7188L18.196 23.4945L28.297 29.263V17.7188Z" fill="#00A3FF"></path><path d="M28.297 8.00839L18.196 23.4964L28.297 17.7045V8.00839Z" fill="#00A3FF"></path><path opacity="0.6" d="M28.3 17.7036L38.4014 23.4957L28.3 8V17.7036Z" fill="#00A3FF"></path></svg></span>;
     const usdcSvg = <span><svg xmlns="http://www.w3.org/2000/svg" data-name="86977684-12db-4850-8f30-233a7c267d11" viewBox="0 0 2000 2000">
@@ -61,7 +62,7 @@ function Vault({ web3 }) {
             id: 1,
             name: 'Ribbon R-EARN',
             vaultUrl: '/vault/ribbon-r-earn',
-            metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: ' TVL', value: ribbonProductTVL }],
+            metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: ' TVL', value: ribbonProductTVL, unit: 'USDC' }],
             token: 'USDC',
             image: '/ribbon_logo_1.png',
             status: 'Active'

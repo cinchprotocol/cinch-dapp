@@ -96,7 +96,7 @@ function Vault({ web3 }) {
   var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
   //var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, usdcERC20Decimals); //TODO read from ribbon contract instead below
   var underlyingProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, usdcERC20Decimals);
-
+  var vaultDepositProcessed = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, usdcERC20Decimals);
 
   const { TabPane } = Tabs;
 
@@ -311,7 +311,10 @@ function Vault({ web3 }) {
                             <dt class="text-sm font-medium text-gray-500">Total cumulative referral payments</dt>
                             <dd class="mt-1 text-2xl  text-gray-900">{formatNumber(cumulativeReferralBalance)}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
-
+                          <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">TVL via Cinch</dt>
+                            <dd class="mt-1 text-2xl text-gray-900">{formatNumber(vaultDepositProcessed)}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
+                          </div>
 
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Referral Payment APY</dt>
@@ -432,9 +435,9 @@ function Vault({ web3 }) {
                             onChange={e => handleChange(e, 'amount')}
                           />
 
-                          <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-lg font-medium px-3.5 py-2 text-sm font-semibold shadow">
+                          <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-base font-medium px-3.5 py-2 shadow my-auto">
                             <img
-                              className="inline-block h-8 w-8 rounded-full"
+                              className="inline-block h-6 w-6 rounded-full"
                               src="/usdc_logo.jpeg"
                               alt=""
                             />

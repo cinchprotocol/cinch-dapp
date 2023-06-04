@@ -10,7 +10,7 @@ const VaultDepositForm = ({
   web3,
   assetDecimals = 6,
   referralAddress,
-  defaultDepositAmountStr = "1000",
+  defaultDepositAmountStr = "0",
   vaultContractName = "Vault"
 }) => {
   const [formValues, setFormValues] = useState(null);

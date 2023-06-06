@@ -426,25 +426,6 @@ function Vault({ web3 }) {
                         </TabPane> : ""
                       }
                       <TabPane tab="Deposit" key="1">
-                        {/* <div className="bg-slate-50 m-6 rounded-2xl p-4 text-3xl  border hover:border-slate-300 flex justify-between">
-                          <input
-                            type='text'
-                            className="bg-transparent placeholder:text-[#B2B9D2] focus:none outline-none text-2xl border-0"
-                            placeholder='0.0'
-                            pattern='^[0-9]*[.,]?[0-9]*$'
-                            onChange={e => handleChange(e, 'amount')}
-                          />
-
-                          <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-base font-medium px-3.5 py-2 shadow my-auto">
-                            <img
-                              className="inline-block h-6 w-6 rounded-full"
-                              src="/usdc_logo.jpeg"
-                              alt=""
-                            />
-                            USDC  
-                          </div>
-                        </div> */}
-
                         <div className="mt-5">
                           <VaultDepositForm web3={web3} vaultContractName={vaultContractName} referralAddress={address} />
                         </div>

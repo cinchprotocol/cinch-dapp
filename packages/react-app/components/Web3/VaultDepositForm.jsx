@@ -3,27 +3,35 @@ import { Col, Row, Statistic, Form, Input, Space, Checkbox, Card } from "antd";
 import { useContractReader } from "eth-hooks";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 const { ethers } = require("ethers");
-
+import { XCircleIcon, CheckCircleIcon } from '@heroicons/react/outline';
 import { Button } from "../Button";
+
+// export const isReferralRegistered = async (web3, vaultContractName, address) => {
+//   const contract = web3?.readContracts[{ vaultContractName }];
+//   if (!contract) {
+//     return {};
+//   }
+//   const isReferralRegistered = await contract?.isReferralRegistered(address);
+//   return isReferralRegistered;
+// };
 
 const VaultDepositForm = ({
   web3,
   assetDecimals = 6,
-  referralAddress,
+  referralAddress = "",
   defaultDepositAmountStr = "0",
   vaultContractName = "Vault"
 }) => {
-  const [formValues, setFormValues] = useState(null);
   const [referralCode, setReferralCode] = useState(referralAddress);
   const [depositAmountStr, setDepositAmountStr] = useState(defaultDepositAmountStr);
+  const [isReferralValid, setIsReferralValid] = useState(false);
 
   const approveAsset = async values => {
-    const { depositAmount } = values;
-    if (!web3 || !depositAmount) return;
+    if (!web3 || !depositAmountStr) return;
     await web3?.tx(
       web3?.writeContracts?.MockERC20?.approve(
         web3?.writeContracts?.[vaultContractName]?.address,
-        ethers.utils.parseUnits(depositAmount, assetDecimals),
+        ethers.utils.parseUnits(depositAmountStr, assetDecimals),
       ),
     );
   };
@@ -49,19 +57,17 @@ const VaultDepositForm = ({
     }
   };
 
-  const onFinish = async values => {
-    console.log("onFinish:", values);
-    await approveAsset(values);
-    setFormValues(values);
-  };
-
-  const onFinishFailed = errorInfo => {
-    console.log("onFinishFailed:", errorInfo);
-  };
-
-  const onReferralChange = e => {
+  const onReferralChange = async e => {
     console.log(`onReferralChange value = ${e.target.value}`);
     setReferralCode(e.target.value);
+
+    var isValid = await web3?.tx(
+      web3?.readContracts?.[vaultContractName]?.isReferralRegistered(
+        referralCode
+      ),
+    );
+    console.log('referral registered:' + isValid?.toString());
+    setIsReferralValid(isValid);
   };
 
   const onInputChange = e => {
@@ -70,50 +76,78 @@ const VaultDepositForm = ({
   };
 
   return (
-    <div className="px-8">
+    <div className="">
+      <div className="bg-slate-50 m-6 rounded-2xl p-4 text-3xl  border hover:border-slate-300 flex justify-between">
+        <input
+          type='text'
+          className="bg-transparent placeholder:text-[#B2B9D2] border-transparent focus:border-transparent focus:ring-0 text-2xl"
+          placeholder='0.0'
+          pattern='^[0-9]*[.,]?[0-9]*$'
+          onChange={onInputChange}
+        />
 
-    <Form
-      name="basic"    
-      style={{ maxWidth: 600 }}
-      initialValues={{ referralEnabled: true, depositAmount: defaultDepositAmountStr }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-      size="large"
-      layout="vertical"
-    >
-      <Form.Item
-        label="Deposit (USDC)"
-        name="depositAmount"
-        rules={[{ required: true, message: "Please input the Deposit Amount!" }]}
+        <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-base font-medium px-3.5 py-1 shadow my-auto">
+          <img
+            className="inline-block h-6 w-6 rounded-full"
+            src="/usdc_logo.jpeg"
+            alt=""
+          />
+          USDC
+        </div>
+      </div>
+
+      <div className="bg-slate-50 m-6 p-1 rounded-2xl text-2xl  border hover:border-slate-300">
+        <input
+          type='text'
+          className="bg-transparent placeholder:text-[#B2B9D2] border-transparent focus:border-transparent focus:ring-0 w-full"
+          placeholder='Referral Address (0x... )'
+          onChange={onReferralChange}
+        />
+
+
+      </div>
+      {referralCode && (
+        <div>
+          {isReferralValid ? <div className="rounded-md bg-green-50 m-6 p-3 align-middle">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <CheckCircleIcon className="h-5 w-5 text-green-500" aria-hidden="true" />
+              </div>
+              <div className="ml-3">
+                <h3 className="font-medium text-green-700">Referral address verified.</h3>
+              </div>
+            </div>
+          </div>
+            :
+            <div className="rounded-md bg-red-50 m-6 p-3 align-middle">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="font-medium text-red-700">Address not registered with Referral program.</h3>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      )}
+
+
+      <Button type="primary" className="ml-6" disabled={depositAmountStr == '0'}
+        onClick={() => {
+          approveAsset();
+        }}>
+        Approve
+      </Button>
+      <Button type="primary" className="ml-3" disabled={depositAmountStr == '0'}
+        onClick={() => {
+          depositAsset();
+        }}
       >
-        <Input onChange={onInputChange} />
-      </Form.Item>
+        Deposit
+      </Button>
 
-
-      <Form.Item label="Referral Code" name="referralCode"  >
-        <Input onChange={onReferralChange} value={referralCode}/>
-      </Form.Item>
-
-      <Form.Item wrapperCol={{
-       
-      }}>
-        <Space>
-          <Button type="primary" htmlType="submit">
-            Approve
-          </Button>
-          <Button
-            type="primary"
-            disabled={formValues == null}
-            onClick={() => {
-              depositAsset(formValues);
-            }}
-          >
-            Deposit
-          </Button>
-        </Space>
-      </Form.Item>
-    </Form>
     </div>
   );
 };

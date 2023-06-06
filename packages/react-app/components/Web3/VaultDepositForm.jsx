@@ -58,14 +58,16 @@ const VaultDepositForm = ({
   };
 
   const onReferralChange = async e => {
-    console.log(`onReferralChange value = ${e.target.value}`);
     setReferralCode(e.target.value);
-    var isValid = await web3?.tx(
-      web3?.readContracts?.[vaultContractName]?.isReferralRegistered(
-        e.target.value
-      ),
-    );
-    console.log('referral registered:' + isValid?.toString());
+    var isValid = false;
+    if (e.target.value !== "") {
+      // isValid = await web3?.tx(
+      //   web3?.readContracts?.[vaultContractName]?.isReferralRegistered(
+      //     e.target.value
+      //   ),
+      // );
+      isValid = await web3?.readContracts[vaultContractName].isReferralRegistered(e.target.value);
+    }
     setIsReferralValid(isValid);
   };
 

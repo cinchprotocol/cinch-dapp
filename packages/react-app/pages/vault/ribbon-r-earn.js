@@ -110,7 +110,7 @@ function Vault({ web3 }) {
       if (address === '') return; // Skip fetching if the address is empty
 
       const response = await client.query(getGraphQuery(address)).toPromise();
-      console.log('GRAPH:', response.data);
+      //console.log('GRAPH:', response.data);
       setGraphData(response.data);
     };
 
@@ -125,8 +125,7 @@ function Vault({ web3 }) {
   }, [graphData]);
 
   useEffect(() => {
-    const web3Address = web3?.address?.toString();
-    console.log('WEB3 ADDRESS:', web3Address);
+    const web3Address = web3?.address?.toString();  
     setAddress(web3Address || '');
   }, [web3]);
 
@@ -140,8 +139,7 @@ function Vault({ web3 }) {
     graphData.withdraws?.forEach((withdrawal) => {
       balance -= parseInt(ethers.utils.formatUnits(withdrawal.amount ?? 0, 6));
     });
-
-    console.log('BALANCE:', balance);
+  
     setNetBalance(balance);
   }
 
@@ -151,7 +149,6 @@ function Vault({ web3 }) {
       balance += parseInt(ethers.utils.formatUnits(withdrawal.amount ?? 0, 6));
     });
 
-    console.log('REFERRAL BALANCE:', balance);
     setCumulativeReferralBalance(balance);
   }
 
@@ -160,8 +157,7 @@ function Vault({ web3 }) {
   const targetNetwork = NETWORK(1); //mainnet
   const targetNetworkName = targetNetwork.name == 'mainnet' ? 'Ethereum' : targetNetwork.name;
   let networkDisplay = null;
-  console.log(targetNetwork.chainId);
-  console.log(selectedChainId);
+
   if (NETWORKCHECK && selectedChainId && selectedChainId !== targetNetwork.chainId) {
     const networkSelected = NETWORK(selectedChainId);
     const networkLocal = NETWORK(localChainId);
@@ -186,7 +182,7 @@ function Vault({ web3 }) {
                       blockExplorerUrls: [targetNetwork.blockExplorer],
                     },
                   ];
-                  console.log("data", data);
+              
 
                   let switchTx;
                   // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods

@@ -35,7 +35,6 @@ const VaultRedeemFormRibbonEarn = ({
   };
 
   const onAmountChange = e => {
-    console.log(`onAmountChange value = ${e.target.value}`);
     setWithdrawAmountStr(e.target.value);
   };
 

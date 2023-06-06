@@ -18,7 +18,7 @@ import { Button } from "../Button";
 const VaultDepositForm = ({
   web3,
   assetDecimals = 6,
-  referralAddress = "",
+  referralAddress = null,
   defaultDepositAmountStr = "0",
   vaultContractName = "Vault"
 }) => {
@@ -38,7 +38,7 @@ const VaultDepositForm = ({
 
   const depositAsset = async values => {
     if (!web3 || !depositAmountStr || !referralCode) return;
-    console.log("depositAsset", depositAmountStr, referralCode);
+
     if (referralCode) {
       await web3?.tx(
         web3?.writeContracts?.[vaultContractName]?.depositWithReferral(
@@ -60,10 +60,9 @@ const VaultDepositForm = ({
   const onReferralChange = async e => {
     console.log(`onReferralChange value = ${e.target.value}`);
     setReferralCode(e.target.value);
-
     var isValid = await web3?.tx(
       web3?.readContracts?.[vaultContractName]?.isReferralRegistered(
-        referralCode
+        e.target.value
       ),
     );
     console.log('referral registered:' + isValid?.toString());
@@ -71,7 +70,6 @@ const VaultDepositForm = ({
   };
 
   const onInputChange = e => {
-    console.log(`onInputChange value = ${e.target.value}`);
     setDepositAmountStr(e.target.value);
   };
 
@@ -134,13 +132,13 @@ const VaultDepositForm = ({
       )}
 
 
-      <Button type="primary" className="ml-6" disabled={depositAmountStr == '0'}
+      <Button type="primary" className="ml-6 mb-6" disabled={depositAmountStr == '0'}
         onClick={() => {
           approveAsset();
         }}>
         Approve
       </Button>
-      <Button type="primary" className="ml-3" disabled={depositAmountStr == '0'}
+      <Button type="primary" className="ml-3 mb-6" disabled={depositAmountStr == '0'}
         onClick={() => {
           depositAsset();
         }}

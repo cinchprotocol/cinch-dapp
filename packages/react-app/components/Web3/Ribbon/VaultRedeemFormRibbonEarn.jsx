@@ -27,21 +27,11 @@ const VaultRedeemFormRibbonEarn = ({
   };
 
   const completeWithdraw = async values => {
-    if (!web3 || !withdrawAmountStr) return;
+    if (!web3) return;
 
     await web3?.tx(
       web3?.writeContracts[vaultContractName]?.completeWithdraw(),
     );
-  };
-
-  const onFinish = async values => {
-    console.log("onFinish:", values);
-    await redeemAsset(values);
-    setFormValues(values);
-  };
-
-  const onFinishFailed = errorInfo => {
-    console.log("onFinishFailed:", errorInfo);
   };
 
   const onAmountChange = e => {
@@ -50,14 +40,53 @@ const VaultRedeemFormRibbonEarn = ({
   };
 
   return (
-    <div className="px-8">
+    <div className="m-6">
       {pendingWithdrawal > 0 ?
         <div>
           <dt class="text-sm font-medium text-gray-500">Pending Withdrawal Balance </dt>
           <dd class="mt-1 text-2xl  text-gray-900">{pendingWithdrawal?.toString()}</dd>
-        </div> : ""
+
+          <Button type="primary"
+            onClick={() => {
+              completeWithdraw();
+            }} className="mt-10 w-full">
+            Complete Withdraw
+          </Button>
+        </div>
+        :
+
+        <div>
+          <div className="bg-slate-50 rounded-2xl p-4 text-3xl  border hover:border-slate-300 flex justify-between">
+            <input
+              type='text'
+              className="bg-transparent placeholder:text-[#B2B9D2] border-transparent focus:border-transparent focus:ring-0 text-2xl"
+              placeholder='0.0'
+              pattern='^[0-9]*[.,]?[0-9]*$'
+              onChange={onAmountChange}
+            />
+
+            <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-base font-medium px-3.5 py-1 shadow my-auto">
+              <img
+                className="inline-block h-6 w-6 rounded-full"
+                src="/usdc_logo.jpeg"
+                alt=""
+              />
+              USDC
+            </div>
+          </div>
+
+          <Button type="primary" disabled={withdrawAmountStr == '0'}
+            onClick={() => {
+              initiateWithdraw();
+            }} className="mt-10 w-full">
+            Initiate Withdraw
+          </Button>
+        </div>
       }
-      <Form
+
+
+
+      {/* <Form
         name="basic"
         style={{ maxWidth: 600 }}
         initialValues={{ redeemAmount: defaultRedeemAmountStr }}
@@ -92,7 +121,7 @@ const VaultRedeemFormRibbonEarn = ({
             Complete Withdraw
           </Button>
         </Form.Item>
-      </Form>
+      </Form> */}
     </div>
   );
 };

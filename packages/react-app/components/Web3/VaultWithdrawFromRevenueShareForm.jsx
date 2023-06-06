@@ -13,61 +13,55 @@ const VaultWithdrawFromRevenueShareForm = ({
   vaultContractName = "Vault",
   cardTitle = "Withdraw From Revenue Share (Referral Account Only)",
 }) => {
-  const [formValues, setFormValues] = useState(null);
+  const [withdrawAmountStr, setWithdrawAmountStr] = useState(0);
 
   const withdrawRevenueShare = async values => {
     const { withdrawAmount } = values;
-    if (!web3 || !withdrawAmount) return;
+    if (!web3 || !withdrawAmountStr) return;
 
     await web3?.tx(
       web3?.writeContracts[vaultContractName]?.withdrawFromRevenueShare(
         web3?.writeContracts?.MockERC20?.address,
-        ethers.utils.parseUnits(withdrawAmount, assetDecimals),
+        ethers.utils.parseUnits(withdrawAmountStr, assetDecimals),
         web3?.address,
       ),
     );
   };
 
-  const onFinish = async values => {
-    console.log("onFinish:", values);
-    await withdrawRevenueShare(values);
-    setFormValues(values);
-  };
-
-  const onFinishFailed = errorInfo => {
-    console.log("onFinishFailed:", errorInfo);
+  const onAmountChange = e => {
+    console.log(`onAmountChange value = ${e.target.value}`);
+    setWithdrawAmountStr(e.target.value);
   };
 
   return (
     <div className="px-8">
+      <div>
+        <div className="bg-slate-50 rounded-2xl p-4 text-3xl  border hover:border-slate-300 flex justify-between">
+          <input
+            type='text'
+            className="bg-transparent placeholder:text-[#B2B9D2] border-transparent focus:border-transparent focus:ring-0 text-2xl"
+            placeholder='0.0'
+            pattern='^[0-9]*[.,]?[0-9]*$'
+            onChange={onAmountChange}
+          />
 
-      <Form
-        name="basic"
-        style={{ maxWidth: 600 }}
-        initialValues={{ withdrawAmount: defaultWithdrawAmountStr }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-        layout="vertical"
-        size="large"
-      >
-        <Form.Item
-          label="Amount"
-          name="withdrawAmount"
-          rules={[{ required: true, message: "Please input the Withdraw Amount!" }]}
-        >
-          <Input />
-        </Form.Item>
+          <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-base font-medium px-3.5 py-1 shadow my-auto">
+            <img
+              className="inline-block h-6 w-6 rounded-full"
+              src="/usdc_logo.jpeg"
+              alt=""
+            />
+            USDC
+          </div>
+        </div>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className="w-full">
-
-            Withdraw
-
-          </Button>
-        </Form.Item>
-      </Form>
-
+        <Button type="primary" disabled={withdrawAmountStr == '0'}
+          onClick={() => {
+            withdrawRevenueShare();
+          }} className="mt-10 w-full">
+          Withdraw
+        </Button>
+      </div>
     </div>
   );
 };

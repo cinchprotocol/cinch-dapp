@@ -62,7 +62,7 @@ function Vault({ web3 }) {
             id: 1,
             name: 'Ribbon R-EARN',
             vaultUrl: '/vault/ribbon-r-earn',
-            metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: ' TVL', value: ribbonProductTVL, unit: 'USDC' }],
+            metrics: [{ name: 'Boosted APY', value: '11.3%' }, { name: 'Referral APY', value: '1.6%' }, { name: ' TVL', value: ribbonProductTVL, unit: 'USDC' }],
             token: 'USDC',
             image: '/ribbon_logo_1.png',
             status: 'Active'
@@ -71,7 +71,7 @@ function Vault({ web3 }) {
             id: 2,
             name: 'Metrix Fund 1',
             vaultUrl: '#',
-            metrics: [{ name: '3M Returns', value: '9.64%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$51.9K' }],
+            metrics: [{ name: '3M Returns', value: '9.6%' }, { name: 'Referral APY', value: '1.5%' }, { name: 'TVL', value: '$51.9K' }],
             token: 'USDC',
             image: '/metrixIcon.png',
             status: 'Comingsoon'
@@ -80,7 +80,7 @@ function Vault({ web3 }) {
             id: 3,
             name: 'Ribbon stETH',
             vaultUrl: '#',
-            metrics: [{ name: 'Boosted APY', value: '11.26%' }, { name: 'Referral APY', value: '1.56%' }, { name: 'TVL', value: '2.28K', unit: 'stETH' }],
+            metrics: [{ name: 'Boosted APY', value: '11.3%' }, { name: 'Referral APY', value: '1.6%' }, { name: 'TVL', value: '2.28K', unit: 'stETH' }],
             token: 'stETH',
             image: '/ribbon_logo_1.png',
             status: 'Comingsoon'
@@ -89,7 +89,7 @@ function Vault({ web3 }) {
             id: 4,
             name: 'Toros USD Delta Neutral',
             vaultUrl: '#',
-            metrics: [{ name: 'Boosted APY', value: '11.1%' }, { name: 'Referral APY', value: '0.25%' }, { name: 'TVL', value: '$1.7M' }],
+            metrics: [{ name: 'Boosted APY', value: '11.1%' }, { name: 'Referral APY', value: '0.3%' }, { name: 'TVL', value: '$1.7M' }],
             token: 'USDC',
             image: '/toroslogo.png',
             status: 'Comingsoon'
@@ -116,7 +116,7 @@ function Vault({ web3 }) {
             id: 6,
             name: 'BENQI AVAX Liquid Staking',
             vaultUrl: '#',
-            metrics: [{ name: 'Boosted APY', value: '7.15%' }, { name: 'Referral APY', value: '1.0%' }, { name: 'TVL', value: '$94.3M' }],
+            metrics: [{ name: 'Boosted APY', value: '7.2%' }, { name: 'Referral APY', value: '1.0%' }, { name: 'TVL', value: '$94.3M' }],
             token: 'USDC',
             image: '/Benqi_logo.png',
             status: 'Comingsoon'

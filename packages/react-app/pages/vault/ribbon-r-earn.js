@@ -253,7 +253,7 @@ function Vault({ web3 }) {
                       <dt className="text-sm font-normal text-gray-900">APY</dt>
                       <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div className="flex items-baseline text-xl font-semibold text-gray-600">
-                          9.7%
+                          2-12%
 
                         </div>
                       </dd>
@@ -318,7 +318,7 @@ function Vault({ web3 }) {
                           </div>
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Boosted APY </dt>
-                            <dd class="mt-1 text-2xl text-gray-900">11.26%</dd>
+                            <dd class="mt-1 text-2xl text-gray-900">2.3-13.8%</dd>
                           </div>
                         </dl>
                       </div>

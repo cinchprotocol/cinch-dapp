@@ -62,7 +62,7 @@ function Vault({ web3 }) {
             id: 1,
             name: 'Ribbon R-EARN',
             vaultUrl: '/vault/ribbon-r-earn',
-            metrics: [{ name: 'Boosted APY', value: '11.3%' }, { name: 'Referral APY', value: '1.6%' }, { name: ' TVL', value: ribbonProductTVL, unit: 'USDC' }],
+            metrics: [{ name: 'Boosted APY', value: '2.3-13.8%' }, { name: 'Referral APY', value: '1.6%' }, { name: ' TVL', value: ribbonProductTVL, unit: 'USDC' }],
             token: 'USDC',
             image: '/ribbon_logo_1.png',
             status: 'Active'

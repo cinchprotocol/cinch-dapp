@@ -14980,6 +14980,7 @@
               "type": "constructor"
             }
           ]
+        },
         "RevenueShareVaultDHedge_Implementation": {
           "address": "0x42EA533F8e2E980993860c8296Ad91bf8C8AB719",
           "abi": [

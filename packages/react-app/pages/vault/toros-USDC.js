@@ -178,14 +178,14 @@ function Vault({ web3 }) {
 
                         <img
                           className="inline-block h-16 w-16 rounded-full bg-black"
-                          src="/toros.png"
+                          src="/toroslogo.png"
                           alt=""
                         />
 
                       </div>
                       <div>
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                          dHedge-Toros USD Delta Neutral Yield
+                          Toros USD Delta Neutral Yield
                         </h1>
                         <CopyToClipboard textToCopy={protocolContractAddress} />
                       </div>

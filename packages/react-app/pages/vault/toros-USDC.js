@@ -459,7 +459,7 @@ function Vault({ web3 }) {
                                 <VaultWithdrawFromRevenueShareForm
                                   web3={web3}
                                   vaultContractName={vaultContractName}
-                                  defaultWithdrawAmountStr={"90"}
+                                  defaultWithdrawAmountStr={"0"}
                                 />
                               </div>
                             </div>

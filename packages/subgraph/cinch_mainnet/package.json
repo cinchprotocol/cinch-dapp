@@ -1,0 +1,18 @@
+{
+  "name": "cinch_mainnet",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ cinch_mainnet",
+    "create-local": "graph create --node http://localhost:8020/ cinch_mainnet",
+    "remove-local": "graph remove --node http://localhost:8020/ cinch_mainnet",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 cinch_mainnet",
+    "test": "graph test"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.49.0",
+    "@graphprotocol/graph-ts": "0.29.1"
+  },
+  "devDependencies": { "matchstick-as": "0.5.0" }
+}

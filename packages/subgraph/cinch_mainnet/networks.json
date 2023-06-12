@@ -1,0 +1,11 @@
+{
+  "mainnet": {
+    "Ribbon_rEarn": {
+      "address": "0x37506bb0192Ac4B6131A7cd893c17f14a01d9C28",
+      "startBlock": 17292203
+    },
+    "RevenueShareVaultRibbonEarn": {
+      "address": "0x37506bb0192Ac4B6131A7cd893c17f14a01d9C28"
+    }
+  }
+}

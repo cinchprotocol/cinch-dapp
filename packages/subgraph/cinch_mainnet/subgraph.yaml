@@ -1,0 +1,59 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Ribbon_rEarn
+    network: mainnet
+    source:
+      address: "0x84c2b16FA6877a8fF4F3271db7ea837233DFd6f0"
+      abi: Ribbon_rEarn
+      startBlock: 17292203
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - InitiateWithdraw
+        - InstantWithdraw
+        - Redeem
+        - Withdraw
+      abis:
+        - name: Ribbon_rEarn
+          file: ./abis/Ribbon_rEarn.json
+      eventHandlers:
+        - event: InitiateWithdraw(indexed address,uint256,uint256)
+          handler: handleInitiateWithdraw
+        - event: InstantWithdraw(indexed address,uint256,uint256)
+          handler: handleInstantWithdraw
+        - event: Redeem(indexed address,uint256,uint256)
+          handler: handleRedeem
+        - event: Withdraw(indexed address,uint256,uint256)
+          handler: handleWithdraw
+      file: ./src/ribbon-r-earn.ts
+  - kind: ethereum
+    name: RevenueShareVaultRibbonEarn
+    network: mainnet
+    source:
+      address: "0x55a4B365aBd729dA4eD92f0048E371CA00690575"
+      abi: RevenueShareVaultRibbonEarn
+      startBlock: 17292203
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - DepositWithReferral
+        - RevenueShareDeposited
+        - RevenueShareWithdrawn
+      abis:
+        - name: RevenueShareVaultRibbonEarn
+          file: ./abis/RevenueShareVaultRibbonEarn.json
+      eventHandlers:
+        - event: DepositWithReferral(address,address,uint256,uint256,indexed address)
+          handler: handleDepositWithReferral
+        - event: RevenueShareDeposited(indexed address,address,uint256)
+          handler: handleRevenueShareDeposited
+        - event: RevenueShareWithdrawn(indexed address,uint256,address,address)
+          handler: handleRevenueShareWithdrawn
+      file: ./src/revenue-share-vault-ribbon-earn.ts

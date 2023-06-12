@@ -88,14 +88,14 @@ function Vault({ web3 }) {
 
   const usdcERC20Decimals = 6;
   const protocolContractAddress = "0x84c2b16fa6877a8ff4f3271db7ea837233dfd6f0";
-  const vaultContractName = "RevenueShareVaultRibbonEarn";
-  const protocolContractName = "MockProtocolRibbonEarn";
+  const vaultContractName = "RevenueShareVaultDHedge";
+  const protocolContractName = "TorosUSDCABI";
   const pollTime = 500;
 
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, usdcERC20Decimals);
   var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
   //var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, usdcERC20Decimals); //TODO read from ribbon contract instead below
-  var underlyingProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, usdcERC20Decimals);
+  var underlyingProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalFundValue', [], pollTime) ?? 0, usdcERC20Decimals);
   var vaultDepositProcessed = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, usdcERC20Decimals);
 
   const { TabPane } = Tabs;

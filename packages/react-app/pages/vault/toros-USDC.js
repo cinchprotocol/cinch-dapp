@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Web3Consumer } from "/helpers/Web3Context";
 import { formatNumber } from "/helpers/utils";
 import _ from "lodash";
-import { Tabs } from "antd";
+import { Tabs, Alert } from "antd";
 const { ethers } = require("ethers");
 import Image from "next/image";
 import {
@@ -22,31 +22,17 @@ import CopyToClipboard from "/components/CopyToClipboardButton";
 import VaultDepositForm from "/components/Web3/VaultDepositForm";
 import VaultRedeemForm from "/components/Web3/VaultRedeemForm";
 import VaultEventsList from "/components/Web3/VaultEventsList";
-import VaultRedeemFormRibbonEarn from "/components/Web3/Ribbon/VaultRedeemFormRibbonEarn";
+import VaultRedeemFormDHedge from "/components/Web3/DHedge/VaultRedeemFormDHedge";
 import VaultWithdrawFromRevenueShareForm from "/components/Web3/VaultWithdrawFromRevenueShareForm";
 import VaultAddRevenueShareReferralForm from "/components/Web3/VaultAddRevenueShareReferralForm";
 import VaultDepositToRevenueShareButton from "/components/Web3/VaultDepositToRevenueShareButton";
 import { XCircleIcon } from '@heroicons/react/outline';
 import { createClient } from 'urql'
-
-
-const APIURL = "https://api.studio.thegraph.com/query/47041/cinch_goerli/v0.0.5"
+import { NETWORK, NETWORKS } from "/constants";
 
 function getGraphQuery(address) {
   const query = `
-    query {
-      withdraws(
-        orderDirection: desc
-        where: {receiver: "${address}"}
-      ) {
-        assets
-        owner
-        receiver
-        sender
-        shares
-        blockTimestamp
-        id
-      }
+    query {     
       depositWithReferrals(
         where: {caller: "${address}"}
         orderDirection: desc
@@ -60,22 +46,33 @@ function getGraphQuery(address) {
         transactionHash
         id
       }
-      redeemWithReferrals(where: {caller: "${address}"}, orderDirection: desc) {
-        assets
-        blockTimestamp
-        caller
-        id
-        receiver
-        referral
-        shares
-        sharesOwner
-      }   
       revenueShareWithdrawns(where: {receiver: "${address}"}, orderDirection: desc) {
         amount
         asset
         blockTimestamp
         receiver
         referral
+      }
+      initiateWithdraws(
+        orderBy: blockTimestamp
+        orderDirection: desc
+        where: {account: "${address}"}
+      ) {
+        account
+        shares
+        round
+        blockTimestamp
+      }
+      withdraws(
+        first: 2
+        orderBy: blockTimestamp
+        orderDirection: desc
+        where: {account: "${address}"}
+      ) {
+        account
+        amount
+        blockTimestamp
+        shares
       }
     }
   `;
@@ -84,22 +81,22 @@ function getGraphQuery(address) {
 }
 
 const client = createClient({
-  url: APIURL
+  url: process.env.GRAPH_API_URL
 })
 
 function Vault({ web3 }) {
 
-  const mockERC20Decimals = 6;
-  const protocolContractAddress = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
-  const vaultContractName = "RevenueShareVaultRibbonEarn";
-  const protocolContractName = "MockProtocolRibbonEarn";
+  const usdcERC20Decimals = 6;
+  const protocolContractAddress = "0x84c2b16fa6877a8ff4f3271db7ea837233dfd6f0";
+  const vaultContractName = "RevenueShareVaultDHedge";
+  const protocolContractName = "TorosUSDCABI";
   const pollTime = 500;
 
-  var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, mockERC20Decimals);
+  var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, usdcERC20Decimals);
   var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
-  var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, mockERC20Decimals); //TODO read from ribbon contract instead below
-  // var underlyingProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, mockERC20Decimals);
-
+  //var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, usdcERC20Decimals); //TODO read from underlying contract instead below
+  var underlyingProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalFundValue', [], pollTime) ?? 0, usdcERC20Decimals);
+  var vaultDepositProcessed = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, usdcERC20Decimals);
 
   const { TabPane } = Tabs;
 
@@ -113,7 +110,7 @@ function Vault({ web3 }) {
       if (address === '') return; // Skip fetching if the address is empty
 
       const response = await client.query(getGraphQuery(address)).toPromise();
-      console.log('GRAPH:', response.data);
+      //console.log('GRAPH:', response.data);
       setGraphData(response.data);
     };
 
@@ -129,7 +126,6 @@ function Vault({ web3 }) {
 
   useEffect(() => {
     const web3Address = web3?.address?.toString();
-    console.log('WEB3 ADDRESS:', web3Address);
     setAddress(web3Address || '');
   }, [web3]);
 
@@ -141,10 +137,9 @@ function Vault({ web3 }) {
     });
 
     graphData.withdraws?.forEach((withdrawal) => {
-      balance -= parseInt(ethers.utils.formatUnits(withdrawal.assets ?? 0, 6));
+      balance -= parseInt(ethers.utils.formatUnits(withdrawal.amount ?? 0, 6));
     });
 
-    console.log('BALANCE:', balance);
     setNetBalance(balance);
   }
 
@@ -154,11 +149,75 @@ function Vault({ web3 }) {
       balance += parseInt(ethers.utils.formatUnits(withdrawal.amount ?? 0, 6));
     });
 
-    console.log('REFERRAL BALANCE:', balance);
     setCumulativeReferralBalance(balance);
   }
 
 
+  const { NETWORKCHECK, localChainId, selectedChainId } = web3;
+  const targetNetwork = NETWORK(10); //optimism
+  const targetNetworkName = targetNetwork.name == 'mainnet' ? 'Ethereum' : targetNetwork.name;
+  let networkDisplay = null;
+
+  if (NETWORKCHECK && selectedChainId && selectedChainId !== targetNetwork.chainId) {
+    const networkSelected = NETWORK(selectedChainId);
+    const networkLocal = NETWORK(localChainId);
+
+    networkDisplay = (
+      <div className="mb-10">
+        <Alert
+          showIcon
+          message="Wrong Network"
+          description={
+            <div>
+              Please switch your wallet network to {targetNetworkName} to interact with the vault.
+              <Button style={{ marginLeft: 14 }}
+                onClick={async () => {
+                  const ethereum = window.ethereum;
+                  const data = [
+                    {
+                      chainId: "0x" + targetNetwork.chainId.toString(16),
+                      chainName: targetNetworkName,
+                      nativeCurrency: targetNetwork.nativeCurrency,
+                      rpcUrls: [targetNetwork.rpcUrl],
+                      blockExplorerUrls: [targetNetwork.blockExplorer],
+                    },
+                  ];
+
+
+                  let switchTx;
+                  // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
+                  try {
+                    switchTx = await ethereum.request({
+                      method: "wallet_switchEthereumChain",
+                      params: [{ chainId: data[0].chainId }],
+                    });
+                  } catch (switchError) {
+                    // not checking specific error code, because maybe we're not using MetaMask
+                    try {
+                      switchTx = await ethereum.request({
+                        method: "wallet_addEthereumChain",
+                        params: data,
+                      });
+                    } catch (addError) {
+                      // handle "add" error
+                    }
+                  }
+
+                  if (switchTx) {
+                    console.log(switchTx);
+                  }
+                }}
+              >
+                Switch to {targetNetworkName}
+              </Button>
+            </div>
+          }
+          type="warning"
+          closable={false}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-slate-50">
@@ -169,32 +228,32 @@ function Vault({ web3 }) {
         <div>
           <Container>
             <div class="mb-5">
+              {networkDisplay}
               <div>
                 <div>
                   <dl className="mt-5 flex justify-start divide-y divide-gray-200 overflow-hidden rounded-lg  md:divide-x md:divide-y-0 ">
 
                     <div class="flex items-center space-x-5 pr-8">
-                      <div class="flex-shrink-0">
+                      <div class="flex-shrink-0 ">
 
                         <img
-                          className="inline-block h-16 w-16 rounded-full bg-black"
-                          src="/toros.png"
+                          className="inline-block h-16 w-16 rounded-full"
+                          src="/toroslogo.png"
                           alt=""
                         />
-
                       </div>
                       <div>
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                          dHedge-Toros USD Delta Neutral Yield
+                          Toros USD Delta Neutral Yield
                         </h1>
-                        <CopyToClipboard textToCopy={protocolContractAddress} />
+                        <CopyToClipboard textToCopy={web3?.writeContracts?.[vaultContractName]?.address} />
                       </div>
                     </div>
                     <div className="px-8 py-2 ">
                       <dt className="text-sm font-normal text-gray-900">APY</dt>
                       <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div className="flex items-baseline text-xl font-semibold text-gray-600">
-                          9.7%
+                          2-12%
 
                         </div>
                       </dd>
@@ -248,7 +307,10 @@ function Vault({ web3 }) {
                             <dt class="text-sm font-medium text-gray-500">Total cumulative referral payments</dt>
                             <dd class="mt-1 text-2xl  text-gray-900">{formatNumber(cumulativeReferralBalance)}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
                           </div>
-
+                          <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">TVL via Cinch</dt>
+                            <dd class="mt-1 text-2xl text-gray-900">{formatNumber(vaultDepositProcessed)}<span className="ml-2 text-sm font-medium text-gray-500">USDC</span></dd>
+                          </div>
 
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Referral Payment APY</dt>
@@ -256,7 +318,7 @@ function Vault({ web3 }) {
                           </div>
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Boosted APY </dt>
-                            <dd class="mt-1 text-2xl text-gray-900">11.26%</dd>
+                            <dd class="mt-1 text-2xl text-gray-900">2.3-13.8%</dd>
                           </div>
                         </dl>
                       </div>
@@ -279,17 +341,17 @@ function Vault({ web3 }) {
                           </div>
 
 
-                          <div class="sm:col-span-1">
+                          {/* <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Your referral code </dt>
                             <dd class="mt-1 text-xl text-gray-900"> <CopyToClipboard textToCopy='0xEdfdb5f2f02432F1E3271582056ECd0f884126aC' /></dd>
-                          </div>
+                          </div> */}
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Revenue shared on platform users (%)</dt>
                             <dd class="mt-1 text-xl text-gray-900">100%</dd>
                           </div>
                           <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Product contract address</dt>
-                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={protocolContractAddress} /></dd>
+                            <dd class="mt-1 text-xl text-gray-900"><CopyToClipboard textToCopy={web3?.writeContracts?.[vaultContractName]?.address} /></dd>
                           </div>
 
                         </dl>
@@ -307,7 +369,7 @@ function Vault({ web3 }) {
                           </svg>
                         </span>
                         <p>
-                          <span className="ml-2">This vault has been audited by Hacken. <a target="_blank">Audit report.</a></span></p>
+                          <span className="ml-2">This vault has been audited by Hacken. <a target="_blank" href="https://2144113251-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FEUGrGQMszyzwnqSJcQhi%2Fuploads%2FPhxht08pRErhrpoguGLO%2FCinch_Protocol_Hacken%20OU_Audit%20Report_12052023.pdf?alt=media&token=271737c0-8966-475e-a378-0858e2ca2998">Audit report.</a></span></p>
                       </div>
 
                     </div>
@@ -321,62 +383,45 @@ function Vault({ web3 }) {
                 <div className="p-1 lg:col-span-2 bg-white rounded-2xl shadow">
                   <div>
                     <Tabs defaultActiveKey="1" centered size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
-                      <TabPane tab="Simulation" key="0">
-                        <div className="p-5">
+                      {selectedChainId !== 1 ?
+                        <TabPane tab="Simulation" key="0">
+                          <div className="p-5">
 
-                          <Button
-                            onClick={async () => {
-                              await web3?.tx(
-                                web3?.writeContracts[vaultContractName]?.addRevenueShareReferral(web3?.address),
-                              );
-                            }}
-                          >
-                            1. Register your address with referral program
-                          </Button>
-
-                          <Button className="my-10"
-                            onClick={() => {
-                              web3?.tx(
-                                web3?.writeContracts?.MockERC20?.faucet(
-                                  web3?.address,
-                                  ethers.utils.parseUnits("1100", mockERC20Decimals),
-                                ),
-                              );
-                            }}
-                          >
-                            2. Get test USDC
-                          </Button>
-                          <div>
-                            <Button className="mb-10" variant="outline">
-                              3. Go to deposit tab and do deposit
+                            <Button
+                              onClick={async () => {
+                                await web3?.tx(
+                                  web3?.writeContracts[vaultContractName]?.addRevenueShareReferral(web3?.address),
+                                );
+                              }}
+                            >
+                              1. Register your address with referral program
                             </Button>
+
+                            <Button className="my-10"
+                              onClick={() => {
+                                web3?.tx(
+                                  web3?.writeContracts?.MockERC20?.faucet(
+                                    web3?.address,
+                                    ethers.utils.parseUnits("1100", usdcERC20Decimals),
+                                  ),
+                                );
+                              }}
+                            >
+                              2. Get test USDC
+                            </Button>
+                            <div>
+                              <Button className="mb-10" variant="outline">
+                                3. Go to deposit tab and do deposit
+                              </Button>
+                            </div>
+
+
+                            <VaultDepositToRevenueShareButton web3={web3} vaultContractName={vaultContractName} />
+
                           </div>
-
-
-                          <VaultDepositToRevenueShareButton web3={web3} vaultContractName={vaultContractName} />
-
-                        </div>
-                      </TabPane>
+                        </TabPane> : ""
+                      }
                       <TabPane tab="Deposit" key="1">
-                        {/* <div className="bg-slate-50 m-6 rounded-2xl p-4 text-3xl  border hover:border-slate-300 flex justify-between">
-                          <input
-                            type='text'
-                            className="bg-transparent placeholder:text-[#B2B9D2] focus:none outline-none text-2xl border-0"
-                            placeholder='0.0'
-                            pattern='^[0-9]*[.,]?[0-9]*$'
-                            onChange={e => handleChange(e, 'amount')}
-                          />
-
-                          <div className="inline-flex items-center gap-x-2 bg-slate-200 rounded-2xl text-lg font-medium px-3.5 py-2 text-sm font-semibold shadow">
-                            <img
-                              className="inline-block h-8 w-8 rounded-full"
-                              src="/usdc_logo.jpeg"
-                              alt=""
-                            />
-                            USDC
-                          </div>
-                        </div> */}
-
                         <div className="mt-5">
                           <VaultDepositForm web3={web3} vaultContractName={vaultContractName} referralAddress={address} />
                         </div>
@@ -384,9 +429,9 @@ function Vault({ web3 }) {
 
                       <TabPane tab="Withdraw" key="2">
                         <div className="mt-5">
-                          <VaultRedeemFormRibbonEarn
+                          <VaultRedeemFormDHedge
                             web3={web3}
-                            vaultContractName="MockProtocolRibbonEarn"
+                            vaultContractName={protocolContractName}
                             cardTitle="Redeem from Protocol"
                           />
                         </div>
@@ -414,7 +459,7 @@ function Vault({ web3 }) {
                                 <VaultWithdrawFromRevenueShareForm
                                   web3={web3}
                                   vaultContractName={vaultContractName}
-                                  defaultWithdrawAmountStr={"90"}
+                                  defaultWithdrawAmountStr={"0"}
                                 />
                               </div>
                             </div>
@@ -435,26 +480,6 @@ function Vault({ web3 }) {
               Transactions
             </h3>
             <div>
-              {/* <Tabs defaultActiveKey="1"  size='large' tabBarStyle={{ display: "flex", justifyContent: "space-between" }}>
-                <TabPane tab="Deposits" key="1">
-                  <div className="mt-5  bg-white">
-                  <VaultDepositEventList
-                  web3={web3}
-                  mockERC20Decimals={mockERC20Decimals}
-                  vaultContractName={vaultContractName}
-                />
-                  </div>
-                </TabPane>
-                <TabPane tab="Withdrawals" key="2">
-                  <div className="mt-5 bg-white">
-                  <VaultRedeemEventList
-                  web3={web3}
-                  mockERC20Decimals={mockERC20Decimals}
-                  vaultContractName={vaultContractName}
-                />
-                  </div>
-                </TabPane>
-              </Tabs> */}
               <VaultEventsList
                 graphData={graphData}
               />

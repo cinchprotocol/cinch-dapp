@@ -94,7 +94,7 @@ function Vault({ web3 }) {
 
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, usdcERC20Decimals);
   var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
-  //var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, usdcERC20Decimals); //TODO read from ribbon contract instead below
+  //var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, usdcERC20Decimals); //TODO read from underlying contract instead below
   var underlyingProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalBalance', [], pollTime) ?? 0, usdcERC20Decimals);
   var vaultDepositProcessed = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, usdcERC20Decimals);
 
@@ -459,7 +459,7 @@ function Vault({ web3 }) {
                                 <VaultWithdrawFromRevenueShareForm
                                   web3={web3}
                                   vaultContractName={vaultContractName}
-                                  defaultWithdrawAmountStr={"90"}
+                                  defaultWithdrawAmountStr={"0"}
                                 />
                               </div>
                             </div>

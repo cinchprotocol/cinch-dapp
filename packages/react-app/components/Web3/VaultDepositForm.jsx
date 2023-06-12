@@ -23,7 +23,7 @@ const VaultDepositForm = ({
   vaultContractName = "Vault"
 }) => {
   const [referralCode, setReferralCode] = useState(referralAddress);
-  const [depositAmountStr, setDepositAmountStr] = useState(defaultDepositAmountStr);
+  const [depositAmountStr, setDepositAmountStr] = useState('');
   const [isReferralValid, setIsReferralValid] = useState(false);
 
   const approveAsset = async values => {
@@ -72,7 +72,17 @@ const VaultDepositForm = ({
   };
 
   const onInputChange = e => {
-    setDepositAmountStr(e.target.value);
+    const { value } = e.target;
+    var sanitizedValue = value.replace(/[^0-9.]/g, '');
+    const decimalIndex = sanitizedValue.indexOf('.');
+    if (decimalIndex !== -1) {
+      const decimalPart = sanitizedValue.substring(decimalIndex + 1);
+      if (decimalPart.length > 6) {
+        const truncatedDecimal = decimalPart.substring(0, 6);
+        sanitizedValue = sanitizedValue.substring(0, decimalIndex + 1) + truncatedDecimal;
+      }
+    }
+    setDepositAmountStr(sanitizedValue);
   };
 
   return (
@@ -81,8 +91,8 @@ const VaultDepositForm = ({
         <input
           type='text'
           className="bg-transparent placeholder:text-[#B2B9D2] border-transparent focus:border-transparent focus:ring-0 text-2xl"
-          placeholder='0.0'
-          pattern='^[0-9]*[.,]?[0-9]*$'
+          placeholder={defaultDepositAmountStr}
+          value={depositAmountStr}
           onChange={onInputChange}
         />
 

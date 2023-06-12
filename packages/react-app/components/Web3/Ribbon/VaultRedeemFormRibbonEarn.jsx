@@ -13,7 +13,7 @@ const VaultRedeemFormRibbonEarn = ({
   vaultContractName = "MockProtocolRibbonEarn",
   cardTitle = "Redeem from Cinch Vault",
 }) => {
-  const [withdrawAmountStr, setWithdrawAmountStr] = useState(0);
+  const [withdrawAmountStr, setWithdrawAmountStr] = useState('');
   var pendingWithdrawal = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'withdrawals', [web3?.address], 500)?.[1] ?? 0, shareDecimals);
 
   const initiateWithdraw = async values => {
@@ -35,7 +35,17 @@ const VaultRedeemFormRibbonEarn = ({
   };
 
   const onAmountChange = e => {
-    setWithdrawAmountStr(e.target.value);
+    const { value } = e.target;
+    var sanitizedValue = value.replace(/[^0-9.]/g, '');
+    const decimalIndex = sanitizedValue.indexOf('.');
+    if (decimalIndex !== -1) {
+      const decimalPart = sanitizedValue.substring(decimalIndex + 1);
+      if (decimalPart.length > 6) {
+        const truncatedDecimal = decimalPart.substring(0, 6);
+        sanitizedValue = sanitizedValue.substring(0, decimalIndex + 1) + truncatedDecimal;
+      }
+    }
+    setWithdrawAmountStr(sanitizedValue);
   };
 
   return (
@@ -59,8 +69,8 @@ const VaultRedeemFormRibbonEarn = ({
             <input
               type='text'
               className="bg-transparent placeholder:text-[#B2B9D2] border-transparent focus:border-transparent focus:ring-0 text-2xl"
-              placeholder='0.0'
-              pattern='^[0-9]*[.,]?[0-9]*$'
+              placeholder='0'
+              value={withdrawAmountStr}
               onChange={onAmountChange}
             />
 
@@ -82,45 +92,7 @@ const VaultRedeemFormRibbonEarn = ({
           </Button>
         </div>
       }
-
-
-
-      {/* <Form
-        name="basic"
-        style={{ maxWidth: 600 }}
-        initialValues={{ redeemAmount: defaultRedeemAmountStr }}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-        size="large"
-        layout="vertical"
-      >
-        <Form.Item
-          label="Redeem Amount"
-          name="redeemAmount"
-          hidden={pendingWithdrawal > 0}
-          rules={[{ required: true, message: "Please input the Redeem Amount!" }]}
-        >
-          <Input onChange={onAmountChange} />
-        </Form.Item>
-
-        <Form.Item>
-          <Button type="primary" hidden={pendingWithdrawal > 0}
-            onClick={() => {
-              initiateWithdraw();
-            }} className="w-full">
-            Initiate Withdraw
-          </Button>
-        </Form.Item>
-
-        <Form.Item>
-          <Button type="primary" hidden={pendingWithdrawal == 0}
-            onClick={() => {
-              completeWithdraw();
-            }} className="w-full">
-            Complete Withdraw
-          </Button>
-        </Form.Item>
-      </Form> */}
+    
     </div>
   );
 };

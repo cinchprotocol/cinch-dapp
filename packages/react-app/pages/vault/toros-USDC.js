@@ -22,7 +22,7 @@ import CopyToClipboard from "/components/CopyToClipboardButton";
 import VaultDepositForm from "/components/Web3/VaultDepositForm";
 import VaultRedeemForm from "/components/Web3/VaultRedeemForm";
 import VaultEventsList from "/components/Web3/VaultEventsList";
-import VaultRedeemFormRibbonEarn from "/components/Web3/Ribbon/VaultRedeemFormRibbonEarn";
+import VaultRedeemFormDHedge from "/components/Web3/DHedge/VaultRedeemFormDHedge";
 import VaultWithdrawFromRevenueShareForm from "/components/Web3/VaultWithdrawFromRevenueShareForm";
 import VaultAddRevenueShareReferralForm from "/components/Web3/VaultAddRevenueShareReferralForm";
 import VaultDepositToRevenueShareButton from "/components/Web3/VaultDepositToRevenueShareButton";
@@ -94,7 +94,7 @@ function Vault({ web3 }) {
 
   var pendingReferralBalance = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'revenueShareBalanceByAssetReferral', [web3?.writeContracts?.MockERC20?.address, web3?.address], pollTime) ?? 0, usdcERC20Decimals);
   var isReferralRegistered = useContractReader(web3.readContracts, vaultContractName, 'isReferralRegistered', [web3?.address], pollTime)
-  //var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, usdcERC20Decimals); //TODO read from ribbon contract instead below
+  //var underlyingProductTVL = ethers.utils.formatUnits(2269745893477 ?? 0, usdcERC20Decimals); //TODO read from underlying contract instead below
   var underlyingProductTVL = ethers.utils.formatUnits(useContractReader(web3.readContracts, protocolContractName, 'totalFundValue', [], pollTime) ?? 0, usdcERC20Decimals);
   var vaultDepositProcessed = ethers.utils.formatUnits(useContractReader(web3.readContracts, vaultContractName, 'totalAssetDepositProcessed', [], pollTime) ?? 0, usdcERC20Decimals);
 
@@ -429,7 +429,7 @@ function Vault({ web3 }) {
 
                       <TabPane tab="Withdraw" key="2">
                         <div className="mt-5">
-                          <VaultRedeemFormRibbonEarn
+                          <VaultRedeemFormDHedge
                             web3={web3}
                             vaultContractName={protocolContractName}
                             cardTitle="Redeem from Protocol"

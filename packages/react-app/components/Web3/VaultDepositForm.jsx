@@ -81,7 +81,7 @@ const VaultDepositForm = ({
         <input
           type='text'
           className="bg-transparent placeholder:text-[#B2B9D2] border-transparent focus:border-transparent focus:ring-0 text-2xl"
-          placeholder='0.0'
+          placeholder={defaultDepositAmountStr}
           pattern='^[0-9]*[.,]?[0-9]*$'
           onChange={onInputChange}
         />

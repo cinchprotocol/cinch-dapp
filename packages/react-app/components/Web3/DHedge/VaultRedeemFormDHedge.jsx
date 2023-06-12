@@ -4,26 +4,23 @@ import { useContractReader } from "eth-hooks";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 const { ethers } = require("ethers");
 
-import { Button } from "../Button";
+import { Button } from "../../Button";
 
-const VaultWithdrawFromRevenueShareForm = ({
+const VaultRedeemFormDHedge = ({
   web3,
-  assetDecimals = 6,
-  defaultWithdrawAmountStr = "0",
-  vaultContractName = "Vault",
-  cardTitle = "Withdraw From Revenue Share (Referral Account Only)",
+  shareDecimals = 6,
+  defaultRedeemAmountStr = "0",
+  vaultContractName = "TorosUSDCABI",
+  cardTitle = "Redeem from Cinch Vault",
 }) => {
   const [withdrawAmountStr, setWithdrawAmountStr] = useState(0);
 
-  const withdrawRevenueShare = async values => {
-    const { withdrawAmount } = values;
+  const withdraw = async values => {
     if (!web3 || !withdrawAmountStr) return;
 
     await web3?.tx(
-      web3?.writeContracts[vaultContractName]?.withdrawFromRevenueShare(
-        web3?.writeContracts?.MockERC20?.address,
-        ethers.utils.parseUnits(withdrawAmountStr, assetDecimals),
-        web3?.address,
+      web3?.writeContracts[vaultContractName]?.withdraw(
+        withdrawAmountStr
       ),
     );
   };
@@ -33,13 +30,13 @@ const VaultWithdrawFromRevenueShareForm = ({
   };
 
   return (
-    <div className="px-8">
+    <div className="m-6">
       <div>
         <div className="bg-slate-50 rounded-2xl p-4 text-3xl  border hover:border-slate-300 flex justify-between">
           <input
             type='text'
             className="bg-transparent placeholder:text-[#B2B9D2] border-transparent focus:border-transparent focus:ring-0 text-2xl"
-            placeholder={defaultWithdrawAmountStr}
+            placeholder={defaultRedeemAmountStr}
             pattern='^[0-9]*[.,]?[0-9]*$'
             onChange={onAmountChange}
           />
@@ -56,7 +53,7 @@ const VaultWithdrawFromRevenueShareForm = ({
 
         <Button type="primary" disabled={withdrawAmountStr == '0'}
           onClick={() => {
-            withdrawRevenueShare();
+            withdraw();
           }} className="mt-10 w-full">
           Withdraw
         </Button>
@@ -65,4 +62,4 @@ const VaultWithdrawFromRevenueShareForm = ({
   );
 };
 
-export default VaultWithdrawFromRevenueShareForm;
+export default VaultRedeemFormDHedge;
